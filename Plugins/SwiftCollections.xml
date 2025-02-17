@@ -694,6 +694,14 @@
             <param name="element">The object to release.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="element"/> is null.</exception>
         </member>
+        <member name="M:SwiftCollections.Pool.SwiftObjectPool`1.Release(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Releases all objects back to the pool for reuse.  If the pool has reached its maximum size, objects
+            are destroyed using the configured destroy action.
+            </summary>
+            <param name="elements"></param>
+            <exception cref="T:System.ArgumentNullException">Thrown if any object in <paramref name="elements"/> is null.</exception>
+        </member>
         <member name="M:SwiftCollections.Pool.SwiftObjectPool`1.Clear">
             <summary>
             Clears all objects from the pool, destroying any active objects if a destroy action is configured.
@@ -2681,7 +2689,7 @@
             <param name="list">The list to shuffle.</param>
             <param name="rng">The random number generator to use for shuffling.</param>
         </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Any``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:SwiftCollections.SwiftExtensions.IsPopulated``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Determines whether a sequence contains any elements.
             </summary>
@@ -2691,7 +2699,7 @@
             true if the source sequence contains any elements; otherwise, false.
             </returns>
         </member>
-        <member name="M:SwiftCollections.SwiftExtensions.IsNotNullOrEmpty``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:SwiftCollections.SwiftExtensions.IsPopulatedSafe``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Determines whether the collection is not null and contains any elements.
             </summary>
@@ -2703,11 +2711,17 @@
         </member>
         <member name="T:LazyDisposable`1">
             <summary>
-             A <see cref="T:System.Lazy`1"/> object that implements <see cref="T:System.IDisposable"/>.
+            A lazily initialized disposable object.
+            This class extends <see cref="T:System.Lazy`1"/> to support <see cref="T:System.IDisposable"/> objects,
+            ensuring proper resource cleanup when disposed.
             </summary>
-            <typeparam name="T">
-             The object being lazily created.
-            </typeparam>
+            <typeparam name="T">The type of the lazily initialized object, which must implement <see cref="T:System.IDisposable"/>.</typeparam>
+        </member>
+        <member name="F:LazyDisposable`1._disposed">
+            <summary>
+            Indicates whether the lazy instance has been disposed.
+            Prevents multiple disposal attempts, ensuring safe resource cleanup.
+            </summary>
         </member>
         <member name="M:LazyDisposable`1.#ctor">
             <summary>
@@ -2772,8 +2786,8 @@
         </member>
         <member name="M:LazyDisposable`1.Dispose">
             <summary>
-             Performs tasks defined in the created instance associated with freeing, releasing,
-             or resetting unmanaged resources.
+            Disposes the lazily initialized value if it has been created.
+            Ensures that disposal is only performed once.
             </summary>
         </member>
     </members>
