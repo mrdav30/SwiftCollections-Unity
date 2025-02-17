@@ -1,0 +1,16 @@
+{
+    "name": "SwiftCollections_Core",
+    "rootNamespace": "SwiftCollections",
+    "references": [
+        "GUID:d166b72a8a4733941852f169793bc2c4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
