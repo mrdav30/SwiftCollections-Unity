@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations. Requires FixedMathSharp-Unity.",
     "unity": "2020.3",
