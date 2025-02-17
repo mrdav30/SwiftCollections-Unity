@@ -2701,5 +2701,80 @@
             True if the collection is not null and contains at least one element; otherwise, false.
             </returns>
         </member>
+        <member name="T:LazyDisposable`1">
+            <summary>
+             A <see cref="T:System.Lazy`1"/> object that implements <see cref="T:System.IDisposable"/>.
+            </summary>
+            <typeparam name="T">
+             The object being lazily created.
+            </typeparam>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             When lazy initialization occurs, the default constructor is used.
+            </summary>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor(System.Boolean)">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             When lazy initialization occurs, the default constructor of the target type
+             and the specified initialization mode are used.
+            </summary>
+            <param name="isThreadSafe">
+             true to make this instance usable concurrently by multiple threads;
+             false to make the instance usable by only one thread at a time. 
+            </param>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor(System.Threading.LazyThreadSafetyMode)">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class
+             that uses the default constructor of T and the specified thread-safety mode.
+            </summary>
+            <param name="mode">
+             One of the enumeration values that specifies the thread safety mode. 
+            </param>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor(System.Func{`0})">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             When lazy initialization occurs, the specified initialization function is used.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor(System.Func{`0},System.Boolean)">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             When lazy initialization occurs, the specified initialization function
+             and initialization mode are used.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+            <param name="isThreadSafe">
+             true to make this instance usable concurrently by multiple threads;
+             false to make this instance usable by only one thread at a time. 
+            </param>
+        </member>
+        <member name="M:LazyDisposable`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)">
+            <summary>
+             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class
+             using the specified initialization function and thread-safety mode.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+            <param name="mode">
+             One of the enumeration values that specifies the thread safety mode. 
+            </param>
+        </member>
+        <member name="M:LazyDisposable`1.Dispose">
+            <summary>
+             Performs tasks defined in the created instance associated with freeing, releasing,
+             or resetting unmanaged resources.
+            </summary>
+        </member>
     </members>
 </doc>

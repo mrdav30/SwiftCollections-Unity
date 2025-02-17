@@ -1,6 +1,5 @@
 {
-    "name": "SwiftCollections_Core",
-    "rootNamespace": "SwiftCollections",
+    "name": "SwiftCollections_Plugins",
     "references": [
         "GUID:d166b72a8a4733941852f169793bc2c4"
     ],
