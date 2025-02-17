@@ -37,6 +37,16 @@ https://github.com/mrdav30/SwiftCollections-Unity.git
 
 ---
 
+## 🧩 Dependencies
+
+SwiftCollections-Unity depends on the following Unity package:
+
+- [FixedMathSharp-Unity](https://github.com/mrdav30/FixedMathSharp-Unity)
+
+This dependency is automatically included when installing via UPM.
+
+---
+
 ## 📖 Usage Examples
 
 ### SwiftBVH for Spatial Queries
