@@ -442,6 +442,11 @@
             A lazily initialized singleton instance of the array pool.
             </summary>
         </member>
+        <member name="P:SwiftCollections.Pool.SwiftArrayPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
         <member name="F:SwiftCollections.Pool.SwiftArrayPool`1._sizePools">
             <summary>
             A collection of object pools, keyed by the size of the arrays they manage.
@@ -460,11 +465,6 @@
             <param name="actionOnRelease">An action performed when an array is released back to the pool (default: clears the array).</param>
             <param name="actionOnDestroy">An action performed when an array is removed from the pool (default: no action).</param>
             <param name="poolMaxCapacity">The maximum number of arrays each pool can hold for a specific size (default: 100).</param>
-        </member>
-        <member name="P:SwiftCollections.Pool.SwiftArrayPool`1.Shared">
-            <summary>
-            Gets the shared singleton instance of the array pool.
-            </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftArrayPool`1.CreateFunc">
             <summary>
@@ -527,9 +527,15 @@
             <typeparam name="TCollection">The type of the collection being pooled. Must implement <see cref="T:System.Collections.Generic.ICollection`1"/> and have a parameterless constructor.</typeparam>
             <typeparam name="TItem">The type of items contained in the collection.</typeparam>
         </member>
-        <member name="F:SwiftCollections.Pool.SwiftCollectionPool`2._collectionPool">
+        <member name="F:SwiftCollections.Pool.SwiftCollectionPool`2._lazyCollectionPool">
             <summary>
             Internal object pool for managing the lifecycle of pooled collections.
+            Uses <see cref="T:System.Lazy`1"/> to ensure lazy initialization.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftCollectionPool`2.CollectionPool">
+            <summary>
+            Gets the shared instance of the pool.
             </summary>
         </member>
         <member name="M:SwiftCollections.Pool.SwiftCollectionPool`2.Rent">
@@ -556,6 +562,11 @@
             Clears all collections from the pool.
             </summary>
         </member>
+        <member name="M:SwiftCollections.Pool.SwiftCollectionPool`2.Flush">
+            <summary>
+            Releases all resources used by the SwiftCollectionPool.
+            </summary>
+        </member>
         <member name="T:SwiftCollections.Pool.SwiftDictionaryPool`2">
             <summary>
             A specialized pool for managing <see cref="T:SwiftCollections.SwiftDictionary`2"/> instances, 
@@ -563,6 +574,22 @@
             </summary>
             <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
             <typeparam name="TValue">The type of values in the dictionary.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftDictionaryPool`2._lazyInstance">
+            <summary>
+            Shared instance of the dictionary pool, providing a globally accessible pool.
+            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftDictionaryPool`2.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftDictionaryPool`2._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
         </member>
         <member name="M:SwiftCollections.Pool.SwiftDictionaryPool`2.Rent">
             <summary>
@@ -574,7 +601,7 @@
             <summary>
             Releases a dictionary instance back to the pool for reuse.
             </summary>
-            <param name="toRelease">The dictionary to release.</param>
+            <param name="dictionary">The dictionary to release.</param>
             <remarks>
             The dictionary will be cleared before being returned to the pool to remove any existing data.
             </remarks>
@@ -584,6 +611,12 @@
             Clears all pooled dictionaries from the pool.
             </summary>
         </member>
+        <member name="M:SwiftCollections.Pool.SwiftDictionaryPool`2.Dispose">
+            <summary>
+            Releases all resources used by the SwiftDictionaryPool.
+            It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
+            </summary>
+        </member>
         <member name="T:SwiftCollections.Pool.SwiftHashSetPool`1">
             <summary>
             A specialized pool for managing <see cref="T:SwiftCollections.SwiftHashSet`1"/> instances, 
@@ -591,11 +624,27 @@
             </summary>
             <typeparam name="T">The type of elements in the hash set.</typeparam>
         </member>
+        <member name="F:SwiftCollections.Pool.SwiftHashSetPool`1._lazyInstance">
+            <summary>
+            Shared instance of the hash set pool, providing a globally accessible pool.
+            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftHashSetPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftHashSetPool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
+        </member>
         <member name="M:SwiftCollections.Pool.SwiftHashSetPool`1.Rent">
             <summary>
             Rents a hash set instance from the pool. If the pool is empty, a new hash set is created.
             </summary>
-            <returns>A <see cref="T:System.Collections.Generic.HashSet`1"/> instance.</returns>
+            <returns>A <see cref="T:SwiftCollections.SwiftHashSet`1"/> instance.</returns>
         </member>
         <member name="M:SwiftCollections.Pool.SwiftHashSetPool`1.Release(SwiftCollections.SwiftHashSet{`0})">
             <summary>
@@ -611,12 +660,34 @@
             Clears all pooled hash sets from the pool.
             </summary>
         </member>
+        <member name="M:SwiftCollections.Pool.SwiftHashSetPool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftHashSetPool.
+            It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
+            </summary>
+        </member>
         <member name="T:SwiftCollections.Pool.SwiftListPool`1">
             <summary>
             A specialized pool for managing <see cref="T:SwiftCollections.SwiftList`1"/> instances,
             providing efficient reuse to minimize memory allocations and improve performance.
             </summary>
             <typeparam name="T">The type of elements in the list.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftListPool`1._lazyInstance">
+            <summary>
+            Shared instance of the hash set pool, providing a globally accessible pool.
+            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftListPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftListPool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
         </member>
         <member name="M:SwiftCollections.Pool.SwiftListPool`1.Rent">
             <summary>
@@ -636,6 +707,12 @@
         <member name="M:SwiftCollections.Pool.SwiftListPool`1.Clear">
             <summary>
             Clears all pooled lists from the pool.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftListPool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftListPool.
+            It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
             </summary>
         </member>
         <member name="T:SwiftCollections.Pool.SwiftObjectPool`1">
@@ -709,7 +786,7 @@
         </member>
         <member name="M:SwiftCollections.Pool.SwiftObjectPool`1.Dispose">
             <summary>
-            Releases all resources used by the SwiftArrayPool.
+            Releases all resources used by the SwiftObjectPool.
             It is important to call Dispose() to release pooled arrays, preventing potential memory leaks.
             </summary>
         </member>
@@ -904,14 +981,14 @@
             Gets the underlying pool of nodes used in the BVH.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVH`1.RootIndex">
-            <summary>
-            Gets the index of the root node in the BVH.
-            </summary>
-        </member>
         <member name="P:SwiftCollections.Query.SwiftBVH`1.RootNode">
             <summary>
             Gets the root node of the BVH.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftBVH`1.RootNodeIndex">
+            <summary>
+            Gets the index of the root node in the BVH.
             </summary>
         </member>
         <member name="P:SwiftCollections.Query.SwiftBVH`1.Count">
@@ -935,11 +1012,6 @@
             <summary>
             Inserts a node into the tree while maintaining tree balance.
             Adjusts parent-child relationships as necessary.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.InsertIntoOptimalChild(System.Int32,System.Int32)">
-            <summary>
-            Determines the optimal child for insertion based on balance and cost metrics.
             </summary>
         </member>
         <member name="M:SwiftCollections.Query.SwiftBVH`1.InsertIntoBuckets(`0,System.Int32)">
@@ -989,13 +1061,7 @@
             Rehashes existing nodes after resizing.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.GetSubtreeSize(System.Int32)">
-            <summary>
-            Updates the bounds and subtree size of a node.
-            Propagates changes to the parent nodes if necessary.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.GetCombinedBounds(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`1.GetCombinedBounds(SwiftCollections.Query.SwiftBVHNode{`0},SwiftCollections.Query.SwiftBVHNode{`0})">
             <summary>
             Gets the combined bounding volume of two child nodes.
             Handles cases where one or both children are missing.
@@ -1077,6 +1143,16 @@
         <member name="P:SwiftCollections.Query.SwiftBVHNode`1.SubtreeSize">
             <summary>
             Tracks the number of nodes in the subtree rooted at this node.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.IsAllocated">
+            <summary>
+            Determines whether or not this node has been allocated from the pool or is a pooled instance
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.Default">
+            <summary>
+            Provides a custom default instance of <see cref="T:SwiftCollections.Query.SwiftBVHNode`1"/>.
             </summary>
         </member>
         <member name="M:SwiftCollections.Query.SwiftBVHNode`1.Reset">
@@ -2788,6 +2864,11 @@
             <summary>
             Disposes the lazily initialized value if it has been created.
             Ensures that disposal is only performed once.
+            </summary>
+        </member>
+        <member name="M:LazyDisposable`1.Finalize">
+            <summary>
+            Finalizer to ensure disposal if Dispose() is never called.
             </summary>
         </member>
     </members>
