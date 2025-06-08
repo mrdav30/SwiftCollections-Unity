@@ -1,6 +1,4 @@
-﻿#if UNITY_EDITOR
-
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace SwiftCollections.Pool
@@ -126,4 +124,3 @@ namespace SwiftCollections.Pool
         }
     }
 }
-#endif

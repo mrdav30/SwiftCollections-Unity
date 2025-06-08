@@ -4,6 +4,1356 @@
         <name>SwiftCollections</name>
     </assembly>
     <members>
+        <member name="M:SwiftCollections.ISwiftCloneable`1.CloneTo(System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Clones the entire <see cref="T:SwiftCollections.ISwiftCloneable`1"/> into a new target <see cref="T:System.Collections.Generic.ICollection`1"/>, 
+            ensuring that the target list is an exact copy. Clears the target list first 
+            to match the structure and state of the source list exactly.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftBiDictionary`2">
+            <summary>
+            Represents a bidirectional dictionary that allows for efficient lookups in both directions,
+            mapping keys to values and values back to keys. Both keys and values must be unique to maintain
+            the integrity of the bidirectional relationship.
+            Inherits from <see cref="T:SwiftCollections.SwiftDictionary`2"/> and maintains a reverse map for reverse lookups.
+            </summary>
+            <typeparam name="T1">The type of the keys in the forward dictionary.</typeparam>
+            <typeparam name="T2">The type of the values in the forward dictionary.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMap">
+            <summary>
+            The reverse map for bidirectional lookup, mapping from <typeparamref name="T2"/> to <typeparamref name="T1"/>.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMapSyncRoot">
+            <summary>
+            An object used to synchronize access to the reverse map during serialization and deserialization.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that is empty and uses the default equality comparers for the key and value types.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that is empty and uses the specified equality comparers for the key and value types.
+            </summary>
+            <param name="comparer1">The comparer to use for the keys.</param>
+            <param name="comparer2">The comparer to use for the values.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that contains elements copied from the specified dictionary and uses the default equality comparers for the key and value types.
+            </summary>
+            <param name="dictionary">The dictionary whose elements are copied to the new <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that contains elements copied from the specified dictionary and uses the specified equality comparers for the key and value types.
+            </summary>
+            <param name="dictionary">The dictionary whose elements are copied to the new <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.</param>
+            <param name="comparer1">The comparer to use for the keys.</param>
+            <param name="comparer2">The comparer to use for the values.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Deserialization constructor used during deserialization to reconstruct the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> instance.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> holding the serialized object data.</param>
+            <param name="context">The contextual information about the source or destination.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.Remove(`0,`1)">
+            <summary>
+            Removes the key-value pair from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
+            Also removes the corresponding value-key pair from the reverse map.
+            </summary>
+            <param name="key">The key of the element to remove.</param>
+            <param name="value">The value of the element to remove.</param>
+            <returns><c>true</c> if the element is successfully found and removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.Add(`0,`1)">
+            <summary>
+            Adds the specified key and value to the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
+            Also adds the value-key pair to the reverse map.
+            </summary>
+            <param name="key">The key of the element to add.</param>
+            <param name="value">The value of the element to add.</param>
+            <exception cref="T:System.ArgumentException">An element with the same key or value already exists.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.InsertIfNotExist(`0,`1)">
+            <summary>
+            Overrides the base class's <see cref="M:SwiftCollections.SwiftDictionary`2.InsertIfNotExist(`0,`1)"/> method to ensure synchronization with the reverse map.
+            </summary>
+            <param name="key">The key to insert.</param>
+            <param name="value">The value to insert.</param>
+            <returns><c>true</c> if a new entry was added; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.Remove(`0)">
+            <summary>
+            Removes the value with the specified key from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
+            Also removes the corresponding key from the reverse map.
+            </summary>
+            <param name="key">The key of the element to remove.</param>
+            <returns><c>true</c> if the element is successfully found and removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.Clear">
+            <summary>
+            Removes all keys and values from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
+            Also clears the reverse map.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.TryGetKey(`1,`0@)">
+            <summary>
+            Attempts to get the key associated with the specified value.
+            </summary>
+            <param name="value">The value whose associated key is to be retrieved.</param>
+            <param name="key">When this method returns, contains the key associated with the specified value, if the key is found; otherwise, the default value for the type of the key.</param>
+            <returns><c>true</c> if the key was found; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.GetKey(`1)">
+            <summary>
+            Gets the key associated with the specified value.
+            </summary>
+            <param name="value">The value whose associated key is to be retrieved.</param>
+            <returns>The key associated with the specified value.</returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">The property is retrieved and <paramref name="value"/> does not exist in the reverse map.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.ContainsValue(`1)">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> contains the specified value.
+            </summary>
+            <param name="value">The value to locate in the dictionary.</param>
+            <returns><c>true</c> if the dictionary contains an element with the specified value; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
+            <param name="context">The destination and source of the serialized stream.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.OnDeserialization(System.Object)">
+            <summary>
+            Implements the <see cref="M:System.Runtime.Serialization.IDeserializationCallback.OnDeserialization(System.Object)"/> method.
+            Reconstructs the reverse map after deserialization.
+            </summary>
+            <param name="sender">The source of the deserialization event.</param>
+        </member>
+        <member name="T:SwiftCollections.SwiftBucket`1">
+             <summary>
+             Represents a high-performance bucket collection that allows O(1) addition and removal of items at any arrayIndex.
+             Items maintain stable indices unless explicitly removed. Iteration does not guarantee any specific order.
+             </summary>
+             <remarks>
+             <c>SwiftBucket&lt;T&gt;</c> provides significant performance benefits over <c>List&lt;T&gt;</c> in specific scenarios,
+             particularly when dealing with frequent modifications at arbitrary positions within the collection.
+             By leveraging its O(1) time complexity for both insertion and removal at any arrayIndex,
+             it outperforms <c>List&lt;T&gt;</c> where such operations are a bottleneck.
+            
+             **Efficient Lookups Using Indices**:
+             When you add items to the bucket using the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method, it returns an arrayIndex that you can store externally.
+             You can then use this arrayIndex to access the item directly via the indexer, and check if it's still present using the <see cref="M:SwiftCollections.SwiftBucket`1.IsAllocated(System.Int32)"/> method.
+             This approach allows for O(1) time complexity for lookups and existence checks, avoiding the need for O(n) searches using methods like <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> or <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/>.
+            
+             **Note**: Operations like <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/> and <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> have O(n) time complexity due to the underlying data structure.
+             Additionally, iteration over the collection does not follow any guaranteed order and depends on internal allocation.
+             </remarks>
+             <typeparam name="T">Specifies the type of elements in the bucket.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified capacity.
+            </summary>
+            <param name="capacity">The initial capacity of the bucket.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftBucket`1.Count">
+            <summary>
+            Gets the number of elements contained in the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftBucket`1.Capacity">
+            <summary>
+            Gets the total capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftBucket`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the element at the specified arrayIndex.
+            Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the arrayIndex is invalid or unallocated.
+            </summary>
+            <param name="index">The zero-based arrayIndex of the element to get or set.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.Add(`0)">
+            <summary>
+            Adds an item to the bucket and returns its arrayIndex.
+            </summary>
+            <param name="item">The item to add.</param>
+            <returns>The arrayIndex where the item was added.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.InsertAt(System.Int32,`0)">
+            <summary>
+            Inserts an item at the specified arrayIndex.
+            If an item already exists at that arrayIndex, it will be replaced.
+            </summary>
+            <param name="index">The arrayIndex at which to insert the item.</param>
+            <param name="item">The item to insert.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.TryRemove(`0)">
+            <summary>
+            Removes the first occurrence of a specific object from the bucket.
+            </summary>
+            <param name="item">The object to remove.</param>
+            <returns><c>true</c> if item was successfully removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.TryRemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified arrayIndex if it has been allocated.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified arrayIndex.
+            </summary>
+            <param name="index">The arrayIndex of the item to remove.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.Clear">
+            <summary>
+            Removes all items from the bucket.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.TrimExcessCapacity">
+            <summary>
+            Reduces the capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/> by resizing the internal array to match the current count.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.Contains(`0)">
+            <summary>
+            Determines whether the bucket contains a specific value.
+            </summary>
+            <param name="item">The object to locate in the bucket.</param>
+            <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
+            <remarks>
+            This method performs a linear search and has a time complexity of O(n).
+            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the bucket.
+            </summary>
+            <param name="item">The object to locate in the bucket.</param>
+            <returns>
+            The zero-based arrayIndex of the first occurrence of <paramref name="item"/> within the bucket, if found; otherwise, <c>-1</c>.
+            </returns>
+            <remarks>
+            This method performs a linear search and has a time complexity of O(n).
+            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies the elements of the bucket to an <see cref="T:System.Array"/>, starting at a particular Array arrayIndex.
+            </summary>
+            <param name="array">The one-dimensional Array that is the destination of the elements copied from bucket.</param>
+            <param name="arrayIndex">The zero-based arrayIndex in array at which copying begins.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
+            </summary>
+            <returns>An enumerator for the bucket.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2">
+            <summary>
+            A high-performance, memory-efficient dictionary providing lightning-fast O(1) operations for addition, retrieval, and removal, optimized to outperform standard dictionaries.
+            </summary>
+            <typeparam name="TKey">Specifies the type of keys in the dictionary.</typeparam>
+            <typeparam name="TValue">Specifies the type of values in the dictionary.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2.DefaultCapacity">
+            <summary>
+            The default initial capacity of the dictionary.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._LoadFactorThreshold">
+            <summary>
+            Determines the maximum allowable load factor before resizing the hash set to maintain performance.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._entries">
+            <summary>
+            The array containing the entries of the dictionary.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._count">
+            <summary>
+            The total number of entries in the dictionary
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._entryMask">
+            <summary>
+            A mask used for efficiently computing the entry arrayIndex from a hash code.
+            This is typically the size of the entry array minus one, assuming the size is a power of two.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._comparer">
+            <summary>
+            The comparer used to determine equality of keys and to generate hash codes.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._adaptiveResizeFactor">
+            <summary>
+            Specifies the dynamic growth factor for resizing, adjusted based on recent usage patterns.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._nextResizeCount">
+            <summary>
+            Tracks the count threshold at which the hash set should resize based on the load factor.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._movingFillRate">
+            <summary>
+            Represents the moving average of the fill rate, used to dynamically adjust resizing behavior.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._syncRoot">
+            <summary>
+            An object that can be used to synchronize access to the SwiftDictionary.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._version">
+            <summary>
+            A version counter used to track modifications to the dictionary.
+            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2.Entry">
+            <summary>
+            Represents a single key-value pair in the dictionary, including its hash code for quick access.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor">
+            <summary>
+            Initialize a new instance of <see cref="T:SwiftCollections.SwiftDictionary`2"/> with customizable capacity and comparer for optimal performance tailored to your needs.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
+            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Collections.Generic.IEqualityComparer{`0})">
+            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Collections.Generic.IEqualityComparer{`0})">
+            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the SwiftDictionary class with serialized data.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:SwiftCollections.SwiftDictionary`2.Count">
+            <summary>
+            Gets the number of elements contained in the dictionary.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._keyCollection">
+            <summary>
+            The collection containing the keys of the dictionary.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._valueCollection">
+            <summary>
+            The collection containing the values of the dictionary.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.Add(`0,`1)">
+            <summary>
+            Attempts to add the specified key and value to the dictionary.
+            </summary>
+            <param name="key">The key of the element to add.</param>
+            <param name="value">The value of the element to add.</param>
+            <returns>
+            true if the key/value pair was added to the dictionary successfully; 
+            false if the key already exists.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.InsertIfNotExist(`0,`1)">
+            <summary>
+            Inserts a key/value pair into the dictionary. If the key already exists and 
+            pair is added, or the method returns false if the key already exists.
+            </summary>
+            <param name="key">The key to insert or update.</param>
+            <param name="value">The value to insert or update.</param>
+            <returns>
+            true if the key/value pair was added to the dictionary successfully; 
+            false if the key already exists.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the key is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.CheckLoadThreshold">
+            <summary>
+            Ensures that the dictionary is resized when the current load factor exceeds the predefined threshold.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures that the dictionary can hold up to the specified number of entries, if not it resizes.
+            </summary>
+            <param name="capacity">The minimum capacity to ensure.</param>
+            <returns>The new capacity of the dictionary.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">The capacity is less than zero.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.Resize(System.Int32)">
+            <summary>
+            Resizes the internal arrays to the specified new size.
+            </summary>
+            <param name="newSize">The new size for the internal arrays.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.TrimExcess">
+            <summary>
+            Sets the capacity of a <see cref="T:SwiftCollections.SwiftDictionary`2"/> to the actual 
+            number of elements it contains, rounded up to a nearby next power of 2 value.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.CalculateAdaptiveResizeFactors(System.Int32)">
+            <summary>
+             Updates adaptive resize parameters based on the current fill rate to balance memory usage and performance.
+            </summary>
+            <param name="newSize"></param>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.Initialize(System.Int32)">
+            <summary>
+            Initializes the dictionary with the specified capacity.
+            </summary>
+            <param name="capacity">The initial number of elements that the dictionary can contain.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.SwitchToRandomizedComparer">
+            <summary>
+            Switches the dictionary's comparer to a randomized comparer to mitigate the effects of high collision counts,
+            and rehashes all entries using the new comparer to redistribute them across <see cref="F:SwiftCollections.SwiftDictionary`2._entries"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.RehashEntries">
+            <summary>
+            Reconstructs the internal entry structure to align with updated hash codes, ensuring efficient access and storage.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.FindEntry(`0)">
+            <summary>
+            Finds the arrayIndex of the entry with the specified key.
+            </summary>
+            <param name="key">The key to locate in the dictionary.</param>
+            <returns>The arrayIndex of the entry if found; otherwise, -1.</returns>
+            <exception cref="T:System.ArgumentNullException">The key is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.ThrowIfNullAndNullsAreIllegal(System.Object)">
+            <summary>
+            Throws an exception if the specified value is null and nulls are not allowed for TValue.
+            </summary>
+            <param name="value">The value to check.</param>
+            <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator">
+            <summary>
+            Provides an efficient enumerator for iterating over the key-value pairs in the SwiftDictionary, enabling smooth traversal during enumeration.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2.KeyCollection">
+            <summary>
+            Provides a dynamic, read-only collection of all keys in the dictionary, supporting enumeration and copy operations.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.KeyCollection.#ctor(SwiftCollections.SwiftDictionary{`0,`1})">
+            <summary>
+            Initializes a new instance of the KeyCollection class that reflects the keys in the specified dictionary.
+            </summary>
+            <param name="dictionary">The dictionary whose keys are reflected in the new KeyCollection.</param>
+            <exception cref="T:System.ArgumentNullException">The dictionary is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.KeyCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the keys in the collection.
+            </summary>
+            <returns>An enumerator for the keys in the collection.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2.ValueCollection">
+            <summary>
+            Offers a dynamic, read-only collection of all values in the dictionary, supporting enumeration and copy operations.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.ValueCollection.#ctor(SwiftCollections.SwiftDictionary{`0,`1})">
+            <summary>
+            Initializes a new instance of the ValueCollection class that reflects the values in the specified dictionary.
+            </summary>
+            <param name="dictionary">The dictionary whose values are reflected in the new ValueCollection.</param>
+            <exception cref="T:System.ArgumentNullException">The dictionary is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.ValueCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the values in the collection.
+            </summary>
+            <returns>An enumerator for the values in the collection.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Implements the System.Runtime.Serialization.ISerializable interface and returns
+            the data needed to serialize the SwiftDictionary instance.
+            </summary>
+            <param name="info">
+            A System.Runtime.Serialization.SerializationInfo object that contains the information 
+            required to serialize the SwiftDictionary instance.
+            </param>
+            <param name="context">
+            A System.Runtime.Serialization.StreamingContext structure that contains the source
+            and destination of the serialized stream associated with the SwiftDictionary
+            instance.
+            </param>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.OnDeserialization(System.Object)">
+            <summary>
+            Implements the System.Runtime.Serialization.ISerializable interface and raises the deserialization event when the deserialization is complete.
+            </summary>
+            <param name="sender">The source of the deserialization event.</param>
+        </member>
+        <member name="T:SwiftCollections.SwiftHashSet`1">
+            <summary>
+            Represents a high-performance set of unique values with efficient operations for addition, removal, and lookup
+            </summary>
+            <typeparam name="T">The type of elements in the set.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1.DefaultCapacity">
+            <summary>
+            The default initial capacity of the set.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._LoadFactorThreshold">
+            <summary>
+            Determines the maximum allowable load factor before resizing the hash set to maintain performance.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._entries">
+            <summary>
+            The array containing the entries of the SwiftHashSet.
+            </summary>
+            <remarks>
+            Capacity will always be a power of two for efficient pooling cache.
+            </remarks>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._count">
+            <summary>
+            The total number of entries in the hash set
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._entryMask">
+            <summary>
+            A mask used for efficiently computing the entry index from a hash code.
+            This is typically the size of the entry array minus one, assuming the size is a power of two.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._comparer">
+            <summary>
+            The comparer used to determine equality of keys and to generate hash codes.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._adaptiveResizeFactor">
+            <summary>
+            Specifies the dynamic growth factor for resizing, adjusted based on recent usage patterns.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._nextResizeCount">
+            <summary>
+            Tracks the count threshold at which the hash set should resize based on the load factor.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._movingFillRate">
+            <summary>
+            Represents the moving average of the fill rate, used to dynamically adjust resizing behavior.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashSet`1._version">
+            <summary>
+            A version counter used to track modifications to the set.
+            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftHashSet`1.Entry">
+            <summary>
+            Represents a single value in the set, including its hash code for quick access.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor">
+            <summary>
+            Initialize a new instance of <see cref="T:SwiftCollections.SwiftHashSet`1"/> with customizable capacity and comparer for optimal performance tailored to your needs.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Collections.Generic.IEqualityComparer{`0})">
+            <inheritdoc cref="M:SwiftCollections.SwiftHashSet`1.#ctor"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class that is empty and has the default initial capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class that contains elements copied from the specified collection.
+            </summary>
+            <param name="collection">The collection whose elements are copied to the new set.</param>
+            <param name="comparer">The comparer to use when comparing elements.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class with serialized data.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:SwiftCollections.SwiftHashSet`1.Count">
+            <summary>
+            Gets the number of elements contained in the set.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftHashSet`1.Comparer">
+            <summary>
+            Gets the <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> object that is used to determine equality for the values in the set.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.InsertIfNotExists(`0)">
+            <summary>
+            Adds the specified element to the set if it's not already present.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Remove(`0)">
+            <summary>
+            Removes the specified element from the set.
+            </summary>
+            <param name="item">The element to remove from the set.</param>
+            <returns>
+            True if the element is successfully found and removed; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Clear">
+            <summary>
+            Removes all elements from the set.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.CheckLoadThreshold">
+            <summary>
+            Ensures that the hash set is resized when the current load factor exceeds the predefined threshold.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures that the set can hold up to the specified number of elements without resizing.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Resize(System.Int32)">
+            <summary>
+            Resizes the hash set to the specified capacity, redistributing all entries to maintain efficiency.
+            </summary>
+            <param name="newSize"></param>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.TrimExcess">
+            <summary>
+            Sets the capacity of a <see cref="T:SwiftCollections.SwiftHashSet`1"/> to the actual 
+            number of elements it contains, rounded up to a nearby next power of 2 value.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.CalculateAdaptiveResizeFactors(System.Int32)">
+            <summary>
+             Updates adaptive resize parameters based on the current fill rate to balance memory usage and performance.
+            </summary>
+            <param name="newSize"></param>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Initialize(System.Int32)">
+            <summary>
+            Initializes the hash set with a given capacity, ensuring it starts with an optimal internal structure.
+            </summary>
+            <param name="capacity"></param>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Contains(`0)">
+            <summary>
+            Determines whether the set contains the specified element.
+            </summary>
+            <param name="item">The element to locate in the set.</param>
+            <returns>
+            True if the set contains the specified element; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.TryGetValue(`0,`0@)">
+            <summary>
+            Searches the set for a given value and returns the equal value it finds, if any.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies the elements of the set to an array, starting at the specified array index.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.SwitchComparer(System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Switches the hash set's comparer and rehashes all entries 
+            using the new comparer to redistribute them across <see cref="F:SwiftCollections.SwiftHashSet`1._entries"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.SwitchToRandomizedComparer">
+            <summary>
+            Replaces the hash set's comparer with a randomized comparer to mitigate high collision rates.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.RehashEntries">
+            <summary>
+            Reconstructs the internal entry structure to align with updated hash codes, ensuring efficient access and storage.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.FindEntry(`0)">
+            <summary>
+            Searches for an entry in the hash set by following its probing sequence, returning its index if found.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the set.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator">
+            <summary>
+            Provides an enumerator for iterating through the elements of the hash set, ensuring consistency during enumeration.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftList`1">
+            <summary>
+            <c>SwiftList&lt;T&gt;</c> is a high-performance, memory-efficient dynamic list designed to outperform
+            traditional generic lists in speed-critical applications. 
+            <para>
+            By utilizing custom growth and
+            shrink strategies, SwiftList optimizes memory allocation and minimizes resizing overhead,
+            all while maintaining compact storage. With aggressive inlining and optimized algorithms,
+            SwiftList delivers faster iteration, insertion, and overall memory management compared to
+            standard List. It is ideal for scenarios where predictable performance and minimal
+            memory allocations are essential.
+            </para>
+            <para>
+            This implementation is optimized for performance and does not perform versioning checks.
+            Modifying the list during enumeration may result in undefined behavior.
+            </para>
+            </summary>
+            <typeparam name="T">Specifies the type of elements in the list.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftList`1.DefaultCapacity">
+            <summary>
+            The default initial capacity of the <see cref="T:SwiftCollections.SwiftList`1"/> if none is specified.
+            Used to allocate a reasonable starting size to minimize resizing operations.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftList`1._innerArray">
+            <summary>
+            The internal array that stores elements of the SwiftList. Resized as needed to
+            accommodate additional elements. Not directly exposed outside the list.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftList`1._count">
+            <summary>
+            The current number of elements in the SwiftList. Represents the total count of
+            valid elements stored in the list, also indicating the arrayIndex of the next insertion point.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftList`1._syncRoot">
+            <summary>
+            An object that can be used to synchronize access to the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftList`1"/> with the specified initial capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftList`1"/> class with elements from the specified collection.
+            The collection must have a known count for optimized memory allocation.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
+        </member>
+        <member name="P:SwiftCollections.SwiftList`1.Capacity">
+            <summary>
+            Gets the total number of elements the SwiftList can hold without resizing.
+            Reflects the current allocated size of the internal array.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftList`1.Count">
+            <inheritdoc cref="F:SwiftCollections.SwiftList`1._count"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftList`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Add(`0)">
+            <summary>
+            Adds an object to the end of the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds the elements of the specified collection to the end of the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of a specific object from the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the element at the specified arrayIndex of the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.RemoveAll(System.Predicate{`0})">
+            <summary>
+            Removes all the elements that match the conditions defined by the specified predicate.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts an element into the SwiftList at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Reverse">
+            <summary>
+            Reverses the order of the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Sort">
+            <summary>
+            Sorts the elements in the <see cref="T:SwiftCollections.SwiftList`1"/> using the <see cref="T:System.IComparable"/> interface implementation of each element of the _innerArray.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Sort(System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Sorts the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/> using the specified comparer.
+            </summary>
+            <param name="comparer">The comparer to use for comparing elements.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Clear">
+            <summary>
+            Removes all elements from the <see cref="T:SwiftCollections.SwiftList`1"/>, resetting its count to zero.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.FastClear">
+            <summary>
+            Clears the <see cref="T:SwiftCollections.SwiftList`1"/> without releasing the reference to the stored elements.
+            Use FastClear() when you want to quickly reset the list without reallocating memory.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftList`1"/> is sufficient to accommodate the specified number of elements.
+            The capacity can increase by double to balance memory allocation efficiency and space.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.TrimExcessCapacity">
+            <summary>
+            Reduces the capacity of the SwiftList if the element count falls below 50% of the current capacity. 
+            Ensures efficient memory usage by resizing the internal array to match the current count when necessary.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.ToArray">
+            <summary>
+            Copies the elements of the SwiftList to a new array.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Contains(`0)">
+            <summary>
+            Determines whether an element is in the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Swap(System.Int32,System.Int32)">
+            <summary>
+            Swaps the values of two elements in the SwiftList.
+            This method exchanges the values referenced by two variables.
+            </summary>
+            <param name="indexA">The first element to swap.</param>
+            <param name="indexB">The second element to swap.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.CopyTo(SwiftCollections.SwiftList{`0})">
+            <summary>
+            Copies the elements of the SwiftList to the specified target SwiftList.
+            The target list will resize if it lacks sufficient capacity, 
+            but retains any existing elements beyond the copied range.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftList`1"/>.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftQueue`1">
+            <summary>
+            <c>SwiftQueue&lt;T&gt;</c> is a high-performance, circular buffer-based queue designed for ultra-low-latency enqueue and dequeue operations.
+            <para>
+            It leverages power-of-two capacities and bitwise arithmetic to eliminate expensive modulo operations, enhancing performance.
+            By managing memory efficiently with a wrap-around technique and custom capacity growth strategies, SwiftQueue minimizes allocations and resizing.
+            Aggressive inlining and optimized exception handling further reduce overhead, making SwiftQueue outperform traditional queues,
+            especially in scenarios with high-frequency additions and removals.
+            </para>
+            <para>
+            This implementation is optimized for performance and does not perform versioning checks.
+            Modifying the queue during enumeration may result in undefined behavior.
+            </para>
+            </summary>
+            <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1.DefaultCapacity">
+            <summary>
+            The default initial capacity of the SwiftQueue if none is specified.
+            Used to allocate a reasonable starting size to minimize resizing operations.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._innerArray">
+            <summary>
+            The internal array that stores elements of the SwiftQueue. Resized as needed to
+            accommodate additional elements. Not directly exposed outside the queue.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._count">
+            <summary>
+            The current number of elements in the SwiftQueue. Represents the total count of
+            valid elements stored in the queue, also indicating the arrayIndex of the next insertion point.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._head">
+            <summary>
+            The arrayIndex of the first element in the queue. Adjusts as elements are dequeued.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._tail">
+            <summary>
+            The arrayIndex at which the next element will be enqueued, wrapping around as needed.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftQueue`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.#ctor">
+            <summary>
+            Initializes a new, empty instance of SwiftQueue.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new, empty instance of SwiftQueue with the specified initial capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of SwiftQueue that contains elements copied from the provided items.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftQueue`1.InnerArray">
+            <inheritdoc cref="F:SwiftCollections.SwiftQueue`1._innerArray"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftQueue`1.Count">
+            <inheritdoc cref="F:SwiftCollections.SwiftQueue`1._count"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftQueue`1.Capacity">
+            <summary>
+            Gets the total number of elements the SwiftQueue can hold without resizing.
+            Reflects the current allocated size of the internal array.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftQueue`1.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Add(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Enqueue(`0)">
+            <summary>
+            Adds an item to the end of the queue. Automatically resizes the queue if the capacity is exceeded.
+            </summary>
+            <param name="item">The item to add to the queue.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Dequeue">
+            <summary>
+            Removes and returns the item at the front of the queue. 
+            Throws an InvalidOperationException if the queue is empty.
+            </summary>
+            <returns>The item at the front of the queue.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.TryDequeue(`0@)">
+            <summary>
+            Tries to remove and return the item at the front of the queue. 
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Peek">
+            <summary>
+            Returns the item at the front of the queue without removing it. 
+            Throws an InvalidOperationException if the queue is empty.
+            </summary>
+            <returns>The item at the front of the queue.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.TryPeek(`0@)">
+            <summary>
+            Tries to return the item at the front of the queue without removing it. 
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.PeekTail">
+            <summary>
+            Returns the item at the end of the queue without removing it. 
+            Throws an InvalidOperationException if the queue is empty.
+            </summary>
+            <returns>The item at the end of the queue.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Contains(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Clear">
+            <summary>
+            Removes all elements from the SwiftQueue, resetting its count to zero.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.FastClear">
+            <summary>
+            Clears the SwiftQueue without releasing the reference to the stored elements.
+            Use FastClear() when you want to quickly reset the list without reallocating memory.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Resize(System.Int32)">
+            <summary>
+            Ensures that the capacity of the queue is sufficient to accommodate the specified number of elements.
+            The capacity increases to the next power of two greater than or equal to the required minimum capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.TrimExcessCapacity">
+            <summary>
+            Reduces the capacity of the SwiftQueue if the element count is significantly less than the current capacity.
+            This method resizes the internal array to the next power of two greater than or equal to the current count,
+            optimizing memory usage.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.ToArray">
+            <summary>
+            Copies the elements of the SwiftQueue to a new array.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.CopyTo(System.Array,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.CopyTo(`0[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the SwiftList.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftSortedList`1">
+            <summary>
+            Represents a dynamically sorted collection of elements.
+            Provides efficient O(log n) operations for adding, removing, and checking for the presence of elements.
+            </summary>
+            <typeparam name="T">The type of elements in the collection.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1.DefaultCapacity">
+            <summary>
+            The default initial capacity of the <see cref="T:SwiftCollections.SwiftSortedList`1"/> if none is specified.
+            Used to allocate a reasonable starting size to minimize resizing operations.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._innerArray">
+            <summary>
+            Represents the internal array that stores the sorted elements.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._offset">
+            <summary>
+            The offset within the internal array where the logical start of the list begins.
+            Used to efficiently manage insertions and deletions at both ends without excessive shifting.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._version">
+            <summary>
+            A version counter used to track modifications to the sorted list.
+            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._comparer">
+            <summary>
+            The comparer used to sort and compare elements in the collection.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._syncRoot">
+            <summary>
+            An object that can be used to synchronize access to the SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftSortedList`1"/> uisng the specified <see cref="T:System.Collections.Generic.IComparer`1"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Int32,System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftSortedList`1"/> with the specified initial capacity and <see cref="T:System.Collections.Generic.IComparer`1"/>.
+            </summary>
+            <param name="capacity">The starting initial capacity.</param>
+            <param name="comparer">The comparer to use. If null, the default comparer is used.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftList`1"/> class with elements from the specified collection.
+            The collection must have a known count for optimized memory allocation.
+            </summary>
+            <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Count">
+            <summary>
+            Gets the number of elements in the sorter.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Capacity">
+            <summary>
+            Gets the current capacity of the internal array.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Comparer">
+            <summary>
+            The comparer used to sort elements in the collection.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Insert(`0,System.Int32)">
+            <summary>
+            Inserts an item into the internal array at the specified arrayIndex, shifting elements as needed.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds a range of elements to the collection, ensuring they are sorted and merged efficiently.
+            </summary>
+            <remarks>
+            This will compact the array for efficiency.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.PopMin">
+            <summary>
+            Removes and returns the minimum element in the sorter.
+            </summary>
+            <returns>The minimum element.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.PopMax">
+            <summary>
+            Removes and returns the maximum element in the sorter.
+            </summary>
+            <returns>The maximum element.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the element at the specified arrayIndex from the sorted list.
+            Shifts elements as needed to maintain the sorted order and efficient space utilization.
+            </summary>
+            <param name="index">The zero-based arrayIndex of the element to remove.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.FastClear">
+            <summary>
+            Quickly clears the list by resetting the count and offset without modifying the internal array.
+            Note: This leaves references in the internal array, which may prevent garbage collection of reference types.
+            Use when performance is critical and you are certain that residual references are acceptable.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftSortedList`1"/> is sufficient to accommodate the specified number of elements.
+            The capacity can increase by double to balance memory allocation efficiency and space.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Resize(System.Int32)">
+            <summary>
+            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftSortedList`1"/> is sufficient to accommodate the specified number of elements.
+            The capacity can increase by double to balance memory allocation efficiency and space.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.RecenterArray">
+            <summary>
+            Recenters the elements within the internal array to balance available space on both ends.
+            This minimizes the need for shifting elements during future insertions and deletions.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.GetPhysicalIndex(System.Int32)">
+            <summary>
+            Converts a logical arrayIndex within the list to the corresponding physical arrayIndex in the internal array.
+            </summary>
+            <param name="logicalIndex">The logical arrayIndex within the list.</param>
+            <returns>The physical arrayIndex within the internal array.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.PeekMin">
+            <summary>
+            Returns the minimum element in the sorter without removing it.
+            </summary>
+            <returns>The minimum element.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.PeekMax">
+            <summary>
+            Returns the maximum element in the sorter without removing it.
+            </summary>
+            <returns>The maximum element.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified item in the sorted collection and returns the arrayIndex of the first occurrence.
+            </summary>
+            <param name="item">The item to search for.</param>
+            <returns>The zero-based arrayIndex of the item if found; otherwise, -1.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.InsertionPoint(`0)">
+            <summary>
+            Determines the insertion point for a specified item in the collection.
+            The insertion point is the arrayIndex where the item would be inserted if it were not already present.
+            </summary>
+            <param name="item">The item for which to find the insertion point.</param>
+            <returns>The insertion point as a zero-based arrayIndex.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Search(`0)">
+            <summary>
+            Searches for the specified item in the sorted collection.
+            </summary>
+            <param name="item">The item to search for.</param>
+            <returns>
+            The arrayIndex of the item if found or where the item should be inserted if not found.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through <see cref="T:SwiftCollections.SwiftSortedList`1"/>.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftStack`1">
+            <summary>
+            Represents a fast, array-based stack (LIFO - Last-In-First-Out) collection of objects.
+            <para>
+            The <c>SwiftStack&lt;T&gt;</c> class provides O(1) time complexity for <c>Push</c> and <c>Pop</c> operations,
+            making it highly efficient for scenarios where performance is critical.
+            It minimizes memory allocations by reusing internal arrays and offers methods
+            like <c>FastClear</c> to quickly reset the stack without deallocating memory.
+            </para>
+            <para>
+            This implementation is optimized for performance and does not perform versioning checks.
+            Modifying the stack during enumeration may result in undefined behavior.
+            </para>
+            </summary>
+            <typeparam name="T">Specifies the type of elements in the stack.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.SwiftStack`1.DefaultCapacity">
+            <summary>
+            The default initial capacity of the SwiftStack if none is specified.
+            Used to allocate a reasonable starting size to minimize resizing operations.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftStack`1._innerArray">
+            <summary>
+            The internal array that stores elements of the SwiftStack. Resized as needed to
+            accommodate additional elements. Not directly exposed outside the stack.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftStack`1._count">
+            <summary>
+            The current number of elements in the SwiftStack. Represents the total count of
+            valid elements stored in the stack, also indicating the arrayIndex of the next insertion point.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.#ctor">
+            <summary>
+            Initializes a new, empty instance of SwiftStack.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new, empty instance of SwiftStack with the specified initial capacity.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftStack`1.Count">
+            <inheritdoc cref="F:SwiftCollections.SwiftStack`1._count"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftStack`1.Capacity">
+            <summary>
+            Gets the total number of elements the SwiftQueue can hold without resizing.
+            Reflects the current allocated size of the internal array.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftStack`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Push(`0)">
+            <summary>
+            Inserts an object at the top of the SwiftStack.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Pop">
+            <summary>
+            Removes and returns the object at the top of the SwiftStack.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Clear">
+            <summary>
+            Removes all elements from the SwiftStack, resetting its count to zero.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.FastClear">
+            <summary>
+            Clears the SwiftStack without releasing the reference to the stored elements.
+            Use FastClear() when you want to quickly reset the list without reallocating memory.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Resize(System.Int32)">
+            <summary>
+            Ensures that the capacity of the stack is sufficient to accommodate the specified number of elements.
+            The stack capacity can increase by double to balance memory allocation efficiency and space.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.TrimCapacity">
+            <summary>
+            Sets the capacity of a <see cref="T:SwiftCollections.SwiftStack`1"/> to the actual 
+            number of elements it contains, rounded up to a nearby next power of 2 value.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Peek">
+            <summary>
+            Returns the object at the top of the SwiftStack without removing it.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:SwiftCollections.Dimensions.Array2D`1">
             <summary>
             Represents a flattened 2D array with dynamic resizing and efficient access.
@@ -122,7 +1472,7 @@
         </member>
         <member name="T:SwiftCollections.Dimensions.Array3D`1">
             <summary>
-            Represents a generic 3D array with efficient indexing and resizing capabilities.
+            Represents a generic, flattened 3D array with efficient indexing and resizing capabilities.
             Optimized for use in performance-critical applications like game grids.
             </summary>
             <typeparam name="T">The type of elements in the 3D array.</typeparam>
@@ -226,13 +1576,6 @@
         <member name="M:SwiftCollections.Dimensions.ShortArray2D.Normalize(System.Int16,System.Int16)">
             <summary>
             Normalizes all elements in the array to a specified range.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.ISwiftCloneable`1.CloneTo(System.Collections.Generic.ICollection{`0})">
-            <summary>
-            Clones the entire <see cref="T:SwiftCollections.ISwiftCloneable`1"/> into a new target <see cref="T:System.Collections.Generic.ICollection`1"/>, 
-            ensuring that the target list is an exact copy. Clears the target list first 
-            to match the structure and state of the source list exactly.
             </summary>
         </member>
         <member name="T:SwiftCollections.Observable.ObservableArray`1">
@@ -1161,1321 +2504,6 @@
             Clears all references and metadata.
             </summary>
         </member>
-        <member name="T:SwiftCollections.SwiftBiDictionary`2">
-            <summary>
-            Represents a bidirectional dictionary that allows for efficient lookups in both directions,
-            mapping keys to values and values back to keys. Both keys and values must be unique to maintain
-            the integrity of the bidirectional relationship.
-            Inherits from <see cref="T:SwiftCollections.SwiftDictionary`2"/> and maintains a reverse map for reverse lookups.
-            </summary>
-            <typeparam name="T1">The type of the keys in the forward dictionary.</typeparam>
-            <typeparam name="T2">The type of the values in the forward dictionary.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMap">
-            <summary>
-            The reverse map for bidirectional lookup, mapping from <typeparamref name="T2"/> to <typeparamref name="T1"/>.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMapSyncRoot">
-            <summary>
-            An object used to synchronize access to the reverse map during serialization and deserialization.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that is empty and uses the default equality comparers for the key and value types.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that is empty and uses the specified equality comparers for the key and value types.
-            </summary>
-            <param name="comparer1">The comparer to use for the keys.</param>
-            <param name="comparer2">The comparer to use for the values.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that contains elements copied from the specified dictionary and uses the default equality comparers for the key and value types.
-            </summary>
-            <param name="dictionary">The dictionary whose elements are copied to the new <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class that contains elements copied from the specified dictionary and uses the specified equality comparers for the key and value types.
-            </summary>
-            <param name="dictionary">The dictionary whose elements are copied to the new <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.</param>
-            <param name="comparer1">The comparer to use for the keys.</param>
-            <param name="comparer2">The comparer to use for the values.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Deserialization constructor used during deserialization to reconstruct the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> instance.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> holding the serialized object data.</param>
-            <param name="context">The contextual information about the source or destination.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.Remove(`0,`1)">
-            <summary>
-            Removes the key-value pair from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            Also removes the corresponding value-key pair from the reverse map.
-            </summary>
-            <param name="key">The key of the element to remove.</param>
-            <param name="value">The value of the element to remove.</param>
-            <returns><c>true</c> if the element is successfully found and removed; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.Add(`0,`1)">
-            <summary>
-            Adds the specified key and value to the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            Also adds the value-key pair to the reverse map.
-            </summary>
-            <param name="key">The key of the element to add.</param>
-            <param name="value">The value of the element to add.</param>
-            <exception cref="T:System.ArgumentException">An element with the same key or value already exists.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.InsertIfNotExist(`0,`1)">
-            <summary>
-            Overrides the base class's <see cref="M:SwiftCollections.SwiftDictionary`2.InsertIfNotExist(`0,`1)"/> method to ensure synchronization with the reverse map.
-            </summary>
-            <param name="key">The key to insert.</param>
-            <param name="value">The value to insert.</param>
-            <returns><c>true</c> if a new entry was added; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.Remove(`0)">
-            <summary>
-            Removes the value with the specified key from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            Also removes the corresponding key from the reverse map.
-            </summary>
-            <param name="key">The key of the element to remove.</param>
-            <returns><c>true</c> if the element is successfully found and removed; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.Clear">
-            <summary>
-            Removes all keys and values from the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            Also clears the reverse map.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.TryGetKey(`1,`0@)">
-            <summary>
-            Attempts to get the key associated with the specified value.
-            </summary>
-            <param name="value">The value whose associated key is to be retrieved.</param>
-            <param name="key">When this method returns, contains the key associated with the specified value, if the key is found; otherwise, the default value for the type of the key.</param>
-            <returns><c>true</c> if the key was found; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.GetKey(`1)">
-            <summary>
-            Gets the key associated with the specified value.
-            </summary>
-            <param name="value">The value whose associated key is to be retrieved.</param>
-            <returns>The key associated with the specified value.</returns>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">The property is retrieved and <paramref name="value"/> does not exist in the reverse map.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.ContainsValue(`1)">
-            <summary>
-            Determines whether the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> contains the specified value.
-            </summary>
-            <param name="value">The value to locate in the dictionary.</param>
-            <returns><c>true</c> if the dictionary contains an element with the specified value; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
-            <param name="context">The destination and source of the serialized stream.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.OnDeserialization(System.Object)">
-            <summary>
-            Implements the <see cref="M:System.Runtime.Serialization.IDeserializationCallback.OnDeserialization(System.Object)"/> method.
-            Reconstructs the reverse map after deserialization.
-            </summary>
-            <param name="sender">The source of the deserialization event.</param>
-        </member>
-        <member name="T:SwiftCollections.SwiftBucket`1">
-             <summary>
-             Represents a high-performance bucket collection that allows O(1) addition and removal of items at any arrayIndex.
-             Items maintain stable indices unless explicitly removed. Iteration does not guarantee any specific order.
-             </summary>
-             <remarks>
-             <c>SwiftBucket&lt;T&gt;</c> provides significant performance benefits over <c>List&lt;T&gt;</c> in specific scenarios,
-             particularly when dealing with frequent modifications at arbitrary positions within the collection.
-             By leveraging its O(1) time complexity for both insertion and removal at any arrayIndex,
-             it outperforms <c>List&lt;T&gt;</c> where such operations are a bottleneck.
-            
-             **Efficient Lookups Using Indices**:
-             When you add items to the bucket using the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method, it returns an arrayIndex that you can store externally.
-             You can then use this arrayIndex to access the item directly via the indexer, and check if it's still present using the <see cref="M:SwiftCollections.SwiftBucket`1.IsAllocated(System.Int32)"/> method.
-             This approach allows for O(1) time complexity for lookups and existence checks, avoiding the need for O(n) searches using methods like <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> or <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/>.
-            
-             **Note**: Operations like <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/> and <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> have O(n) time complexity due to the underlying data structure.
-             Additionally, iteration over the collection does not follow any guaranteed order and depends on internal allocation.
-             </remarks>
-             <typeparam name="T">Specifies the type of elements in the bucket.</typeparam>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified capacity.
-            </summary>
-            <param name="capacity">The initial capacity of the bucket.</param>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Count">
-            <summary>
-            Gets the number of elements contained in the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Capacity">
-            <summary>
-            Gets the total capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Item(System.Int32)">
-            <summary>
-            Gets or sets the element at the specified arrayIndex.
-            Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the arrayIndex is invalid or unallocated.
-            </summary>
-            <param name="index">The zero-based arrayIndex of the element to get or set.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Add(`0)">
-            <summary>
-            Adds an item to the bucket and returns its arrayIndex.
-            </summary>
-            <param name="item">The item to add.</param>
-            <returns>The arrayIndex where the item was added.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.InsertAt(System.Int32,`0)">
-            <summary>
-            Inserts an item at the specified arrayIndex.
-            If an item already exists at that arrayIndex, it will be replaced.
-            </summary>
-            <param name="index">The arrayIndex at which to insert the item.</param>
-            <param name="item">The item to insert.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Remove(`0)">
-            <summary>
-            Removes the first occurrence of a specific object from the bucket.
-            </summary>
-            <param name="item">The object to remove.</param>
-            <returns><c>true</c> if item was successfully removed; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TryRemoveAt(System.Int32)">
-            <summary>
-            Removes the item at the specified arrayIndex if it has been allocated.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.RemoveAt(System.Int32)">
-            <summary>
-            Removes the item at the specified arrayIndex.
-            </summary>
-            <param name="index">The arrayIndex of the item to remove.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Clear">
-            <summary>
-            Removes all items from the bucket.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TrimExcessCapacity">
-            <summary>
-            Reduces the capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/> by resizing the internal array to match the current count.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Contains(`0)">
-            <summary>
-            Determines whether the bucket contains a specific value.
-            </summary>
-            <param name="item">The object to locate in the bucket.</param>
-            <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
-            <remarks>
-            This method performs a linear search and has a time complexity of O(n).
-            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)">
-            <summary>
-            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the bucket.
-            </summary>
-            <param name="item">The object to locate in the bucket.</param>
-            <returns>
-            The zero-based arrayIndex of the first occurrence of <paramref name="item"/> within the bucket, if found; otherwise, <c>-1</c>.
-            </returns>
-            <remarks>
-            This method performs a linear search and has a time complexity of O(n).
-            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.CopyTo(`0[],System.Int32)">
-            <summary>
-            Copies the elements of the bucket to an <see cref="T:System.Array"/>, starting at a particular Array arrayIndex.
-            </summary>
-            <param name="array">The one-dimensional Array that is the destination of the elements copied from bucket.</param>
-            <param name="arrayIndex">The zero-based arrayIndex in array at which copying begins.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-            <returns>An enumerator for the bucket.</returns>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2">
-            <summary>
-            A high-performance, memory-efficient dictionary providing lightning-fast O(1) operations for addition, retrieval, and removal, optimized to outperform standard dictionaries.
-            </summary>
-            <typeparam name="TKey">Specifies the type of keys in the dictionary.</typeparam>
-            <typeparam name="TValue">Specifies the type of values in the dictionary.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2.DefaultCapacity">
-            <summary>
-            The default initial capacity of the dictionary.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._LoadFactorThreshold">
-            <summary>
-            Determines the maximum allowable load factor before resizing the hash set to maintain performance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._entries">
-            <summary>
-            The array containing the entries of the dictionary.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._count">
-            <summary>
-            The total number of entries in the dictionary
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._entryMask">
-            <summary>
-            A mask used for efficiently computing the entry arrayIndex from a hash code.
-            This is typically the size of the entry array minus one, assuming the size is a power of two.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._comparer">
-            <summary>
-            The comparer used to determine equality of keys and to generate hash codes.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._adaptiveResizeFactor">
-            <summary>
-            Specifies the dynamic growth factor for resizing, adjusted based on recent usage patterns.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._nextResizeCount">
-            <summary>
-            Tracks the count threshold at which the hash set should resize based on the load factor.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._movingFillRate">
-            <summary>
-            Represents the moving average of the fill rate, used to dynamically adjust resizing behavior.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._syncRoot">
-            <summary>
-            An object that can be used to synchronize access to the SwiftDictionary.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._version">
-            <summary>
-            A version counter used to track modifications to the dictionary.
-            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.Entry">
-            <summary>
-            Represents a single key-value pair in the dictionary, including its hash code for quick access.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor">
-            <summary>
-            Initialize a new instance of <see cref="T:SwiftCollections.SwiftDictionary`2"/> with customizable capacity and comparer for optimal performance tailored to your needs.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
-            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Collections.Generic.IEqualityComparer{`0})">
-            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Collections.Generic.IEqualityComparer{`0})">
-            <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the SwiftDictionary class with serialized data.
-            </summary>
-            <param name="info"></param>
-            <param name="context"></param>
-        </member>
-        <member name="P:SwiftCollections.SwiftDictionary`2.Count">
-            <summary>
-            Gets the number of elements contained in the dictionary.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._keyCollection">
-            <summary>
-            The collection containing the keys of the dictionary.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._valueCollection">
-            <summary>
-            The collection containing the values of the dictionary.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.Add(`0,`1)">
-            <summary>
-            Attempts to add the specified key and value to the dictionary.
-            </summary>
-            <param name="key">The key of the element to add.</param>
-            <param name="value">The value of the element to add.</param>
-            <returns>
-            true if the key/value pair was added to the dictionary successfully; 
-            false if the key already exists.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.InsertIfNotExist(`0,`1)">
-            <summary>
-            Inserts a key/value pair into the dictionary. If the key already exists and 
-            pair is added, or the method returns false if the key already exists.
-            </summary>
-            <param name="key">The key to insert or update.</param>
-            <param name="value">The value to insert or update.</param>
-            <returns>
-            true if the key/value pair was added to the dictionary successfully; 
-            false if the key already exists.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">Thrown when the key is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.CheckLoadThreshold">
-            <summary>
-            Ensures that the dictionary is resized when the current load factor exceeds the predefined threshold.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the dictionary can hold up to the specified number of entries, if not it resizes.
-            </summary>
-            <param name="capacity">The minimum capacity to ensure.</param>
-            <returns>The new capacity of the dictionary.</returns>
-            <exception cref="T:System.ArgumentOutOfRangeException">The capacity is less than zero.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.Resize(System.Int32)">
-            <summary>
-            Resizes the internal arrays to the specified new size.
-            </summary>
-            <param name="newSize">The new size for the internal arrays.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.TrimExcess">
-            <summary>
-            Sets the capacity of a <see cref="T:SwiftCollections.SwiftDictionary`2"/> to the actual 
-            number of elements it contains, rounded up to a nearby next power of 2 value.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.CalculateAdaptiveResizeFactors(System.Int32)">
-            <summary>
-             Updates adaptive resize parameters based on the current fill rate to balance memory usage and performance.
-            </summary>
-            <param name="newSize"></param>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.Initialize(System.Int32)">
-            <summary>
-            Initializes the dictionary with the specified capacity.
-            </summary>
-            <param name="capacity">The initial number of elements that the dictionary can contain.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.SwitchToRandomizedComparer">
-            <summary>
-            Switches the dictionary's comparer to a randomized comparer to mitigate the effects of high collision counts,
-            and rehashes all entries using the new comparer to redistribute them across <see cref="F:SwiftCollections.SwiftDictionary`2._entries"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.RehashEntries">
-            <summary>
-            Reconstructs the internal entry structure to align with updated hash codes, ensuring efficient access and storage.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.FindEntry(`0)">
-            <summary>
-            Finds the arrayIndex of the entry with the specified key.
-            </summary>
-            <param name="key">The key to locate in the dictionary.</param>
-            <returns>The arrayIndex of the entry if found; otherwise, -1.</returns>
-            <exception cref="T:System.ArgumentNullException">The key is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.ThrowIfNullAndNullsAreIllegal(System.Object)">
-            <summary>
-            Throws an exception if the specified value is null and nulls are not allowed for TValue.
-            </summary>
-            <param name="value">The value to check.</param>
-            <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator">
-            <summary>
-            Provides an efficient enumerator for iterating over the key-value pairs in the SwiftDictionary, enabling smooth traversal during enumeration.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.KeyCollection">
-            <summary>
-            Provides a dynamic, read-only collection of all keys in the dictionary, supporting enumeration and copy operations.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.KeyCollection.#ctor(SwiftCollections.SwiftDictionary{`0,`1})">
-            <summary>
-            Initializes a new instance of the KeyCollection class that reflects the keys in the specified dictionary.
-            </summary>
-            <param name="dictionary">The dictionary whose keys are reflected in the new KeyCollection.</param>
-            <exception cref="T:System.ArgumentNullException">The dictionary is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.KeyCollection.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the keys in the collection.
-            </summary>
-            <returns>An enumerator for the keys in the collection.</returns>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.ValueCollection">
-            <summary>
-            Offers a dynamic, read-only collection of all values in the dictionary, supporting enumeration and copy operations.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.ValueCollection.#ctor(SwiftCollections.SwiftDictionary{`0,`1})">
-            <summary>
-            Initializes a new instance of the ValueCollection class that reflects the values in the specified dictionary.
-            </summary>
-            <param name="dictionary">The dictionary whose values are reflected in the new ValueCollection.</param>
-            <exception cref="T:System.ArgumentNullException">The dictionary is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.ValueCollection.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the values in the collection.
-            </summary>
-            <returns>An enumerator for the values in the collection.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Implements the System.Runtime.Serialization.ISerializable interface and returns
-            the data needed to serialize the SwiftDictionary instance.
-            </summary>
-            <param name="info">
-            A System.Runtime.Serialization.SerializationInfo object that contains the information 
-            required to serialize the SwiftDictionary instance.
-            </param>
-            <param name="context">
-            A System.Runtime.Serialization.StreamingContext structure that contains the source
-            and destination of the serialized stream associated with the SwiftDictionary
-            instance.
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.OnDeserialization(System.Object)">
-            <summary>
-            Implements the System.Runtime.Serialization.ISerializable interface and raises the deserialization event when the deserialization is complete.
-            </summary>
-            <param name="sender">The source of the deserialization event.</param>
-        </member>
-        <member name="T:SwiftCollections.SwiftHashSet`1">
-            <summary>
-            Represents a high-performance set of unique values with efficient operations for addition, removal, and lookup
-            </summary>
-            <typeparam name="T">The type of elements in the set.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1.DefaultCapacity">
-            <summary>
-            The default initial capacity of the set.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._LoadFactorThreshold">
-            <summary>
-            Determines the maximum allowable load factor before resizing the hash set to maintain performance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._entries">
-            <summary>
-            The array containing the entries of the SwiftHashSet.
-            </summary>
-            <remarks>
-            Capacity will always be a power of two for efficient pooling cache.
-            </remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._count">
-            <summary>
-            The total number of entries in the hash set
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._entryMask">
-            <summary>
-            A mask used for efficiently computing the entry index from a hash code.
-            This is typically the size of the entry array minus one, assuming the size is a power of two.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._comparer">
-            <summary>
-            The comparer used to determine equality of keys and to generate hash codes.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._adaptiveResizeFactor">
-            <summary>
-            Specifies the dynamic growth factor for resizing, adjusted based on recent usage patterns.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._nextResizeCount">
-            <summary>
-            Tracks the count threshold at which the hash set should resize based on the load factor.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._movingFillRate">
-            <summary>
-            Represents the moving average of the fill rate, used to dynamically adjust resizing behavior.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHashSet`1._version">
-            <summary>
-            A version counter used to track modifications to the set.
-            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftHashSet`1.Entry">
-            <summary>
-            Represents a single value in the set, including its hash code for quick access.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor">
-            <summary>
-            Initialize a new instance of <see cref="T:SwiftCollections.SwiftHashSet`1"/> with customizable capacity and comparer for optimal performance tailored to your needs.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Collections.Generic.IEqualityComparer{`0})">
-            <inheritdoc cref="M:SwiftCollections.SwiftHashSet`1.#ctor"/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class that is empty and has the default initial capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IEqualityComparer{`0})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class that contains elements copied from the specified collection.
-            </summary>
-            <param name="collection">The collection whose elements are copied to the new set.</param>
-            <param name="comparer">The comparer to use when comparing elements.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class with serialized data.
-            </summary>
-            <param name="info"></param>
-            <param name="context"></param>
-        </member>
-        <member name="P:SwiftCollections.SwiftHashSet`1.Count">
-            <summary>
-            Gets the number of elements contained in the set.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftHashSet`1.Comparer">
-            <summary>
-            Gets the <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> object that is used to determine equality for the values in the set.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.InsertIfNotExists(`0)">
-            <summary>
-            Adds the specified element to the set if it's not already present.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Remove(`0)">
-            <summary>
-            Removes the specified element from the set.
-            </summary>
-            <param name="item">The element to remove from the set.</param>
-            <returns>
-            True if the element is successfully found and removed; otherwise, false.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Clear">
-            <summary>
-            Removes all elements from the set.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.CheckLoadThreshold">
-            <summary>
-            Ensures that the hash set is resized when the current load factor exceeds the predefined threshold.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the set can hold up to the specified number of elements without resizing.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Resize(System.Int32)">
-            <summary>
-            Resizes the hash set to the specified capacity, redistributing all entries to maintain efficiency.
-            </summary>
-            <param name="newSize"></param>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.TrimExcess">
-            <summary>
-            Sets the capacity of a <see cref="T:SwiftCollections.SwiftHashSet`1"/> to the actual 
-            number of elements it contains, rounded up to a nearby next power of 2 value.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.CalculateAdaptiveResizeFactors(System.Int32)">
-            <summary>
-             Updates adaptive resize parameters based on the current fill rate to balance memory usage and performance.
-            </summary>
-            <param name="newSize"></param>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Initialize(System.Int32)">
-            <summary>
-            Initializes the hash set with a given capacity, ensuring it starts with an optimal internal structure.
-            </summary>
-            <param name="capacity"></param>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Contains(`0)">
-            <summary>
-            Determines whether the set contains the specified element.
-            </summary>
-            <param name="item">The element to locate in the set.</param>
-            <returns>
-            True if the set contains the specified element; otherwise, false.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.TryGetValue(`0,`0@)">
-            <summary>
-            Searches the set for a given value and returns the equal value it finds, if any.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.CopyTo(`0[],System.Int32)">
-            <summary>
-            Copies the elements of the set to an array, starting at the specified array index.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwitchComparer(System.Collections.Generic.IEqualityComparer{`0})">
-            <summary>
-            Switches the hash set's comparer and rehashes all entries 
-            using the new comparer to redistribute them across <see cref="F:SwiftCollections.SwiftHashSet`1._entries"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwitchToRandomizedComparer">
-            <summary>
-            Replaces the hash set's comparer with a randomized comparer to mitigate high collision rates.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.RehashEntries">
-            <summary>
-            Reconstructs the internal entry structure to align with updated hash codes, ensuring efficient access and storage.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.FindEntry(`0)">
-            <summary>
-            Searches for an entry in the hash set by following its probing sequence, returning its index if found.
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the set.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator">
-            <summary>
-            Provides an enumerator for iterating through the elements of the hash set, ensuring consistency during enumeration.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftList`1">
-            <summary>
-            <c>SwiftList&lt;T&gt;</c> is a high-performance, memory-efficient dynamic list designed to outperform
-            traditional generic lists in speed-critical applications. 
-            <para>
-            By utilizing custom growth and
-            shrink strategies, SwiftList optimizes memory allocation and minimizes resizing overhead,
-            all while maintaining compact storage. With aggressive inlining and optimized algorithms,
-            SwiftList delivers faster iteration, insertion, and overall memory management compared to
-            standard List. It is ideal for scenarios where predictable performance and minimal
-            memory allocations are essential.
-            </para>
-            <para>
-            This implementation is optimized for performance and does not perform versioning checks.
-            Modifying the list during enumeration may result in undefined behavior.
-            </para>
-            </summary>
-            <typeparam name="T">Specifies the type of elements in the list.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftList`1.DefaultCapacity">
-            <summary>
-            The default initial capacity of the <see cref="T:SwiftCollections.SwiftList`1"/> if none is specified.
-            Used to allocate a reasonable starting size to minimize resizing operations.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftList`1._innerArray">
-            <summary>
-            The internal array that stores elements of the SwiftList. Resized as needed to
-            accommodate additional elements. Not directly exposed outside the list.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftList`1._count">
-            <summary>
-            The current number of elements in the SwiftList. Represents the total count of
-            valid elements stored in the list, also indicating the arrayIndex of the next insertion point.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftList`1._syncRoot">
-            <summary>
-            An object that can be used to synchronize access to the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftList`1"/> with the specified initial capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftList`1"/> class with elements from the specified collection.
-            The collection must have a known count for optimized memory allocation.
-            </summary>
-            <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
-        </member>
-        <member name="P:SwiftCollections.SwiftList`1.Capacity">
-            <summary>
-            Gets the total number of elements the SwiftList can hold without resizing.
-            Reflects the current allocated size of the internal array.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftList`1.Count">
-            <inheritdoc cref="F:SwiftCollections.SwiftList`1._count"/>
-        </member>
-        <member name="P:SwiftCollections.SwiftList`1.Item(System.Int32)">
-            <summary>
-            Gets the element at the specified arrayIndex.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Add(`0)">
-            <summary>
-            Adds an object to the end of the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Adds the elements of the specified collection to the end of the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Remove(`0)">
-            <summary>
-            Removes the first occurrence of a specific object from the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.RemoveAt(System.Int32)">
-            <summary>
-            Removes the element at the specified arrayIndex of the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.RemoveAll(System.Predicate{`0})">
-            <summary>
-            Removes all the elements that match the conditions defined by the specified predicate.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Insert(System.Int32,`0)">
-            <summary>
-            Inserts an element into the SwiftList at the specified arrayIndex.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Reverse">
-            <summary>
-            Reverses the order of the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Sort">
-            <summary>
-            Sorts the elements in the <see cref="T:SwiftCollections.SwiftList`1"/> using the <see cref="T:System.IComparable"/> interface implementation of each element of the _innerArray.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Sort(System.Collections.Generic.IComparer{`0})">
-            <summary>
-            Sorts the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/> using the specified comparer.
-            </summary>
-            <param name="comparer">The comparer to use for comparing elements.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Clear">
-            <summary>
-            Removes all elements from the <see cref="T:SwiftCollections.SwiftList`1"/>, resetting its count to zero.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.FastClear">
-            <summary>
-            Clears the <see cref="T:SwiftCollections.SwiftList`1"/> without releasing the reference to the stored elements.
-            Use FastClear() when you want to quickly reset the list without reallocating memory.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftList`1"/> is sufficient to accommodate the specified number of elements.
-            The capacity can increase by double to balance memory allocation efficiency and space.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.TrimExcessCapacity">
-            <summary>
-            Reduces the capacity of the SwiftList if the element count falls below 50% of the current capacity. 
-            Ensures efficient memory usage by resizing the internal array to match the current count when necessary.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.IndexOf(`0)">
-            <summary>
-            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.ToArray">
-            <summary>
-            Copies the elements of the SwiftList to a new array.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.ToString">
-            <summary>
-            Returns a string that represents the current object.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Contains(`0)">
-            <summary>
-            Determines whether an element is in the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Swap(System.Int32,System.Int32)">
-            <summary>
-            Swaps the values of two elements in the SwiftList.
-            This method exchanges the values referenced by two variables.
-            </summary>
-            <param name="indexA">The first element to swap.</param>
-            <param name="indexB">The second element to swap.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.CopyTo(SwiftCollections.SwiftList{`0})">
-            <summary>
-            Copies the elements of the SwiftList to the specified target SwiftList.
-            The target list will resize if it lacks sufficient capacity, 
-            but retains any existing elements beyond the copied range.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftList`1"/>.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftQueue`1">
-            <summary>
-            <c>SwiftQueue&lt;T&gt;</c> is a high-performance, circular buffer-based queue designed for ultra-low-latency enqueue and dequeue operations.
-            <para>
-            It leverages power-of-two capacities and bitwise arithmetic to eliminate expensive modulo operations, enhancing performance.
-            By managing memory efficiently with a wrap-around technique and custom capacity growth strategies, SwiftQueue minimizes allocations and resizing.
-            Aggressive inlining and optimized exception handling further reduce overhead, making SwiftQueue outperform traditional queues,
-            especially in scenarios with high-frequency additions and removals.
-            </para>
-            <para>
-            This implementation is optimized for performance and does not perform versioning checks.
-            Modifying the queue during enumeration may result in undefined behavior.
-            </para>
-            </summary>
-            <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftQueue`1.DefaultCapacity">
-            <summary>
-            The default initial capacity of the SwiftQueue if none is specified.
-            Used to allocate a reasonable starting size to minimize resizing operations.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftQueue`1._innerArray">
-            <summary>
-            The internal array that stores elements of the SwiftQueue. Resized as needed to
-            accommodate additional elements. Not directly exposed outside the queue.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftQueue`1._count">
-            <summary>
-            The current number of elements in the SwiftQueue. Represents the total count of
-            valid elements stored in the queue, also indicating the arrayIndex of the next insertion point.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftQueue`1._head">
-            <summary>
-            The arrayIndex of the first element in the queue. Adjusts as elements are dequeued.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftQueue`1._tail">
-            <summary>
-            The arrayIndex at which the next element will be enqueued, wrapping around as needed.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftQueue`1.Item(System.Int32)">
-            <summary>
-            Gets the element at the specified arrayIndex.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.#ctor">
-            <summary>
-            Initializes a new, empty instance of SwiftQueue.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new, empty instance of SwiftQueue with the specified initial capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Initializes a new instance of SwiftQueue that contains elements copied from the provided items.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftQueue`1.Count">
-            <inheritdoc cref="F:SwiftCollections.SwiftQueue`1._count"/>
-        </member>
-        <member name="P:SwiftCollections.SwiftQueue`1.Capacity">
-            <summary>
-            Gets the total number of elements the SwiftQueue can hold without resizing.
-            Reflects the current allocated size of the internal array.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Enqueue(`0)">
-            <summary>
-            Adds an item to the end of the queue. Automatically resizes the queue if the capacity is exceeded.
-            </summary>
-            <param name="item">The item to add to the queue.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Dequeue">
-            <summary>
-            Removes and returns the item at the front of the queue. 
-            Throws an InvalidOperationException if the queue is empty.
-            </summary>
-            <returns>The item at the front of the queue.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Peek">
-            <summary>
-            Returns the item at the front of the queue without removing it. 
-            Throws an InvalidOperationException if the queue is empty.
-            </summary>
-            <returns>The item at the front of the queue.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.PeekTail">
-            <summary>
-            Returns the item at the end of the queue without removing it. 
-            Throws an InvalidOperationException if the queue is empty.
-            </summary>
-            <returns>The item at the end of the queue.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Clear">
-            <summary>
-            Removes all elements from the SwiftQueue, resetting its count to zero.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.FastClear">
-            <summary>
-            Clears the SwiftQueue without releasing the reference to the stored elements.
-            Use FastClear() when you want to quickly reset the list without reallocating memory.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Resize(System.Int32)">
-            <summary>
-            Ensures that the capacity of the queue is sufficient to accommodate the specified number of elements.
-            The capacity increases to the next power of two greater than or equal to the required minimum capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.TrimExcessCapacity">
-            <summary>
-            Reduces the capacity of the SwiftQueue if the element count is significantly less than the current capacity.
-            This method resizes the internal array to the next power of two greater than or equal to the current count,
-            optimizing memory usage.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.ToArray">
-            <summary>
-            Copies the elements of the SwiftQueue to a new array.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the SwiftList.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftSortedList`1">
-            <summary>
-            Represents a dynamically sorted collection of elements.
-            Provides efficient O(log n) operations for adding, removing, and checking for the presence of elements.
-            </summary>
-            <typeparam name="T">The type of elements in the collection.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1.DefaultCapacity">
-            <summary>
-            The default initial capacity of the <see cref="T:SwiftCollections.SwiftSortedList`1"/> if none is specified.
-            Used to allocate a reasonable starting size to minimize resizing operations.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1._innerArray">
-            <summary>
-            Represents the internal array that stores the sorted elements.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1._offset">
-            <summary>
-            The offset within the internal array where the logical start of the list begins.
-            Used to efficiently manage insertions and deletions at both ends without excessive shifting.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1._version">
-            <summary>
-            A version counter used to track modifications to the sorted list.
-            Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1._comparer">
-            <summary>
-            The comparer used to sort and compare elements in the collection.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftSortedList`1._syncRoot">
-            <summary>
-            An object that can be used to synchronize access to the SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Collections.Generic.IComparer{`0})">
-            <summary>
-            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftSortedList`1"/> uisng the specified <see cref="T:System.Collections.Generic.IComparer`1"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Int32,System.Collections.Generic.IComparer{`0})">
-            <summary>
-            Initializes a new, empty instance of <see cref="T:SwiftCollections.SwiftSortedList`1"/> with the specified initial capacity and <see cref="T:System.Collections.Generic.IComparer`1"/>.
-            </summary>
-            <param name="capacity">The starting initial capacity.</param>
-            <param name="comparer">The comparer to use. If null, the default comparer is used.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IComparer{`0})">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftList`1"/> class with elements from the specified collection.
-            The collection must have a known count for optimized memory allocation.
-            </summary>
-            <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
-        </member>
-        <member name="P:SwiftCollections.SwiftSortedList`1.Count">
-            <summary>
-            Gets the number of elements in the sorter.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftSortedList`1.Capacity">
-            <summary>
-            Gets the current capacity of the internal array.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftSortedList`1.Comparer">
-            <summary>
-            The comparer used to sort elements in the collection.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftSortedList`1.Item(System.Int32)">
-            <summary>
-            Gets the element at the specified arrayIndex.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.Insert(`0,System.Int32)">
-            <summary>
-            Inserts an item into the internal array at the specified arrayIndex, shifting elements as needed.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Adds a range of elements to the collection, ensuring they are sorted and merged efficiently.
-            </summary>
-            <remarks>
-            This will compact the array for efficiency.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.PopMin">
-            <summary>
-            Removes and returns the minimum element in the sorter.
-            </summary>
-            <returns>The minimum element.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.PopMax">
-            <summary>
-            Removes and returns the maximum element in the sorter.
-            </summary>
-            <returns>The maximum element.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.RemoveAt(System.Int32)">
-            <summary>
-            Removes the element at the specified arrayIndex from the sorted list.
-            Shifts elements as needed to maintain the sorted order and efficient space utilization.
-            </summary>
-            <param name="index">The zero-based arrayIndex of the element to remove.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.FastClear">
-            <summary>
-            Quickly clears the list by resetting the count and offset without modifying the internal array.
-            Note: This leaves references in the internal array, which may prevent garbage collection of reference types.
-            Use when performance is critical and you are certain that residual references are acceptable.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftSortedList`1"/> is sufficient to accommodate the specified number of elements.
-            The capacity can increase by double to balance memory allocation efficiency and space.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.Resize(System.Int32)">
-            <summary>
-            Ensures that the capacity of <see cref="T:SwiftCollections.SwiftSortedList`1"/> is sufficient to accommodate the specified number of elements.
-            The capacity can increase by double to balance memory allocation efficiency and space.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.RecenterArray">
-            <summary>
-            Recenters the elements within the internal array to balance available space on both ends.
-            This minimizes the need for shifting elements during future insertions and deletions.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.GetPhysicalIndex(System.Int32)">
-            <summary>
-            Converts a logical arrayIndex within the list to the corresponding physical arrayIndex in the internal array.
-            </summary>
-            <param name="logicalIndex">The logical arrayIndex within the list.</param>
-            <returns>The physical arrayIndex within the internal array.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.PeekMin">
-            <summary>
-            Returns the minimum element in the sorter without removing it.
-            </summary>
-            <returns>The minimum element.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.PeekMax">
-            <summary>
-            Returns the maximum element in the sorter without removing it.
-            </summary>
-            <returns>The maximum element.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.IndexOf(`0)">
-            <summary>
-            Searches for the specified item in the sorted collection and returns the arrayIndex of the first occurrence.
-            </summary>
-            <param name="item">The item to search for.</param>
-            <returns>The zero-based arrayIndex of the item if found; otherwise, -1.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.InsertionPoint(`0)">
-            <summary>
-            Determines the insertion point for a specified item in the collection.
-            The insertion point is the arrayIndex where the item would be inserted if it were not already present.
-            </summary>
-            <param name="item">The item for which to find the insertion point.</param>
-            <returns>The insertion point as a zero-based arrayIndex.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.Search(`0)">
-            <summary>
-            Searches for the specified item in the sorted collection.
-            </summary>
-            <param name="item">The item to search for.</param>
-            <returns>
-            The arrayIndex of the item if found or where the item should be inserted if not found.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftSortedList`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through <see cref="T:SwiftCollections.SwiftSortedList`1"/>.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftStack`1">
-            <summary>
-            Represents a fast, array-based stack (LIFO - Last-In-First-Out) collection of objects.
-            <para>
-            The <c>SwiftStack&lt;T&gt;</c> class provides O(1) time complexity for <c>Push</c> and <c>Pop</c> operations,
-            making it highly efficient for scenarios where performance is critical.
-            It minimizes memory allocations by reusing internal arrays and offers methods
-            like <c>FastClear</c> to quickly reset the stack without deallocating memory.
-            </para>
-            <para>
-            This implementation is optimized for performance and does not perform versioning checks.
-            Modifying the stack during enumeration may result in undefined behavior.
-            </para>
-            </summary>
-            <typeparam name="T">Specifies the type of elements in the stack.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftStack`1.DefaultCapacity">
-            <summary>
-            The default initial capacity of the SwiftStack if none is specified.
-            Used to allocate a reasonable starting size to minimize resizing operations.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftStack`1._innerArray">
-            <summary>
-            The internal array that stores elements of the SwiftStack. Resized as needed to
-            accommodate additional elements. Not directly exposed outside the stack.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftStack`1._count">
-            <summary>
-            The current number of elements in the SwiftStack. Represents the total count of
-            valid elements stored in the stack, also indicating the arrayIndex of the next insertion point.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.#ctor">
-            <summary>
-            Initializes a new, empty instance of SwiftStack.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new, empty instance of SwiftStack with the specified initial capacity.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftStack`1.Count">
-            <inheritdoc cref="F:SwiftCollections.SwiftStack`1._count"/>
-        </member>
-        <member name="P:SwiftCollections.SwiftStack`1.Capacity">
-            <summary>
-            Gets the total number of elements the SwiftQueue can hold without resizing.
-            Reflects the current allocated size of the internal array.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftStack`1.Item(System.Int32)">
-            <summary>
-            Gets the element at the specified arrayIndex.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.Push(`0)">
-            <summary>
-            Inserts an object at the top of the SwiftStack.
-            </summary>
-            <param name="item"></param>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.Pop">
-            <summary>
-            Removes and returns the object at the top of the SwiftStack.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.Clear">
-            <summary>
-            Removes all elements from the SwiftStack, resetting its count to zero.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.FastClear">
-            <summary>
-            Clears the SwiftStack without releasing the reference to the stored elements.
-            Use FastClear() when you want to quickly reset the list without reallocating memory.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.Resize(System.Int32)">
-            <summary>
-            Ensures that the capacity of the stack is sufficient to accommodate the specified number of elements.
-            The stack capacity can increase by double to balance memory allocation efficiency and space.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.TrimCapacity">
-            <summary>
-            Sets the capacity of a <see cref="T:SwiftCollections.SwiftStack`1"/> to the actual 
-            number of elements it contains, rounded up to a nearby next power of 2 value.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStack`1.Peek">
-            <summary>
-            Returns the object at the top of the SwiftStack without removing it.
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:SwiftCollections.HashHelper">
             <summary>
             Provides helper methods and constants for hashing and power of two calculations used in hash-based collections.
@@ -2784,6 +2812,27 @@
             <returns>
             True if the collection is not null and contains at least one element; otherwise, false.
             </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Gets the element at the specified index from the end (1-based).
+            For example, FromEnd(1) returns the last item, FromEnd(2) returns second-to-last.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(SwiftCollections.SwiftList{``0},System.Int32)">
+            <summary>
+            Gets the element at the specified index from the end (1-based) from SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.Last``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the last item in the sequence.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.SecondToLast``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the second-to-last item in the sequence.
+            </summary>
         </member>
         <member name="T:LazyDisposable`1">
             <summary>
