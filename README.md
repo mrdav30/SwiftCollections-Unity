@@ -33,7 +33,7 @@ This dependency must be installed before using SwiftCollections-Unity.
 2. Click the **+** button and select **Add package from git URL**.
 3. Enter the following URL:
 
-    <https://github.com/mrdav30/SwiftCollections-Unity.git>.git
+    <https://github.com/mrdav30/SwiftCollections-Unity.git>
 
 4. Click Add and Unity will install the package automatically.
 
