@@ -1,4 +1,4 @@
-SwiftCollections-Unity
+# SwiftCollections-Unity
 ==============
 
 ![SwiftCollections Icon](https://raw.githubusercontent.com/mrdav30/SwiftCollections/main/icon.png)
@@ -19,13 +19,21 @@ This package is a Unity-specific implementation of the [SwiftCollections](https:
 
 ## 🚀 Installation
 
+### 🧩 Dependencies
+
+SwiftCollections-Unity depends on the following Unity package:
+
+- [FixedMathSharp-Unity](https://github.com/mrdav30/FixedMathSharp-Unity)
+
+This dependency must be installed before using SwiftCollections-Unity.
+
 ### Via Unity Package Manager (UPM)
 
 1. Open Unity and navigate to **Window → Package Manager**.
 2. Click the **+** button and select **Add package from git URL**.
 3. Enter the following URL:
 
-https://github.com/mrdav30/SwiftCollections-Unity.git
+    <https://github.com/mrdav30/SwiftCollections-Unity.git>.git
 
 4. Click Add and Unity will install the package automatically.
 
@@ -34,16 +42,6 @@ https://github.com/mrdav30/SwiftCollections-Unity.git
 1. Download the .unitypackage file from the [latest release](https://github.com/mrdav30/SwiftCollections-Unity/releases).
 2. Open Unity and import the package via **Assets → Import Package → Custom Package...**.
 3. Select the downloaded file and import the contents.
-
----
-
-## 🧩 Dependencies
-
-SwiftCollections-Unity depends on the following Unity package:
-
-- [FixedMathSharp-Unity](https://github.com/mrdav30/FixedMathSharp-Unity)
-
-This dependency is automatically included when installing via UPM.
 
 ---
 
