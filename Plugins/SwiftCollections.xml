@@ -11,6 +11,88 @@
             to match the structure and state of the source list exactly.
             </summary>
         </member>
+        <member name="T:SwiftCollections.SwiftIntStack">
+            <summary>
+            A minimal and efficient stack implementation for integers.
+            Optimized for internal use in within the SwiftCollections library.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftIntStack.DefaultCapacity">
+            <summary>
+            The default initial capacity of the stack.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftIntStack.Array">
+            <summary>
+            The internal array holding stack elements.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftIntStack.Count">
+            <summary>
+            The current count of elements in the stack.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftIntStack"/> class with the default capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftIntStack"/> class with a specified initial capacity.
+            </summary>
+            <param name="capacity">The initial capacity of the stack.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.#ctor(System.Int32[],System.Int32)">
+            <summary>
+            Initializes a new instance of the IntStack class using the specified array as the underlying storage and sets
+            the initial number of elements in the stack.
+            </summary>
+            <remarks>This constructor allows advanced scenarios where the stack is initialized with a pre-existing
+            array and a specific element count. The caller is responsible for ensuring that the array and count accurately
+            represent the intended stack state.</remarks>
+            <param name="array">The array that provides the underlying storage for the stack. This parameter cannot be null.</param>
+            <param name="count">The number of elements initially contained in the stack. Must be a non-negative integer and cannot exceed the
+            length of the array.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.Push(System.Int32)">
+            <summary>
+            Pushes an integer onto the stack.
+            Expands the stack's capacity if necessary.
+            </summary>
+            <param name="value">The integer value to push.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.Pop">
+            <summary>
+            Removes and returns the top integer from the stack.
+            </summary>
+            <returns>The top integer from the stack.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when attempting to pop from an empty stack.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.Peek">
+            <summary>
+            Returns the top integer from the stack without removing it.
+            </summary>
+            <returns>The top integer from the stack.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when attempting to peek an empty stack.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.Reset">
+            <summary>
+            Resets the stack to it's initial state.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.Clear">
+            <summary>
+            Removes all elements from the stack.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftIntStack.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures the stack has at least the specified capacity.
+            Expands the internal array if necessary.
+            </summary>
+            <param name="capacity">The minimum capacity to ensure.</param>
+        </member>
         <member name="T:SwiftCollections.SwiftBiDictionary`2">
             <summary>
             Represents a bidirectional dictionary that allows for efficient lookups in both directions,
@@ -20,13 +102,31 @@
             </summary>
             <typeparam name="T1">The type of the keys in the forward dictionary.</typeparam>
             <typeparam name="T2">The type of the values in the forward dictionary.</typeparam>
+            <remarks>
+            The comparer is not serialized. After deserialization the dictionary uses
+            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/> for keys and <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/> for values.
+            
+            If a custom comparer is required it can be reapplied using
+            <see cref="M:SwiftCollections.SwiftBiDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})"/>.
+            </remarks>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftDictionaryState&lt;T1, T2&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMap">
             <summary>
             The reverse map for bidirectional lookup, mapping from <typeparamref name="T2"/> to <typeparamref name="T1"/>.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseMapSyncRoot">
+        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseComparer">
+            <summary>
+            The comparer used to determine equality of keys and to generate hash codes.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftBiDictionary`2._reverseSyncRoot">
             <summary>
             An object used to synchronize access to the reverse map during serialization and deserialization.
             </summary>
@@ -57,12 +157,11 @@
             <param name="comparer1">The comparer to use for the keys.</param>
             <param name="comparer2">The comparer to use for the values.</param>
         </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Deserialization constructor used during deserialization to reconstruct the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> instance.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> holding the serialized object data.</param>
-            <param name="context">The contextual information about the source or destination.</param>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.#ctor(SwiftCollections.SwiftDictionaryState{`0,`1})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/> class with the specified <see cref="T:SwiftCollections.SwiftDictionaryState`2"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="M:SwiftCollections.SwiftBiDictionary`2.Remove(`0,`1)">
             <summary>
@@ -104,6 +203,16 @@
             Also clears the reverse map.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftBiDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})">
+            <summary>
+            Sets the comparers used to determine equality for keys and values in the dictionary.
+            </summary>
+            <remarks>This method updates the internal comparers and rebuilds the reverse mapping using the
+            specified value comparer. The operation is thread-safe and locks the internal state during the update. Changing
+            comparers may affect key and value lookup behavior.</remarks>
+            <param name="comparer1">The equality comparer to use for keys of type T1. Cannot be null.</param>
+            <param name="comparer2">The equality comparer to use for values of type T2. Cannot be null.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftBiDictionary`2.TryGetKey(`1,`0@)">
             <summary>
             Attempts to get the key associated with the specified value.
@@ -127,30 +236,29 @@
             <param name="value">The value to locate in the dictionary.</param>
             <returns><c>true</c> if the dictionary contains an element with the specified value; otherwise, <c>false</c>.</returns>
         </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the <see cref="T:SwiftCollections.SwiftBiDictionary`2"/>.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
-            <param name="context">The destination and source of the serialized stream.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBiDictionary`2.OnDeserialization(System.Object)">
-            <summary>
-            Implements the <see cref="M:System.Runtime.Serialization.IDeserializationCallback.OnDeserialization(System.Object)"/> method.
-            Reconstructs the reverse map after deserialization.
-            </summary>
-            <param name="sender">The source of the deserialization event.</param>
-        </member>
         <member name="T:SwiftCollections.SwiftBucket`1">
              <summary>
-             Represents a high-performance bucket collection that allows O(1) addition and removal of items at any arrayIndex.
-             Items maintain stable indices unless explicitly removed. Iteration does not guarantee any specific order.
+             Represents a high-performance bucket collection that assigns and manages stable integer indices
+             for stored items. Provides O(1) insertion, removal, and lookup by internally generated index.
              </summary>
              <remarks>
-             <c>SwiftBucket&lt;T&gt;</c> provides significant performance benefits over <c>List&lt;T&gt;</c> in specific scenarios,
-             particularly when dealing with frequent modifications at arbitrary positions within the collection.
-             By leveraging its O(1) time complexity for both insertion and removal at any arrayIndex,
-             it outperforms <c>List&lt;T&gt;</c> where such operations are a bottleneck.
+             Unlike <see cref="T:SwiftCollections.SwiftSparseMap`1"/>, which requires callers to provide the key used to store values,
+             <see cref="T:SwiftCollections.SwiftBucket`1"/> internally generates and manages indices for each inserted item.
+            
+             These indices remain stable for the lifetime of the item unless it is removed.
+            
+             The container is optimized for scenarios requiring:
+             <list type="bullet">
+                 <item>
+                     <description>Stable handles or identifiers.</description>
+                 </item>
+                 <item>
+                     <description>Fast addition and removal.</description>
+                 </item>
+                 <item>
+                     <description>Dense storage and iteration performance.</description>
+                 </item>
+             </list>
             
              **Efficient Lookups Using Indices**:
              When you add items to the bucket using the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method, it returns an arrayIndex that you can store externally.
@@ -159,8 +267,16 @@
             
              **Note**: Operations like <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/> and <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> have O(n) time complexity due to the underlying data structure.
              Additionally, iteration over the collection does not follow any guaranteed order and depends on internal allocation.
+             
+             Iteration order is not guaranteed.
              </remarks>
              <typeparam name="T">Specifies the type of elements in the bucket.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftBucketState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="M:SwiftCollections.SwiftBucket`1.#ctor">
             <summary>
@@ -172,6 +288,12 @@
             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified capacity.
             </summary>
             <param name="capacity">The initial capacity of the bucket.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.#ctor(SwiftCollections.SwiftBucketState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="P:SwiftCollections.SwiftBucket`1.Count">
             <summary>
@@ -276,6 +398,19 @@
             </summary>
             <typeparam name="TKey">Specifies the type of keys in the dictionary.</typeparam>
             <typeparam name="TValue">Specifies the type of values in the dictionary.</typeparam>
+            <remarks>
+            The comparer is not serialized. After deserialization the dictionary uses
+            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>. 
+            
+            If a custom comparer is required it can be reapplied using
+            <see cref="M:SwiftCollections.SwiftDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0})"/>.
+            </remarks>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftDictionaryState&lt;TKey, TValue&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftDictionary`2.DefaultCapacity">
             <summary>
@@ -295,6 +430,11 @@
         <member name="F:SwiftCollections.SwiftDictionary`2._count">
             <summary>
             The total number of entries in the dictionary
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._lastIndex">
+            <summary>
+            The index of the last used entry in the dictionary.
             </summary>
         </member>
         <member name="F:SwiftCollections.SwiftDictionary`2._entryMask">
@@ -323,15 +463,20 @@
             Represents the moving average of the fill rate, used to dynamically adjust resizing behavior.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2._syncRoot">
+        <member name="F:SwiftCollections.SwiftDictionary`2._maxStepCount">
             <summary>
-            An object that can be used to synchronize access to the SwiftDictionary.
+            The maximum number of steps allowed during probing to resolve collisions.
             </summary>
         </member>
         <member name="F:SwiftCollections.SwiftDictionary`2._version">
             <summary>
             A version counter used to track modifications to the dictionary.
             Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftDictionary`2._syncRoot">
+            <summary>
+            An object that can be used to synchronize access to the SwiftDictionary.
             </summary>
         </member>
         <member name="T:SwiftCollections.SwiftDictionary`2.Entry">
@@ -353,12 +498,11 @@
         <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}},System.Collections.Generic.IEqualityComparer{`0})">
             <inheritdoc cref="M:SwiftCollections.SwiftDictionary`2.#ctor"/>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the SwiftDictionary class with serialized data.
-            </summary>
-            <param name="info"></param>
-            <param name="context"></param>
+        <member name="M:SwiftCollections.SwiftDictionary`2.#ctor(SwiftCollections.SwiftDictionaryState{`0,`1})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftDictionary`2"/> class with the specified <see cref="T:SwiftCollections.SwiftDictionaryState`2"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="P:SwiftCollections.SwiftDictionary`2.Count">
             <summary>
@@ -430,11 +574,18 @@
             </summary>
             <param name="newSize"></param>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.Initialize(System.Int32)">
+        <member name="M:SwiftCollections.SwiftDictionary`2.Initialize(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
             <summary>
             Initializes the dictionary with the specified capacity.
             </summary>
             <param name="capacity">The initial number of elements that the dictionary can contain.</param>
+            <param name="comparer">The comparer to use for the dictionary.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Sets a new comparer for the dictionary and rehashes the entries.
+            </summary>
+            <param name="comparer">The new comparer to use.</param>
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.SwitchToRandomizedComparer">
             <summary>
@@ -503,32 +654,74 @@
             </summary>
             <returns>An enumerator for the values in the collection.</returns>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Implements the System.Runtime.Serialization.ISerializable interface and returns
-            the data needed to serialize the SwiftDictionary instance.
-            </summary>
-            <param name="info">
-            A System.Runtime.Serialization.SerializationInfo object that contains the information 
-            required to serialize the SwiftDictionary instance.
-            </param>
-            <param name="context">
-            A System.Runtime.Serialization.StreamingContext structure that contains the source
-            and destination of the serialized stream associated with the SwiftDictionary
-            instance.
-            </param>
+        <member name="T:SwiftCollections.SwiftGenerationalBucket`1">
+             <summary>
+             Represents a high-performance generational bucket that assigns stable handles to stored items.
+             </summary>
+             <remarks>
+             <para>
+             <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> is similar to <see cref="T:SwiftCollections.SwiftBucket`1"/> but adds
+             <b>generation tracking</b> to prevent stale references from accessing reused slots.
+             </para>
+            
+             <para>
+             When an item is added, a <see cref="T:SwiftCollections.SwiftGenerationalBucket`1.Handle"/> containing both an index and generation
+             is returned. If the item is removed and the slot reused later, the generation value
+             changes, causing older handles to automatically become invalid.
+             </para>
+            
+             <para>
+             This pattern is widely used to safely reference objects without risking accidental access 
+             to recycled memory slots.
+             </para>
+            
+             <para>
+             Key characteristics:
+             <list type="bullet">
+             <item><description>O(1) insertion and removal.</description></item>
+             <item><description>Stable handles for the lifetime of stored items.</description></item>
+             <item><description>Automatic invalidation of stale handles via generation counters.</description></item>
+             <item><description>Cache-friendly contiguous storage.</description></item>
+             </list>
+             </para>
+            
+             <para>
+             Use <see cref="T:SwiftCollections.SwiftBucket`1"/> when raw indices are acceptable.
+             Use <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> when handle safety is required.
+             </para>
+             </remarks>
+             <typeparam name="T">Specifies the type of elements stored in the bucket.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftGenerationalBucketState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.OnDeserialization(System.Object)">
-            <summary>
-            Implements the System.Runtime.Serialization.ISerializable interface and raises the deserialization event when the deserialization is complete.
-            </summary>
-            <param name="sender">The source of the deserialization event.</param>
+        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.#ctor(SwiftCollections.SwiftGenerationalBucketState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> class with the specified <see cref="T:SwiftCollections.SwiftBucketState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="T:SwiftCollections.SwiftHashSet`1">
             <summary>
             Represents a high-performance set of unique values with efficient operations for addition, removal, and lookup
             </summary>
             <typeparam name="T">The type of elements in the set.</typeparam>
+            <remarks>
+            The comparer is not serialized. After deserialization the set uses
+            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>. 
+            
+            If a custom comparer is required it can be reapplied using
+            <see cref="M:SwiftCollections.SwiftHashSet`1.SetComparer(System.Collections.Generic.IEqualityComparer{`0})"/>.
+            </remarks>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftHashSet`1.DefaultCapacity">
             <summary>
@@ -610,12 +803,11 @@
             <param name="collection">The collection whose elements are copied to the new set.</param>
             <param name="comparer">The comparer to use when comparing elements.</param>
         </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class with serialized data.
-            </summary>
-            <param name="info"></param>
-            <param name="context"></param>
+        <member name="M:SwiftCollections.SwiftHashSet`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftHashSet`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="P:SwiftCollections.SwiftHashSet`1.Count">
             <summary>
@@ -674,11 +866,12 @@
             </summary>
             <param name="newSize"></param>
         </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.Initialize(System.Int32)">
+        <member name="M:SwiftCollections.SwiftHashSet`1.Initialize(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
             <summary>
             Initializes the hash set with a given capacity, ensuring it starts with an optimal internal structure.
             </summary>
             <param name="capacity"></param>
+            <param name="comparer"></param>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.Contains(`0)">
             <summary>
@@ -699,7 +892,7 @@
             Copies the elements of the set to an array, starting at the specified array index.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwitchComparer(System.Collections.Generic.IEqualityComparer{`0})">
+        <member name="M:SwiftCollections.SwiftHashSet`1.SetComparer(System.Collections.Generic.IEqualityComparer{`0})">
             <summary>
             Switches the hash set's comparer and rehashes all entries 
             using the new comparer to redistribute them across <see cref="F:SwiftCollections.SwiftHashSet`1._entries"/>.
@@ -750,6 +943,12 @@
             </para>
             </summary>
             <typeparam name="T">Specifies the type of elements in the list.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftList`1.DefaultCapacity">
             <summary>
@@ -769,6 +968,11 @@
             valid elements stored in the list, also indicating the arrayIndex of the next insertion point.
             </summary>
         </member>
+        <member name="F:SwiftCollections.SwiftList`1._version">
+            <summary>
+            The version of the SwiftList, used to track modifications.
+            </summary>
+        </member>
         <member name="F:SwiftCollections.SwiftList`1._syncRoot">
             <summary>
             An object that can be used to synchronize access to the SwiftList.
@@ -785,6 +989,12 @@
             The collection must have a known count for optimized memory allocation.
             </summary>
             <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftList`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
         <member name="P:SwiftCollections.SwiftList`1.Capacity">
             <summary>
@@ -909,6 +1119,34 @@
             Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftList`1"/>.
             </summary>
         </member>
+        <member name="T:SwiftCollections.SwiftPackedSet`1">
+            <summary>
+            Represents a high-performance set that stores unique values in a densely packed array
+            while providing O(1) lookups via an internal hash map.
+            </summary>
+            <remarks>
+            <para>
+            <see cref="T:SwiftCollections.SwiftPackedSet`1"/> maintains values in a contiguous array for extremely
+            cache-friendly iteration while using a hash-based lookup table to guarantee fast
+            membership tests and removals.
+            </para>
+            <para>
+            Removal uses a swap-back strategy that keeps the dense storage contiguous but does not
+            preserve ordering. As a result, iteration order is not guaranteed to remain stable.
+            </para>
+            <para>
+            This structure is commonly used in high-performance systems such as ECS (Entity Component Systems)
+            where dense iteration speed is critical.
+            </para>
+            </remarks>
+            <typeparam name="T">The type of elements contained in the set.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
         <member name="T:SwiftCollections.SwiftQueue`1">
             <summary>
             <c>SwiftQueue&lt;T&gt;</c> is a high-performance, circular buffer-based queue designed for ultra-low-latency enqueue and dequeue operations.
@@ -918,12 +1156,14 @@
             Aggressive inlining and optimized exception handling further reduce overhead, making SwiftQueue outperform traditional queues,
             especially in scenarios with high-frequency additions and removals.
             </para>
-            <para>
-            This implementation is optimized for performance and does not perform versioning checks.
-            Modifying the queue during enumeration may result in undefined behavior.
-            </para>
             </summary>
             <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftQueue`1.DefaultCapacity">
             <summary>
@@ -953,9 +1193,19 @@
             The arrayIndex at which the next element will be enqueued, wrapping around as needed.
             </summary>
         </member>
-        <member name="P:SwiftCollections.SwiftQueue`1.Item(System.Int32)">
+        <member name="F:SwiftCollections.SwiftQueue`1._mask">
             <summary>
-            Gets the element at the specified arrayIndex.
+            A bitmask used for efficient modulo operations, derived from the capacity of the internal array.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._version">
+            <summary>
+            A version number used to track modifications to the SwiftQueue to help detect changes during enumeration and ensures thread safety.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftQueue`1._syncRoot">
+            <summary>
+            An object used to synchronize access to the SwiftQueue, ensuring thread safety.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftQueue`1.#ctor">
@@ -973,6 +1223,12 @@
             Initializes a new instance of SwiftQueue that contains elements copied from the provided items.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftQueue`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
         <member name="P:SwiftCollections.SwiftQueue`1.InnerArray">
             <inheritdoc cref="F:SwiftCollections.SwiftQueue`1._innerArray"/>
         </member>
@@ -988,7 +1244,12 @@
         <member name="P:SwiftCollections.SwiftQueue`1.IsReadOnly">
             <inheritdoc/>
         </member>
-        <member name="M:SwiftCollections.SwiftQueue`1.Add(`0)">
+        <member name="P:SwiftCollections.SwiftQueue`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified arrayIndex.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.System#Collections#Generic#ICollection{T}#Add(`0)">
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftQueue`1.Enqueue(`0)">
@@ -1076,7 +1337,20 @@
             Represents a dynamically sorted collection of elements.
             Provides efficient O(log n) operations for adding, removing, and checking for the presence of elements.
             </summary>
+            <remarks>
+            The comparer is not serialized. After deserialization the list uses
+            <see cref="P:System.Collections.Generic.Comparer`1.Default"/>. 
+            
+            If a custom comparer is required it can be reapplied using
+            <see cref="M:SwiftCollections.SwiftSortedList`1.SetComparer(System.Collections.Generic.IComparer{`0})"/>.
+            </remarks>
             <typeparam name="T">The type of elements in the collection.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftSortedList`1.DefaultCapacity">
             <summary>
@@ -1087,6 +1361,11 @@
         <member name="F:SwiftCollections.SwiftSortedList`1._innerArray">
             <summary>
             Represents the internal array that stores the sorted elements.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSortedList`1._count">
+            <summary>
+            The number of elements contained in the <see cref="T:SwiftCollections.SwiftSortedList`1"/>.
             </summary>
         </member>
         <member name="F:SwiftCollections.SwiftSortedList`1._offset">
@@ -1130,10 +1409,20 @@
             </summary>
             <exception cref="T:System.ArgumentException">Thrown if the input collection does not have a known count.</exception>
         </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSortedList`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
         <member name="P:SwiftCollections.SwiftSortedList`1.Count">
-            <summary>
-            Gets the number of elements in the sorter.
-            </summary>
+            <inheritdoc cref="F:SwiftCollections.SwiftSortedList`1._count"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Offset">
+            <inheritdoc cref="F:SwiftCollections.SwiftSortedList`1._offset"/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSortedList`1.Version">
+            <inheritdoc cref="F:SwiftCollections.SwiftSortedList`1._version"/>
         </member>
         <member name="P:SwiftCollections.SwiftSortedList`1.Capacity">
             <summary>
@@ -1141,9 +1430,7 @@
             </summary>
         </member>
         <member name="P:SwiftCollections.SwiftSortedList`1.Comparer">
-            <summary>
-            The comparer used to sort elements in the collection.
-            </summary>
+            <inheritdoc cref="F:SwiftCollections.SwiftSortedList`1._comparer"/>
         </member>
         <member name="P:SwiftCollections.SwiftSortedList`1.Item(System.Int32)">
             <summary>
@@ -1207,6 +1494,12 @@
             This minimizes the need for shifting elements during future insertions and deletions.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.SetComparer(System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Sets a new comparer for the sorted list and re-sorts the elements.
+            </summary>
+            <param name="comparer">The new comparer to use.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftSortedList`1.GetPhysicalIndex(System.Int32)">
             <summary>
             Converts a logical arrayIndex within the list to the corresponding physical arrayIndex in the internal array.
@@ -1255,6 +1548,79 @@
             Returns an enumerator that iterates through <see cref="T:SwiftCollections.SwiftSortedList`1"/>.
             </summary>
         </member>
+        <member name="T:SwiftCollections.SwiftSparseMap`1">
+             <summary>
+             Represents a high-performance sparse map that stores values indexed by externally supplied integer keys.
+             Provides O(1) Add, Remove, Contains, and lookup operations while maintaining densely packed storage
+             for cache-friendly iteration.
+             </summary>
+             <remarks>
+             Unlike <see cref="T:SwiftCollections.SwiftBucket`1"/>, which internally assigns and manages item indices,
+             <see cref="T:SwiftCollections.SwiftSparseMap`1"/> is externally keyed. The caller supplies the integer key
+             (for example, an entity ID or handle) used to index the value.
+            
+             Internally, the container maintains:
+             <list type="bullet">
+                 <item>
+                     <description>A sparse lookup table mapping keys to dense indices.</description>
+                 </item>
+                 <item>
+                     <description>A dense array of keys.</description>
+                 </item>
+                 <item>
+                     <description>A dense array of values.</description>
+                 </item>
+             </list>
+            
+             Removal uses a swap-back strategy to keep dense storage contiguous. As a result,
+             iteration order is not guaranteed to remain stable.
+             </remarks>
+             <typeparam name="T">Value type stored by key.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftSparseSetState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.DenseCapacity">
+            <summary>
+            Capacity of the dense arrays (Keys/Values storage).
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.SparseCapacity">
+            <summary>
+            Capacity of the sparse array (max key+1 that can be mapped without resizing).
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.DenseKeys">
+            <summary>
+            Returns the dense keys array (valid range: [0..Count)).
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.DenseValues">
+            <summary>
+            Returns the dense values array (valid range: [0..Count)).
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.Item(System.Int32)">
+            <summary>
+            Gets/sets the value for a key. Setting:
+            - overwrites if present
+            - inserts if not present
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.TryAdd(System.Int32,`0)">
+            <summary>
+            Adds a key/value only if the key is not present.
+            Returns false if already present.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.Add(System.Int32,`0)">
+            <summary>
+            Adds or overwrites (same behavior as indexer set).
+            </summary>
+        </member>
         <member name="T:SwiftCollections.SwiftStack`1">
             <summary>
             Represents a fast, array-based stack (LIFO - Last-In-First-Out) collection of objects.
@@ -1270,6 +1636,12 @@
             </para>
             </summary>
             <typeparam name="T">Specifies the type of elements in the stack.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
         <member name="F:SwiftCollections.SwiftStack`1.DefaultCapacity">
             <summary>
@@ -1298,6 +1670,15 @@
             <summary>
             Initializes a new, empty instance of SwiftStack with the specified initial capacity.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftStack`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftStack`1.InnerArray">
+            <inheritdoc cref="F:SwiftCollections.SwiftStack`1._innerArray"/>
         </member>
         <member name="P:SwiftCollections.SwiftStack`1.Count">
             <inheritdoc cref="F:SwiftCollections.SwiftStack`1._count"/>
@@ -1354,50 +1735,111 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:SwiftCollections.Dimensions.Array2D`1">
+        <member name="T:SwiftCollections.Dimensions.SwiftBoolArray2D">
+            <summary>
+            Represents a 2D array specifically designed to handle boolean values.
+            </summary>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.Array2DState&lt;bool&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftBoolArray2D.Toggle(System.Int32,System.Int32)">
+            <summary>
+            Toggles the value at the specified position in the array.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftBoolArray2D.SetRegion(System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Sets all values within a rectangular region to the specified value.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftBoolArray2D.CountTrue">
+            <summary>
+            Counts the number of true values in the array.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Dimensions.SwiftShortArray2D">
+            <summary>
+            Represents a 2D array specifically designed to handle short integer values.
+            </summary>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.Array2DState&lt;short&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftShortArray2D.Scale(System.Int16)">
+            <summary>
+            Scales all elements in the array by the specified factor.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftShortArray2D.Normalize(System.Int16,System.Int16)">
+            <summary>
+            Normalizes all elements in the array to a specified range.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Dimensions.SwiftArray2D`1">
             <summary>
             Represents a flattened 2D array with dynamic resizing and efficient access.
             </summary>
             <typeparam name="T">The type of elements in the array.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.Array2DState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.#ctor">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.Array2D`1"/> class.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.SwiftArray2D`1"/> class.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.#ctor(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.#ctor(System.Int32,System.Int32)">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.Array2D`1"/> class with specified dimensions.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.SwiftArray2D`1"/> class with specified dimensions.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.#ctor(System.Int32,System.Int32,`0)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.#ctor(System.Int32,System.Int32,`0)">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.Array2D`1"/> class with specified dimensions and default value.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Dimensions.SwiftArray2D`1"/> class with specified dimensions and default value.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Dimensions.Array2D`1.Width">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.Width">
             <summary>
             Gets the width of the 2D array.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Dimensions.Array2D`1.Height">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.Height">
             <summary>
             Gets the height of the 2D array.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Dimensions.Array2D`1.InnerArray">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.InnerArray">
             <summary>
             Gets the underlying flattened array for direct access.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Dimensions.Array2D`1.Item(System.Int32,System.Int32)">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.Size">
+            <summary>
+            Total size of the array
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.Length">
+            <inheritdoc cref="P:System.Array.Length" />
+        </member>
+        <member name="P:SwiftCollections.Dimensions.SwiftArray2D`1.Item(System.Int32,System.Int32)">
             <summary>
             Gets or sets the element at the specified position in the 2D array.
             </summary>
             <param name="x">The zero-based X coordinate.</param>
             <param name="y">The zero-based Y coordinate.</param>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.AddRange(`0[0:,0:])">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.AddRange(`0[0:,0:])">
             <summary>
             Adds the provides source into the current 2D Array.
             </summary>
@@ -1406,12 +1848,12 @@
             </remarks>
             <param name="source"></param>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.Fill(`0)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Fill(`0)">
             <summary>
             Fills the array with the specified value.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.Shift(System.Int32,System.Int32,System.Boolean)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Shift(System.Int32,System.Int32,System.Boolean)">
             <summary>
             Shifts the elements in the array by the specified X and Y offsets.
             </summary>
@@ -1423,77 +1865,86 @@
             If <c>false</c>, values that exceed boundaries are discarded.
             </param>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.Clear">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Clear">
             <summary>
             Clears all elements in the array.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.Resize(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Resize(System.Int32,System.Int32)">
             <summary>
             Resizes the 2D array to new dimensions, preserving existing values within the new bounds.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.ValidateIndex(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.ValidateIndex(System.Int32,System.Int32)">
             <summary>
             Validates the specified index coordinates.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.IsValidIndex(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.IsValidIndex(System.Int32,System.Int32)">
             <summary>
             Checks if the specified index is valid in the current array dimensions.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.GetIndex(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.GetIndex(System.Int32,System.Int32)">
             <summary>
             Converts 2D coordinates to a flattened index.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.ToArray">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.ToArray">
             <summary>
             Converts the flattened array back to a 2D array representation.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.Clone">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Clone">
             <summary>
             Clones a 2D array into a new instance of Array2D.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.GetEnumerator">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.GetEnumerator">
             <summary>
             Returns an enumerator that iterates through all elements in the 2D array.
             </summary>
             <returns>An enumerator for the 2D array.</returns>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array2D`1.System#Collections#IEnumerable#GetEnumerator">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.System#Collections#IEnumerable#GetEnumerator">
             <summary>
             Returns an enumerator that iterates through all elements in the 2D array (non-generic).
             </summary>
             <returns>An enumerator for the 2D array.</returns>
         </member>
-        <member name="T:SwiftCollections.Dimensions.Array3D`1">
+        <member name="T:SwiftCollections.Dimensions.SwiftArray3D`1">
             <summary>
             Represents a generic, flattened 3D array with efficient indexing and resizing capabilities.
             Optimized for use in performance-critical applications like game grids.
             </summary>
             <typeparam name="T">The type of elements in the 3D array.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.Array3DState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="P:SwiftCollections.Dimensions.Array3D`1.Size">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray3D`1.Size">
             <summary>
-            Total number of elements in the 3D array.
+            Total size of the array.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.Initialize(System.Int32,System.Int32,System.Int32)">
+        <member name="P:SwiftCollections.Dimensions.SwiftArray3D`1.Length">
+            <inheritdoc cref="P:System.Array.Length" />
+        </member>
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.Initialize(System.Int32,System.Int32,System.Int32)">
             <summary>
             Initializes the 3D array with the specified dimensions.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.Resize(System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.Resize(System.Int32,System.Int32,System.Int32)">
             <summary>
             Resizes the 3D array to the specified dimensions.
             Retains existing data where possible.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.Shift(System.Int32,System.Int32,System.Int32,System.Boolean)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.Shift(System.Int32,System.Int32,System.Int32,System.Boolean)">
             <summary>
             Shifts the elements in the array by the specified offsets along each axis.
             </summary>
@@ -1510,267 +1961,360 @@
             - Non-wrapping behavior discards elements that move out of bounds.
             </remarks>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.Clear">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.Clear">
             <summary>
             Clears all elements in the array.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.Fill(`0)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.Fill(`0)">
             <summary>
             Fills the entire array with the specified value.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.ValidateIndex(System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.ValidateIndex(System.Int32,System.Int32,System.Int32)">
             <summary>
             Validates the specified indices.
             Throws an exception if the indices are out of bounds.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.IsValidIndex(System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.IsValidIndex(System.Int32,System.Int32,System.Int32)">
             <summary>
             Checks if the specified indices are within bounds.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.GetEnumerator">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.GetEnumerator">
             <summary>
             Returns an enumerator that iterates through all elements in the 3D array.
             </summary>
             <returns>An enumerator for the 3D array.</returns>
         </member>
-        <member name="M:SwiftCollections.Dimensions.Array3D`1.System#Collections#IEnumerable#GetEnumerator">
+        <member name="M:SwiftCollections.Dimensions.SwiftArray3D`1.System#Collections#IEnumerable#GetEnumerator">
             <summary>
             Returns an enumerator that iterates through all elements in the 3D array (non-generic).
             </summary>
             <returns>An enumerator for the 3D array.</returns>
         </member>
-        <member name="T:SwiftCollections.Dimensions.BoolArray2D">
+        <member name="T:SwiftCollections.SwiftObjectEqualityComparer">
             <summary>
-            Represents a 2D array specifically designed to handle boolean values.
+            Provides a randomized equality comparer for objects, enhancing hash code distribution to reduce collisions in hash-based collections.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.BoolArray2D.Toggle(System.Int32,System.Int32)">
+        <member name="F:SwiftCollections.SwiftObjectEqualityComparer._entropy">
             <summary>
-            Toggles the value at the specified position in the array.
+            A 64-bit entropy value used to randomize hash codes for better distribution.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.BoolArray2D.SetRegion(System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean)">
+        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.#ctor">
             <summary>
-            Sets all values within a rectangular region to the specified value.
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftStringEqualityComparer"/> class with a unique entropy value.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.BoolArray2D.CountTrue">
+        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.Equals(System.Object,System.Object)">
             <summary>
-            Counts the number of true values in the array.
+            Determines whether the specified objects are equal.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns><c>true</c> if the specified objects are equal; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current comparer.
+            </summary>
+            <param name="obj">The object to compare with the current comparer.</param>
+            <returns><c>true</c> if the specified object is equal to the current comparer; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.GetHashCode(System.Object)">
+            <summary>
+            Returns a hash code for the specified object, incorporating entropy for better distribution.
+            </summary>
+            <param name="obj">The object for which to get a hash code.</param>
+            <returns>A hash code for the specified object.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.GetHashCode">
+            <summary>
+            Returns a hash code for the current comparer.
+            </summary>
+            <returns>A hash code for the current comparer.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftStringEqualityComparer">
+            <summary>
+            Provides a randomized equality comparer for objects, enhancing hash code distribution to reduce collisions in hash-based collections.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Dimensions.ShortArray2D">
+        <member name="F:SwiftCollections.SwiftStringEqualityComparer._entropy">
             <summary>
-            Represents a 2D array specifically designed to handle short integer values.
+            A 64-bit entropy value used to randomize hash codes for better distribution.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.ShortArray2D.Scale(System.Int16)">
+        <member name="M:SwiftCollections.SwiftStringEqualityComparer.#ctor">
             <summary>
-            Scales all elements in the array by the specified factor.
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftStringEqualityComparer"/> class with a unique entropy value.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Dimensions.ShortArray2D.Normalize(System.Int16,System.Int16)">
+        <member name="M:SwiftCollections.SwiftStringEqualityComparer.Equals(System.Object,System.Object)">
             <summary>
-            Normalizes all elements in the array to a specified range.
+            Determines whether the specified objects are equal.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns><c>true</c> if the specified objects are equal; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStringEqualityComparer.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current comparer.
+            </summary>
+            <param name="obj">The object to compare with the current comparer.</param>
+            <returns><c>true</c> if the specified object is equal to the current comparer; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStringEqualityComparer.GetHashCode(System.Object)">
+            <summary>
+            Returns a hash code for the specified object, incorporating entropy for better distribution.
+            </summary>
+            <param name="obj">The object for which to get a hash code.</param>
+            <returns>A hash code for the specified object.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStringEqualityComparer.GetHashCode">
+            <summary>
+            Returns a hash code for the current comparer.
+            </summary>
+            <returns>A hash code for the current comparer.</returns>
+        </member>
+        <member name="T:SwiftCollections.Observable.SwiftObservableProperty`1">
+            <summary>
+            Represents a property of type <typeparamref name="TValue"/> that raises a <see cref="E:SwiftCollections.Observable.SwiftObservableProperty`1.PropertyChanged"/> event when its value changes.
+            </summary>
+            <typeparam name="TValue">The type of the value being observed.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>TValue</b> _value<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="E:SwiftCollections.Observable.SwiftObservableProperty`1.PropertyChanged">
+            <summary>
+            Raised whenever the property's value changes.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Observable.ObservableArray`1">
+        <member name="M:SwiftCollections.Observable.SwiftObservableProperty`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableProperty`1"/> class with the default value of <typeparamref name="TValue"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableProperty`1.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableProperty`1"/> class with the specified initial value.
+            </summary>
+            <param name="value">The initial value of the property.</param>
+        </member>
+        <member name="P:SwiftCollections.Observable.SwiftObservableProperty`1.Value">
+            <summary>
+            Gets or sets the property's value. Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableProperty`1.PropertyChanged"/> event when the value changes.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableProperty`1.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableProperty`1.PropertyChanged"/> event with the specified property name.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Observable.SwiftObservableArray`1">
             <summary>
             Represents an array of observable properties, raising events whenever an element is updated.
             Designed for performance-critical scenarios in Unity game development.
             </summary>
             <typeparam name="TValue">The type of elements in the array.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;TValue&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableArray`1.ElementChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableArray`1.ElementChanged">
             <summary>
             Raised when any element in the array changes, providing the index and the new value.
             </summary>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableArray`1.PropertyChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableArray`1.PropertyChanged">
             <summary>
             Raised when the array's state changes.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Observable.ObservableArray`1.ElementChangedEventArgs`1">
+        <member name="T:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1">
             <summary>
             Provides details about a changed element, including its index and new value.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Observable.ObservableArray`1.ElementChangedEventArgs`1.Index">
+        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.Index">
             <summary>
             The index of the changed element.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Observable.ObservableArray`1.ElementChangedEventArgs`1.NewValue">
+        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.NewValue">
             <summary>
             The new value of the changed element.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Observable.ObservableProperty`1">
-            <summary>
-            Represents a property of type <typeparamref name="TValue"/> that raises a <see cref="E:SwiftCollections.Observable.ObservableProperty`1.PropertyChanged"/> event when its value changes.
-            </summary>
-            <typeparam name="TValue">The type of the value being observed.</typeparam>
+        <member name="M:SwiftCollections.Observable.SwiftObservableArray`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableArray`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableProperty`1.PropertyChanged">
-            <summary>
-            Raised whenever the property's value changes.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableProperty`1.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.ObservableProperty`1"/> class with the default value of <typeparamref name="TValue"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableProperty`1.#ctor(`0)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.ObservableProperty`1"/> class with the specified initial value.
-            </summary>
-            <param name="value">The initial value of the property.</param>
-        </member>
-        <member name="P:SwiftCollections.Observable.ObservableProperty`1.Value">
-            <summary>
-            Gets or sets the property's value. Raises the <see cref="E:SwiftCollections.Observable.ObservableProperty`1.PropertyChanged"/> event when the value changes.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableProperty`1.OnPropertyChanged(System.String)">
-            <summary>
-            Raises the <see cref="E:SwiftCollections.Observable.ObservableProperty`1.PropertyChanged"/> event with the specified property name.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Observable.ObservableSwiftDictionary`2">
+        <member name="T:SwiftCollections.Observable.SwiftObservableDictionary`2">
             <summary>
             Represents a dictionary that notifies listeners of changes to its items and structure.
             </summary>
             <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
             <typeparam name="TValue">The type of values in the dictionary.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftDictionaryState&lt;TKey, TValue&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableSwiftDictionary`2.PropertyChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableDictionary`2.PropertyChanged">
             <summary>
             Raised when a property on the dictionary changes.
             </summary>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableSwiftDictionary`2.CollectionChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableDictionary`2.CollectionChanged">
             <summary>
             Raised when the dictionary's collection is modified.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Observable.ObservableSwiftDictionary`2.Item(`0)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.#ctor(SwiftCollections.SwiftDictionaryState{`0,`1})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableDictionary`2"/> class with the specified <see cref="T:SwiftCollections.SwiftDictionaryState`2"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
+        <member name="P:SwiftCollections.Observable.SwiftObservableDictionary`2.Item(`0)">
             <summary>
             Gets or sets the value associated with the specified key.
             Raises property and collection change notifications.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftDictionary`2.Add(`0,`1)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.Add(`0,`1)">
             <summary>
             Adds an element with the provided key and value to the dictionary.
             Raises a collection change notification.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftDictionary`2.Remove(`0)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.Remove(`0)">
             <summary>
             Removes the element with the specified key from the dictionary.
             Raises a collection change notification if the key existed.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftDictionary`2.Clear">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.Clear">
             <summary>
             Clears all elements from the dictionary.
             Raises a reset collection change notification.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftDictionary`2.OnPropertyChanged(System.String)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.OnPropertyChanged(System.String)">
             <summary>
-            Raises the <see cref="E:SwiftCollections.Observable.ObservableSwiftDictionary`2.PropertyChanged"/> event.
+            Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableDictionary`2.PropertyChanged"/> event.
             </summary>
             <param name="propertyName">The name of the property that changed.</param>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftDictionary`2.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableDictionary`2.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
             <summary>
-            Raises the <see cref="E:SwiftCollections.Observable.ObservableSwiftDictionary`2.CollectionChanged"/> event for the specified action and items.
+            Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableDictionary`2.CollectionChanged"/> event for the specified action and items.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Observable.ObservableSwiftList`1">
+        <member name="T:SwiftCollections.Observable.SwiftObservableList`1">
             <summary>
             Represents an observable extension of the high-performance <see cref="T:SwiftCollections.SwiftList`1"/>.
             Notifies listeners of changes to its items and structure for reactive programming scenarios.
             </summary>
             <typeparam name="T">The type of elements in the list.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableSwiftList`1.PropertyChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableList`1.PropertyChanged">
             <summary>
             Raised when a property on the list changes.
             </summary>
         </member>
-        <member name="E:SwiftCollections.Observable.ObservableSwiftList`1.CollectionChanged">
+        <member name="E:SwiftCollections.Observable.SwiftObservableList`1.CollectionChanged">
             <summary>
             Raised when the list's collection is modified.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.#ctor">
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.ObservableSwiftList`1"/> class.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableList`1"/> class.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.#ctor(System.Int32)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.#ctor(System.Int32)">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.ObservableSwiftList`1"/> class with the specified initial capacity.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableList`1"/> class with the specified initial capacity.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.ObservableSwiftList`1"/> class that contains elements copied from the specified collection.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableList`1"/> class that contains elements copied from the specified collection.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.Add(`0)">
-            <summary>
-            Adds an element to the end of the list.
-            Raises collection and property change notifications.
-            </summary>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.#ctor(SwiftCollections.SwiftArrayState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Observable.SwiftObservableList`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.Remove(`0)">
-            <summary>
-            Removes the first occurrence of a specific object from the list.
-            Raises collection and property change notifications.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.RemoveAt(System.Int32)">
-            <summary>
-            Removes the element at the specified index.
-            Raises collection and property change notifications.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.Insert(System.Int32,`0)">
-            <summary>
-            Inserts an element into the list at the specified index.
-            Raises collection and property change notifications.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.Clear">
-            <summary>
-            Clears all elements from the list.
-            Raises a reset collection change notification.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Observable.ObservableSwiftList`1.Item(System.Int32)">
+        <member name="P:SwiftCollections.Observable.SwiftObservableList`1.Item(System.Int32)">
             <summary>
             Sets or gets the element at the specified index.
             Raises collection change notifications on modification.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.OnPropertyChanged(System.String)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.Add(`0)">
             <summary>
-            Raises the <see cref="E:SwiftCollections.Observable.ObservableSwiftList`1.PropertyChanged"/> event.
+            Adds an element to the end of the list.
+            Raises collection and property change notifications.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of a specific object from the list.
+            Raises collection and property change notifications.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the element at the specified index.
+            Raises collection and property change notifications.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts an element into the list at the specified index.
+            Raises collection and property change notifications.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.Clear">
+            <summary>
+            Clears all elements from the list.
+            Raises a reset collection change notification.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableList`1.PropertyChanged"/> event.
             </summary>
             <param name="propertyName">The name of the property that changed.</param>
         </member>
-        <member name="M:SwiftCollections.Observable.ObservableSwiftList`1.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
             <summary>
-            Raises the <see cref="E:SwiftCollections.Observable.ObservableSwiftList`1.CollectionChanged"/> event for the specified action and items.
+            Raises the <see cref="E:SwiftCollections.Observable.SwiftObservableList`1.CollectionChanged"/> event for the specified action and items.
             </summary>
         </member>
         <member name="T:SwiftCollections.Pool.SwiftArrayPool`1">
@@ -1921,7 +2465,7 @@
         <member name="F:SwiftCollections.Pool.SwiftDictionaryPool`2._lazyInstance">
             <summary>
             Shared instance of the dictionary pool, providing a globally accessible pool.
-            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftDictionaryPool`2.Shared">
@@ -1970,7 +2514,7 @@
         <member name="F:SwiftCollections.Pool.SwiftHashSetPool`1._lazyInstance">
             <summary>
             Shared instance of the hash set pool, providing a globally accessible pool.
-            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftHashSetPool`1.Shared">
@@ -2019,7 +2563,7 @@
         <member name="F:SwiftCollections.Pool.SwiftListPool`1._lazyInstance">
             <summary>
             Shared instance of the hash set pool, providing a globally accessible pool.
-            Uses <see cref="T:LazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftListPool`1.Shared">
@@ -2055,6 +2599,55 @@
         <member name="M:SwiftCollections.Pool.SwiftListPool`1.Dispose">
             <summary>
             Releases all resources used by the SwiftListPool.
+            It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Pool.SwiftQueuePool`1">
+            <summary>
+            A specialized pool for managing <see cref="T:SwiftCollections.SwiftQueue`1"/> instances, 
+            providing efficient reuse to minimize memory allocations and improve performance.
+            </summary>
+            <typeparam name="T">The type of elements in the queue.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftQueuePool`1._lazyInstance">
+            <summary>
+            Shared instance of the queue pool, providing a globally accessible pool.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftQueuePool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftQueuePool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftQueuePool`1.Rent">
+            <summary>
+            Rents a queue instance from the pool. If the pool is empty, a new queue is created.
+            </summary>
+            <returns>A <see cref="T:SwiftCollections.SwiftQueue`1"/> instance.</returns>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftQueuePool`1.Release(SwiftCollections.SwiftQueue{`0})">
+            <summary>
+            Releases a queue instance back to the pool for reuse.
+            </summary>
+            <param name="queue">The queue to release.</param>
+            <remarks>
+            The queue will be cleared before being returned to the pool to ensure it contains no stale data.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftQueuePool`1.Clear">
+            <summary>
+            Clears all pooled queues from the pool.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftQueuePool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftQueuePool.
             It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
             </summary>
         </member>
@@ -2166,148 +2759,6 @@
             This method is automatically called when the <see cref="T:SwiftCollections.Pool.SwiftPooledObject`1"/> goes out of scope in a
             using block or when manually disposed.
             </remarks>
-        </member>
-        <member name="T:SwiftCollections.Query.BoundVolume">
-            <summary>
-            Represents an axis-aligned bounding box (AABB) in 3D space.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._min">
-            <summary>
-            The minimum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._max">
-            <summary>
-            The maximum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._center">
-            <summary>
-            The center of the bounding volume as the midpoint of the minimum and maximum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._size">
-            <summary>
-            The size of the bounding volume as the difference between the maximum and minimum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._volume">
-            <summary>
-            The volume of the bounding box, calculated as the product of its dimensions.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._isDirty">
-            <summary>
-            Marks the bounding volume as dirty, indicating its properties need recalculation.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Min">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._min"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Max">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._max"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Center">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._center"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Size">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._size"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Volume">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._volume"/>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.RecalculateMeta">
-            <summary>
-            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc cref="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
-        </member>
-        <member name="T:SwiftCollections.Query.FixedBoundVolume">
-            <summary>
-            Represents an axis-aligned bounding box (AABB) in 3D space using Fixed-Point Math.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._min">
-            <summary>
-            The minimum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._max">
-            <summary>
-            The maximum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._center">
-            <summary>
-            The center of the bounding volume as the midpoint of the minimum and maximum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._size">
-            <summary>
-            The size of the bounding volume as the difference between the maximum and minimum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._volume">
-            <summary>
-            The volume of the bounding box, calculated as the product of its dimensions.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._isDirty">
-            <summary>
-            Marks the bounding volume as dirty, indicating its properties need recalculation.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Min">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._min"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Max">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._max"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Center">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._center"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Size">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._size"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Volume">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._volume"/>
-        </member>
-        <member name="M:SwiftCollections.Query.FixedBoundVolume.RecalculateMeta">
-            <summary>
-            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.FixedBoundVolume)">
-            <inheritdoc cref="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
-        </member>
-        <member name="T:SwiftCollections.Query.IBoundVolume">
-            <summary>
-            Represents a generic interface for a bounding volume, supporting spatial queries and operations.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.Union(SwiftCollections.Query.IBoundVolume)">
-            <summary>
-            Combines the current bounding volume with another, creating a new volume that encloses both.
-            </summary>
-            <param name="other">The other bounding volume to combine with.</param>
-            <returns>A new bounding volume that contains both the current and other volumes.</returns>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.Intersects(SwiftCollections.Query.IBoundVolume)">
-            <summary>
-            Determines whether the current bounding volume intersects with another.
-            </summary>
-            <param name="other">The other bounding volume to test for intersection.</param>
-            <returns>True if the volumes intersect; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.GetCost(SwiftCollections.Query.IBoundVolume)">
-            <summary>
-            Calculates the cost of combining the current bounding volume with another.
-            </summary>
-            <param name="other">The other bounding volume to consider.</param>
-            <returns>The cost metric of the union operation.</returns>
         </member>
         <member name="T:SwiftCollections.Query.SwiftBVH`1">
             <summary>
@@ -2504,229 +2955,216 @@
             Clears all references and metadata.
             </summary>
         </member>
-        <member name="T:SwiftCollections.HashHelper">
+        <member name="T:SwiftCollections.Query.BoundVolume">
             <summary>
-            Provides helper methods and constants for hashing and power of two calculations used in hash-based collections.
+            Represents an axis-aligned bounding box (AABB) in 3D space.
             </summary>
         </member>
-        <member name="F:SwiftCollections.HashHelper.rng">
+        <member name="F:SwiftCollections.Query.BoundVolume._min">
             <summary>
-            Provides a cryptographic random number generator for generating entropy.
+            The minimum point of the bounding volume.
             </summary>
         </member>
-        <member name="F:SwiftCollections.HashHelper.data">
+        <member name="F:SwiftCollections.Query.BoundVolume._max">
             <summary>
-            Stores random bytes used for entropy generation.
+            The maximum point of the bounding volume.
             </summary>
         </member>
-        <member name="F:SwiftCollections.HashHelper.currentIndex">
+        <member name="F:SwiftCollections.Query.BoundVolume._center">
             <summary>
-            Tracks the current index in the entropy data buffer.
+            The center of the bounding volume as the midpoint of the minimum and maximum points.
             </summary>
         </member>
-        <member name="F:SwiftCollections.HashHelper.lockObj">
+        <member name="F:SwiftCollections.Query.BoundVolume._size">
             <summary>
-            Synchronization object for thread-safe operations.
+            The size of the bounding volume as the difference between the maximum and minimum points.
             </summary>
         </member>
-        <member name="F:SwiftCollections.HashHelper.s_SerializationInfoTable">
+        <member name="F:SwiftCollections.Query.BoundVolume._volume">
             <summary>
-            Holds serialization information for objects during the serialization process.
+            The volume of the bounding box, calculated as the product of its dimensions.
             </summary>
         </member>
-        <member name="P:SwiftCollections.HashHelper.SerializationInfoTable">
+        <member name="F:SwiftCollections.Query.BoundVolume._isDirty">
             <summary>
-            Gets the table that stores serialization information for objects.
+            Marks the bounding volume as dirty, indicating its properties need recalculation.
             </summary>
         </member>
-        <member name="M:SwiftCollections.HashHelper.NextPowerOfTwo(System.Int32)">
+        <member name="P:SwiftCollections.Query.BoundVolume.Min">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._min"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Max">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._max"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Center">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._center"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Size">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._size"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Volume">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._volume"/>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.RecalculateMeta">
             <summary>
-            Calculates the smallest power of two that is greater than or equal to the specified integer.
-            This method is used to ensure that capacities are powers of two, enabling optimizations
-            in indexing operations through bitwise arithmetic.
+            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
             </summary>
-            <param name="value">The integer value for which to find the next power of two.</param>
-            <returns>The smallest power of two greater than or equal to <paramref name="value"/>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc cref="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
+        </member>
+        <member name="T:SwiftCollections.Query.FixedBoundVolume">
+            <summary>
+            Represents an axis-aligned bounding box (AABB) in 3D space using Fixed-Point Math.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._min">
+            <summary>
+            The minimum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._max">
+            <summary>
+            The maximum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._center">
+            <summary>
+            The center of the bounding volume as the midpoint of the minimum and maximum points.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._size">
+            <summary>
+            The size of the bounding volume as the difference between the maximum and minimum points.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._volume">
+            <summary>
+            The volume of the bounding box, calculated as the product of its dimensions.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.FixedBoundVolume._isDirty">
+            <summary>
+            Marks the bounding volume as dirty, indicating its properties need recalculation.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Min">
+            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._min"/>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Max">
+            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._max"/>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Center">
+            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._center"/>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Size">
+            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._size"/>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Volume">
+            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._volume"/>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.RecalculateMeta">
+            <summary>
+            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.FixedBoundVolume)">
+            <inheritdoc cref="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
+        </member>
+        <member name="T:SwiftCollections.Query.IBoundVolume">
+            <summary>
+            Represents a generic interface for a bounding volume, supporting spatial queries and operations.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume.Union(SwiftCollections.Query.IBoundVolume)">
+            <summary>
+            Combines the current bounding volume with another, creating a new volume that encloses both.
+            </summary>
+            <param name="other">The other bounding volume to combine with.</param>
+            <returns>A new bounding volume that contains both the current and other volumes.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume.Intersects(SwiftCollections.Query.IBoundVolume)">
+            <summary>
+            Determines whether the current bounding volume intersects with another.
+            </summary>
+            <param name="other">The other bounding volume to test for intersection.</param>
+            <returns>True if the volumes intersect; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume.GetCost(SwiftCollections.Query.IBoundVolume)">
+            <summary>
+            Calculates the cost of combining the current bounding volume with another.
+            </summary>
+            <param name="other">The other bounding volume to consider.</param>
+            <returns>The cost metric of the union operation.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftArrayState`1">
             <remarks>
-            If <paramref name="value"/> is less than or equal to zero, the method returns 1.
-            If <paramref name="value"/> is too large to represent as a power of two within an <c>int</c>,
-            the methods returns `int.Max`.
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            </code>
             </remarks>
         </member>
-        <member name="M:SwiftCollections.HashHelper.GetEntropy">
-            <summary>
-            Generates a cryptographically strong random 64-bit integer for use as entropy.
-            </summary>
-            <returns>A 64-bit integer filled with cryptographically strong random bytes.</returns>
+        <member name="T:SwiftCollections.SwiftDictionaryState`2">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>System.Collections.Generic.KeyValuePair&lt;TKey, TValue&gt;[]</b> Items<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="M:SwiftCollections.HashHelper.MurmurHash3(System.String,System.Int32)">
-            <summary>
-            Computes a hash code for a string using the MurmurHash3 algorithm, incorporating entropy for randomization.
-            </summary>
-            <param name="key">The string to hash.</param>
-            <param name="seed">The seed value for the hash function.</param>
-            <returns>An integer hash code for the string.</returns>
+        <member name="T:SwiftCollections.SwiftBucketState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            <b>bool[]</b> Allocated<br/>
+            <b>int[]</b> FreeIndices<br/>
+            <b>int</b> PeakCount<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="T:SwiftCollections.IntStack">
-            <summary>
-            A minimal and efficient stack implementation for integers.
-            Optimized for internal use in within the SwiftCollections library.
-            </summary>
+        <member name="T:SwiftCollections.SwiftGenerationalBucketState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            <b>bool[]</b> Allocated<br/>
+            <b>uint[]</b> Generations<br/>
+            <b>int[]</b> FreeIndices<br/>
+            <b>int</b> Peak<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="F:SwiftCollections.IntStack.DefaultCapacity">
-            <summary>
-            The default initial capacity of the stack.
-            </summary>
+        <member name="T:SwiftCollections.Array2DState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>int</b> Width<br/>
+            <b>int</b> Height<br/>
+            <b>T[]</b> Data<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="F:SwiftCollections.IntStack._array">
-            <summary>
-            The internal array holding stack elements.
-            </summary>
+        <member name="T:SwiftCollections.Array3DState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>int</b> Width<br/>
+            <b>int</b> Height<br/>
+            <b>int</b> Depth<br/>
+            <b>T[]</b> Data<br/>
+            </code>
+            </remarks>
         </member>
-        <member name="F:SwiftCollections.IntStack._count">
-            <summary>
-            The current count of elements in the stack.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.IntStack.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.IntStack"/> class with the default capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.IntStack.#ctor(System.Int32)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.IntStack"/> class with a specified initial capacity.
-            </summary>
-            <param name="capacity">The initial capacity of the stack.</param>
-        </member>
-        <member name="P:SwiftCollections.IntStack.Count">
-            <summary>
-            Gets the number of elements currently in the stack.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.IntStack.Push(System.Int32)">
-            <summary>
-            Pushes an integer onto the stack.
-            Expands the stack's capacity if necessary.
-            </summary>
-            <param name="value">The integer value to push.</param>
-        </member>
-        <member name="M:SwiftCollections.IntStack.Pop">
-            <summary>
-            Removes and returns the top integer from the stack.
-            </summary>
-            <returns>The top integer from the stack.</returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when attempting to pop from an empty stack.</exception>
-        </member>
-        <member name="M:SwiftCollections.IntStack.Peek">
-            <summary>
-            Returns the top integer from the stack without removing it.
-            </summary>
-            <returns>The top integer from the stack.</returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when attempting to peek an empty stack.</exception>
-        </member>
-        <member name="M:SwiftCollections.IntStack.Reset">
-            <summary>
-            Resets the stack to it's initial state.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.IntStack.Clear">
-            <summary>
-            Removes all elements from the stack.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.IntStack.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures the stack has at least the specified capacity.
-            Expands the internal array if necessary.
-            </summary>
-            <param name="capacity">The minimum capacity to ensure.</param>
-        </member>
-        <member name="T:SwiftCollections.SwiftObjectEqualityComparer">
-            <summary>
-            Provides a randomized equality comparer for objects, enhancing hash code distribution to reduce collisions in hash-based collections.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftObjectEqualityComparer._entropy">
-            <summary>
-            A 64-bit entropy value used to randomize hash codes for better distribution.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftStringEqualityComparer"/> class with a unique entropy value.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.Equals(System.Object,System.Object)">
-            <summary>
-            Determines whether the specified objects are equal.
-            </summary>
-            <param name="x">The first object to compare.</param>
-            <param name="y">The second object to compare.</param>
-            <returns><c>true</c> if the specified objects are equal; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.Equals(System.Object)">
-            <summary>
-            Determines whether the specified object is equal to the current comparer.
-            </summary>
-            <param name="obj">The object to compare with the current comparer.</param>
-            <returns><c>true</c> if the specified object is equal to the current comparer; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.GetHashCode(System.Object)">
-            <summary>
-            Returns a hash code for the specified object, incorporating entropy for better distribution.
-            </summary>
-            <param name="obj">The object for which to get a hash code.</param>
-            <returns>A hash code for the specified object.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftObjectEqualityComparer.GetHashCode">
-            <summary>
-            Returns a hash code for the current comparer.
-            </summary>
-            <returns>A hash code for the current comparer.</returns>
-        </member>
-        <member name="T:SwiftCollections.SwiftStringEqualityComparer">
-            <summary>
-            Provides a randomized equality comparer for objects, enhancing hash code distribution to reduce collisions in hash-based collections.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftStringEqualityComparer._entropy">
-            <summary>
-            A 64-bit entropy value used to randomize hash codes for better distribution.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStringEqualityComparer.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftStringEqualityComparer"/> class with a unique entropy value.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftStringEqualityComparer.Equals(System.Object,System.Object)">
-            <summary>
-            Determines whether the specified objects are equal.
-            </summary>
-            <param name="x">The first object to compare.</param>
-            <param name="y">The second object to compare.</param>
-            <returns><c>true</c> if the specified objects are equal; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftStringEqualityComparer.Equals(System.Object)">
-            <summary>
-            Determines whether the specified object is equal to the current comparer.
-            </summary>
-            <param name="obj">The object to compare with the current comparer.</param>
-            <returns><c>true</c> if the specified object is equal to the current comparer; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftStringEqualityComparer.GetHashCode(System.Object)">
-            <summary>
-            Returns a hash code for the specified object, incorporating entropy for better distribution.
-            </summary>
-            <param name="obj">The object for which to get a hash code.</param>
-            <returns>A hash code for the specified object.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftStringEqualityComparer.GetHashCode">
-            <summary>
-            Returns a hash code for the current comparer.
-            </summary>
-            <returns>A hash code for the current comparer.</returns>
+        <member name="T:SwiftCollections.SwiftSparseSetState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>int[]</b> DenseKeys<br/>
+            <b>T[]</b> DenseValues<br/>
+            </code>
+            </remarks>
         </member>
         <member name="T:SwiftCollections.SwiftExtensions">
             <summary>
@@ -2824,9 +3262,14 @@
             Gets the element at the specified index from the end (1-based) from SwiftList.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Last``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:SwiftCollections.SwiftExtensions.PopLast``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Returns the last item in the sequence.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.SkipFromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Bypasses a specified number of elements from the end and then returns the remaining elements.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftExtensions.SecondToLast``1(System.Collections.Generic.IEnumerable{``0})">
@@ -2834,7 +3277,85 @@
             Returns the second-to-last item in the sequence.
             </summary>
         </member>
-        <member name="T:LazyDisposable`1">
+        <member name="T:SwiftCollections.SwiftHashTools">
+            <summary>
+            Provides utility functions for generating, combining, and working with hash codes.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashTools.rng">
+            <summary>
+            Provides a cryptographic random number generator for generating entropy.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashTools.data">
+            <summary>
+            Stores random bytes used for entropy generation.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashTools.currentIndex">
+            <summary>
+            Tracks the current index in the entropy data buffer.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashTools.lockObj">
+            <summary>
+            Synchronization object for thread-safe operations.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftHashTools.s_SerializationInfoTable">
+            <summary>
+            Holds serialization information for objects during the serialization process.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftHashTools.SerializationInfoTable">
+            <summary>
+            Gets the table that stores serialization information for objects.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.NextPowerOfTwo(System.Int32)">
+            <summary>
+            Calculates the smallest power of two that is greater than or equal to the specified integer.
+            This method is used to ensure that capacities are powers of two, enabling optimizations
+            in indexing operations through bitwise arithmetic.
+            </summary>
+            <param name="value">The integer value for which to find the next power of two.</param>
+            <returns>The smallest power of two greater than or equal to <paramref name="value"/>.</returns>
+            <remarks>
+            If <paramref name="value"/> is less than or equal to zero, the method returns 1.
+            If <paramref name="value"/> is too large to represent as a power of two within an <c>int</c>,
+            the methods returns `int.Max`.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Runtime.CompilerServices.ITuple,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines the hash codes of the elements in a tuple using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[],System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines the hash codes of a set of objects using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[])">
+            <summary>
+            Combines the hash codes of the provided objects using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetEntropy">
+            <summary>
+            Generates a cryptographically strong random 64-bit integer for use as entropy.
+            </summary>
+            <returns>A 64-bit integer filled with cryptographically strong random bytes.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.MurmurHash3(System.String,System.Int32)">
+            <summary>
+            Computes a hash code for a string using the MurmurHash3 algorithm, incorporating entropy for randomization.
+            </summary>
+            <param name="key">The string to hash.</param>
+            <param name="seed">The seed value for the hash function.</param>
+            <returns>An integer hash code for the string.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftLazyDisposable`1">
             <summary>
             A lazily initialized disposable object.
             This class extends <see cref="T:System.Lazy`1"/> to support <see cref="T:System.IDisposable"/> objects,
@@ -2842,21 +3363,21 @@
             </summary>
             <typeparam name="T">The type of the lazily initialized object, which must implement <see cref="T:System.IDisposable"/>.</typeparam>
         </member>
-        <member name="F:LazyDisposable`1._disposed">
+        <member name="F:SwiftCollections.SwiftLazyDisposable`1._disposed">
             <summary>
             Indicates whether the lazy instance has been disposed.
             Prevents multiple disposal attempts, ensuring safe resource cleanup.
             </summary>
         </member>
-        <member name="M:LazyDisposable`1.#ctor">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
              When lazy initialization occurs, the default constructor is used.
             </summary>
         </member>
-        <member name="M:LazyDisposable`1.#ctor(System.Boolean)">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Boolean)">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
              When lazy initialization occurs, the default constructor of the target type
              and the specified initialization mode are used.
             </summary>
@@ -2865,27 +3386,27 @@
              false to make the instance usable by only one thread at a time. 
             </param>
         </member>
-        <member name="M:LazyDisposable`1.#ctor(System.Threading.LazyThreadSafetyMode)">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Threading.LazyThreadSafetyMode)">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class
              that uses the default constructor of T and the specified thread-safety mode.
             </summary>
             <param name="mode">
              One of the enumeration values that specifies the thread safety mode. 
             </param>
         </member>
-        <member name="M:LazyDisposable`1.#ctor(System.Func{`0})">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0})">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
              When lazy initialization occurs, the specified initialization function is used.
             </summary>
             <param name="valueFactory">
              The delegate that is invoked to produce the lazily initialized value when it is needed. 
             </param>
         </member>
-        <member name="M:LazyDisposable`1.#ctor(System.Func{`0},System.Boolean)">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Boolean)">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class.
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
              When lazy initialization occurs, the specified initialization function
              and initialization mode are used.
             </summary>
@@ -2897,9 +3418,9 @@
              false to make this instance usable by only one thread at a time. 
             </param>
         </member>
-        <member name="M:LazyDisposable`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)">
             <summary>
-             Initializes a new instance of the <see cref="T:LazyDisposable`1"/> class
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class
              using the specified initialization function and thread-safety mode.
             </summary>
             <param name="valueFactory">
@@ -2909,13 +3430,13 @@
              One of the enumeration values that specifies the thread safety mode. 
             </param>
         </member>
-        <member name="M:LazyDisposable`1.Dispose">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.Dispose">
             <summary>
             Disposes the lazily initialized value if it has been created.
             Ensures that disposal is only performed once.
             </summary>
         </member>
-        <member name="M:LazyDisposable`1.Finalize">
+        <member name="M:SwiftCollections.SwiftLazyDisposable`1.Finalize">
             <summary>
             Finalizer to ensure disposal if Dispose() is never called.
             </summary>
