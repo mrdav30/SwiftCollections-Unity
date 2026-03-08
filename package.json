@@ -16,7 +16,9 @@
         "unity",
         "memory efficient"
     ],
-    "dependencies": {},
+    "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.2"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
