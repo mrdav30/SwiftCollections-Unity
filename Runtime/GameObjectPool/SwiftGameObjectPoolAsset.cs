@@ -37,8 +37,8 @@ namespace SwiftCollections.Pool
         /// </summary>
         public void Init()
         {
-            if (_pools == null || _pools.Length == 0)
-                ThrowHelper.ThrowInvalidOperationException("Pools array is not initialized or empty.");
+            SwiftThrowHelper.ThrowIfNull(_pools, "Pools array is not initialized.");
+            SwiftThrowHelper.ThrowIfNegativeOrZero(_pools.Length, nameof(_pools));
 
             _parentTransform = new GameObject("Scriptable Object Pool").transform;
             _poolDict = new SwiftDictionary<string, SwiftGameObjectPool>(_pools.Length);
@@ -59,8 +59,9 @@ namespace SwiftCollections.Pool
         /// <returns>A pooled GameObject instance.</returns>
         public GameObject GetObject(string id)
         {
-            if (_poolDict == null || !_poolDict.TryGetValue(id, out var pool))
-                return ThrowHelper.ThrowInvalidOperationException<GameObject>($"Pool with ID '{id}' not found.");
+            SwiftThrowHelper.ThrowIfNull(_poolDict, nameof(_poolDict));
+            if (!_poolDict.TryGetValue(id, out var pool))
+                throw new InvalidOperationException($"Pool with ID '{id}' not found.");
 
             return pool.GetObject(_parentTransform);
         }

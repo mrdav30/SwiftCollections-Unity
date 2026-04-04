@@ -103,8 +103,14 @@
             <typeparam name="T1">The type of the keys in the forward dictionary.</typeparam>
             <typeparam name="T2">The type of the values in the forward dictionary.</typeparam>
             <remarks>
-            The comparer is not serialized. After deserialization the dictionary uses
-            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/> for keys and <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/> for values.
+            The comparer is not serialized. After deserialization the dictionary reverts
+            to the same default comparer selection used by a new instance for both the
+            forward and reverse maps. String keys use SwiftCollections' deterministic
+            default comparer. Object keys use a SwiftCollections comparer that hashes
+            strings deterministically, while other object-key determinism still depends
+            on the underlying key type's <see cref="M:System.Object.GetHashCode"/>
+            implementation. Other key types use <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>
+            and <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>.
             
             If a custom comparer is required it can be reapplied using
             <see cref="M:SwiftCollections.SwiftBiDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0},System.Collections.Generic.IEqualityComparer{`1})"/>.
@@ -265,10 +271,7 @@
              You can then use this arrayIndex to access the item directly via the indexer, and check if it's still present using the <see cref="M:SwiftCollections.SwiftBucket`1.IsAllocated(System.Int32)"/> method.
              This approach allows for O(1) time complexity for lookups and existence checks, avoiding the need for O(n) searches using methods like <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> or <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/>.
             
-             **Note**: Operations like <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/> and <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> have O(n) time complexity due to the underlying data structure.
-             Additionally, iteration over the collection does not follow any guaranteed order and depends on internal allocation.
-             
-             Iteration order is not guaranteed.
+             **Note**: iteration over the collection does not follow any guaranteed order and depends on internal allocation.
              </remarks>
              <typeparam name="T">Specifies the type of elements in the bucket.</typeparam>
             <remarks>
@@ -352,8 +355,16 @@
         </member>
         <member name="M:SwiftCollections.SwiftBucket`1.TrimExcessCapacity">
             <summary>
-            Reduces the capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/> by resizing the internal array to match the current count.
+            Reduces unused tail capacity while preserving stable handles for all currently allocated entries.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.TryGetValue(System.Int32,`0@)">
+            <summary>
+            Attempts to get the value at the specified arrayIndex.
+            </summary>
+            <param name="key">The arrayIndex of the item to get.</param>
+            <param name="value">When this method returns, contains the value associated with the specified arrayIndex, if the arrayIndex is found; otherwise, the default value for the type of the value parameter.</param>
+            <returns><c>true</c> if the bucket contains an element at the specified arrayIndex; otherwise, <c>false</c>.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftBucket`1.Contains(`0)">
             <summary>
@@ -365,6 +376,20 @@
             This method performs a linear search and has a time complexity of O(n).
             It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
             </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftBucket`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftBucket`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftBucket`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in bucket iteration order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)">
             <summary>
@@ -399,8 +424,13 @@
             <typeparam name="TKey">Specifies the type of keys in the dictionary.</typeparam>
             <typeparam name="TValue">Specifies the type of values in the dictionary.</typeparam>
             <remarks>
-            The comparer is not serialized. After deserialization the dictionary uses
-            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>. 
+            The comparer is not serialized. After deserialization the dictionary reverts
+            to the same default comparer selection used by a new instance. String keys
+            use SwiftCollections' deterministic default comparer. Object keys use a
+            SwiftCollections comparer that hashes strings deterministically, while other
+            object-key determinism still depends on the underlying key type's
+            <see cref="M:System.Object.GetHashCode"/> implementation. Other key types use
+            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>.
             
             If a custom comparer is required it can be reapplied using
             <see cref="M:SwiftCollections.SwiftDictionary`2.SetComparer(System.Collections.Generic.IEqualityComparer{`0})"/>.
@@ -606,13 +636,6 @@
             <returns>The arrayIndex of the entry if found; otherwise, -1.</returns>
             <exception cref="T:System.ArgumentNullException">The key is null.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.ThrowIfNullAndNullsAreIllegal(System.Object)">
-            <summary>
-            Throws an exception if the specified value is null and nulls are not allowed for TValue.
-            </summary>
-            <param name="value">The value to check.</param>
-            <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
-        </member>
         <member name="T:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator">
             <summary>
             Provides an efficient enumerator for iterating over the key-value pairs in the SwiftDictionary, enabling smooth traversal during enumeration.
@@ -704,14 +727,33 @@
              </summary>
              <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
         </member>
+        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in bucket iteration order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
+        </member>
         <member name="T:SwiftCollections.SwiftHashSet`1">
             <summary>
             Represents a high-performance set of unique values with efficient operations for addition, removal, and lookup
             </summary>
             <typeparam name="T">The type of elements in the set.</typeparam>
             <remarks>
-            The comparer is not serialized. After deserialization the set uses
-            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>. 
+            The comparer is not serialized. After deserialization the set reverts
+            to the same default comparer selection used by a new instance. String values
+            use SwiftCollections' deterministic default comparer. Object values use a
+            SwiftCollections comparer that hashes strings deterministically, while other
+            object-value determinism still depends on the underlying value type's
+            <see cref="M:System.Object.GetHashCode"/> implementation. Other types use
+            <see cref="P:System.Collections.Generic.EqualityComparer`1.Default"/>.
             
             If a custom comparer is required it can be reapplied using
             <see cref="M:SwiftCollections.SwiftHashSet`1.SetComparer(System.Collections.Generic.IEqualityComparer{`0})"/>.
@@ -819,6 +861,13 @@
             Gets the <see cref="T:System.Collections.Generic.IEqualityComparer`1"/> object that is used to determine equality for the values in the set.
             </summary>
         </member>
+        <member name="P:SwiftCollections.SwiftHashSet`1.Item(`0)">
+            <summary>
+            Gets the stored value that matches the specified key.
+            </summary>
+            <param name="key">The lookup value used to find an equal element in the set.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">No matching value exists in the set.</exception>
+        </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.InsertIfNotExists(`0)">
             <summary>
             Adds the specified element to the set if it's not already present.
@@ -841,6 +890,11 @@
         <member name="M:SwiftCollections.SwiftHashSet`1.CheckLoadThreshold">
             <summary>
             Ensures that the hash set is resized when the current load factor exceeds the predefined threshold.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.EnsureCapacityForAddRange(System.Int32)">
+            <summary>
+            Ensures there is enough room to add a batch of items without repeatedly checking the load threshold.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.EnsureCapacity(System.Int32)">
@@ -881,6 +935,20 @@
             <returns>
             True if the set contains the specified element; otherwise, false.
             </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftHashSet`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftHashSet`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.TryGetValue(`0,`0@)">
             <summary>
@@ -1020,6 +1088,18 @@
             Adds the elements of the specified collection to the end of the SwiftList.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftList`1.AddRange(`0[])">
+            <summary>
+            Adds the elements of the specified array to the end of the SwiftList.
+            </summary>
+            <param name="items">The array whose elements should be appended.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.AddRange(System.ReadOnlySpan{`0})">
+            <summary>
+            Adds the elements of the specified span to the end of the SwiftList.
+            </summary>
+            <param name="items">The span whose elements should be appended.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftList`1.Remove(`0)">
             <summary>
             Removes the first occurrence of a specific object from the SwiftList.
@@ -1089,6 +1169,16 @@
             Copies the elements of the SwiftList to a new array.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftList`1.AsSpan">
+            <summary>
+            Returns a mutable span over the populated portion of the list.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.AsReadOnlySpan">
+            <summary>
+            Returns a read-only span over the populated portion of the list.
+            </summary>
+        </member>
         <member name="M:SwiftCollections.SwiftList`1.ToString">
             <summary>
             Returns a string that represents the current object.
@@ -1098,6 +1188,20 @@
             <summary>
             Determines whether an element is in the SwiftList.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftList`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftList`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the entire <see cref="T:SwiftCollections.SwiftList`1"/>.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftList`1.Swap(System.Int32,System.Int32)">
             <summary>
@@ -1113,6 +1217,12 @@
             The target list will resize if it lacks sufficient capacity, 
             but retains any existing elements beyond the copied range.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftList`1.CopyTo(System.Span{`0})">
+            <summary>
+            Copies the populated elements of the SwiftList into the specified destination span.
+            </summary>
+            <param name="destination">The destination span.</param>
         </member>
         <member name="M:SwiftCollections.SwiftList`1.GetEnumerator">
             <summary>
@@ -1146,6 +1256,25 @@
             <b>SwiftCollections.SwiftArrayState&lt;T&gt;</b> State<br/>
             </code>
             </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.AsReadOnlySpan">
+            <summary>
+            Returns a read-only span over the populated dense portion of the set.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftPackedSet`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftPackedSet`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in dense iteration order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="T:SwiftCollections.SwiftQueue`1">
             <summary>
@@ -1258,6 +1387,18 @@
             </summary>
             <param name="item">The item to add to the queue.</param>
         </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.EnqueueRange(`0[])">
+            <summary>
+            Adds the elements of the specified array to the end of the queue in queue order.
+            </summary>
+            <param name="items">The array whose elements should be enqueued.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.EnqueueRange(System.ReadOnlySpan{`0})">
+            <summary>
+            Adds the elements of the specified span to the end of the queue in queue order.
+            </summary>
+            <param name="items">The span whose elements should be enqueued.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftQueue`1.Dequeue">
             <summary>
             Removes and returns the item at the front of the queue. 
@@ -1292,6 +1433,20 @@
         <member name="M:SwiftCollections.SwiftQueue`1.Contains(`0)">
             <inheritdoc/>
         </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftQueue`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftQueue`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in queue order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
+        </member>
         <member name="M:SwiftCollections.SwiftQueue`1.Clear">
             <summary>
             Removes all elements from the SwiftQueue, resetting its count to zero.
@@ -1321,11 +1476,24 @@
             Copies the elements of the SwiftQueue to a new array.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.GetSegments(System.ReadOnlySpan{`0}@,System.ReadOnlySpan{`0}@)">
+            <summary>
+            Returns the current queue contents as up to two read-only spans.
+            </summary>
+            <param name="first">The first contiguous queue segment.</param>
+            <param name="second">The wrapped tail segment, if any.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftQueue`1.CopyTo(System.Array,System.Int32)">
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftQueue`1.CopyTo(`0[],System.Int32)">
             <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.CopyTo(System.Span{`0})">
+            <summary>
+            Copies the elements of the SwiftQueue into the specified destination span.
+            </summary>
+            <param name="destination">The destination span.</param>
         </member>
         <member name="M:SwiftCollections.SwiftQueue`1.GetEnumerator">
             <summary>
@@ -1507,6 +1675,11 @@
             <param name="logicalIndex">The logical arrayIndex within the list.</param>
             <returns>The physical arrayIndex within the internal array.</returns>
         </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.AsReadOnlySpan">
+            <summary>
+            Returns a read-only span over the populated sorted portion of the list.
+            </summary>
+        </member>
         <member name="M:SwiftCollections.SwiftSortedList`1.PeekMin">
             <summary>
             Returns the minimum element in the sorter without removing it.
@@ -1518,6 +1691,20 @@
             Returns the maximum element in the sorter without removing it.
             </summary>
             <returns>The maximum element.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftSortedList`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftSortedList`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in sorted order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftSortedList`1.IndexOf(`0)">
             <summary>
@@ -1574,6 +1761,12 @@
             
              Removal uses a swap-back strategy to keep dense storage contiguous. As a result,
              iteration order is not guaranteed to remain stable.
+            
+             Keys are used as direct indices into the sparse lookup table, so memory usage scales
+             with the highest stored key rather than the number of stored values. This container is
+             intended for compact, non-negative IDs such as entity handles or slot indices. It is
+             not a good fit for arbitrary hashes or widely spaced keys; for those workloads prefer
+             <c>SwiftDictionary&lt;TKey, TValue&gt;</c>.
              </remarks>
              <typeparam name="T">Value type stored by key.</typeparam>
             <remarks>
@@ -1583,6 +1776,16 @@
             </code>
             </remarks>
         </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new sparse map with the specified sparse and dense capacities.
+            </summary>
+            <param name="sparseCapacity">
+            Initial sparse lookup capacity. This should track the highest expected key plus one,
+            not the number of stored values.
+            </param>
+            <param name="denseCapacity">Initial dense storage capacity for values.</param>
+        </member>
         <member name="P:SwiftCollections.SwiftSparseMap`1.DenseCapacity">
             <summary>
             Capacity of the dense arrays (Keys/Values storage).
@@ -1591,6 +1794,7 @@
         <member name="P:SwiftCollections.SwiftSparseMap`1.SparseCapacity">
             <summary>
             Capacity of the sparse array (max key+1 that can be mapped without resizing).
+            Memory usage grows with this capacity.
             </summary>
         </member>
         <member name="P:SwiftCollections.SwiftSparseMap`1.DenseKeys">
@@ -1700,6 +1904,12 @@
             </summary>
             <param name="item"></param>
         </member>
+        <member name="M:SwiftCollections.SwiftStack`1.PushRange(System.ReadOnlySpan{`0})">
+            <summary>
+            Pushes the elements of the specified span onto the stack in order.
+            </summary>
+            <param name="items">The span whose elements should be pushed.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftStack`1.Pop">
             <summary>
             Removes and returns the object at the top of the SwiftStack.
@@ -1734,6 +1944,36 @@
             Returns the object at the top of the SwiftStack without removing it.
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.AsSpan">
+            <summary>
+            Returns a mutable span over the populated portion of the stack.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.AsReadOnlySpan">
+            <summary>
+            Returns a read-only span over the populated portion of the stack.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.CopyTo(System.Span{`0})">
+            <summary>
+            Copies the populated elements of the SwiftStack into the specified destination span.
+            </summary>
+            <param name="destination">The destination span.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftStack`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftStack`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in stack enumeration order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
         <member name="T:SwiftCollections.Dimensions.SwiftBoolArray2D">
             <summary>
@@ -1993,6 +2233,17 @@
             Returns an enumerator that iterates through all elements in the 3D array (non-generic).
             </summary>
             <returns>An enumerator for the 3D array.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftDeterministicObjectEqualityComparer">
+            <summary>
+            Provides a deterministic object comparer used by SwiftCollections when no comparer is supplied.
+            Strings are hashed via <see cref="M:SwiftCollections.SwiftHashTools.MurmurHash3(System.String,System.Int32)"/> to avoid runtime-dependent string hashes.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftDeterministicStringEqualityComparer">
+            <summary>
+            Provides a deterministic string comparer used by SwiftCollections when no comparer is supplied.
+            </summary>
         </member>
         <member name="T:SwiftCollections.SwiftObjectEqualityComparer">
             <summary>
@@ -2280,6 +2531,18 @@
             <summary>
             Adds an element to the end of the list.
             Raises collection and property change notifications.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.AddRange(`0[])">
+            <summary>
+            Adds the elements of the specified array to the end of the list.
+            Raises collection and property change notifications for each added item.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Observable.SwiftObservableList`1.AddRange(System.ReadOnlySpan{`0})">
+            <summary>
+            Adds the elements of the specified span to the end of the list.
+            Raises collection and property change notifications for each added item.
             </summary>
         </member>
         <member name="M:SwiftCollections.Observable.SwiftObservableList`1.Remove(`0)">
@@ -2602,6 +2865,51 @@
             It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
             </summary>
         </member>
+        <member name="T:SwiftCollections.Pool.SwiftPackedSetPool`1">
+            <summary>
+            A specialized pool for managing <see cref="T:SwiftCollections.SwiftPackedSet`1"/> instances,
+            providing efficient reuse to minimize memory allocations and improve performance.
+            </summary>
+            <typeparam name="T">The type of elements in the packed set.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftPackedSetPool`1._lazyInstance">
+            <summary>
+            Shared instance of the packed set pool, providing a globally accessible pool.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftPackedSetPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftPackedSetPool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftPackedSetPool`1.Rent">
+            <summary>
+            Rents a packed set instance from the pool. If the pool is empty, a new packed set is created.
+            </summary>
+            <returns>A <see cref="T:SwiftCollections.SwiftPackedSet`1"/> instance.</returns>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftPackedSetPool`1.Release(SwiftCollections.SwiftPackedSet{`0})">
+            <summary>
+            Releases a packed set instance back to the pool for reuse.
+            </summary>
+            <param name="set">The packed set to release.</param>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftPackedSetPool`1.Clear">
+            <summary>
+            Clears all pooled packed sets from the pool.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftPackedSetPool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftPackedSetPool.
+            </summary>
+        </member>
         <member name="T:SwiftCollections.Pool.SwiftQueuePool`1">
             <summary>
             A specialized pool for managing <see cref="T:SwiftCollections.SwiftQueue`1"/> instances, 
@@ -2649,6 +2957,108 @@
             <summary>
             Releases all resources used by the SwiftQueuePool.
             It is important to call Dispose() to release pooled objects, preventing potential memory leaks.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Pool.SwiftSparseMapPool`1">
+            <summary>
+            A specialized pool for managing <see cref="T:SwiftCollections.SwiftSparseMap`1"/> instances,
+            providing efficient reuse to minimize memory allocations and improve performance.
+            </summary>
+            <typeparam name="T">The type of values stored in the sparse map.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftSparseMapPool`1._lazyInstance">
+            <summary>
+            Shared instance of the sparse map pool, providing a globally accessible pool.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftSparseMapPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftSparseMapPool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftSparseMapPool`1.CollectionPool">
+            <summary>
+            Gets the underlying object pool used to manage sparse map instances.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftSparseMapPool`1.Rent">
+            <summary>
+            Rents a sparse map instance from the pool. If the pool is empty, a new sparse map is created.
+            </summary>
+            <returns>A <see cref="T:SwiftCollections.SwiftSparseMap`1"/> instance.</returns>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftSparseMapPool`1.Get(SwiftCollections.SwiftSparseMap{`0}@)">
+            <summary>
+            Rents a sparse map from the pool and wraps it in a <see cref="T:SwiftCollections.Pool.SwiftPooledObject`1"/> for automatic release.
+            </summary>
+            <param name="value">The rented sparse map.</param>
+            <returns>A <see cref="T:SwiftCollections.Pool.SwiftPooledObject`1"/> instance wrapping the rented sparse map.</returns>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftSparseMapPool`1.Release(SwiftCollections.SwiftSparseMap{`0})">
+            <summary>
+            Releases a sparse map instance back to the pool for reuse.
+            </summary>
+            <param name="map">The sparse map to release.</param>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftSparseMapPool`1.Clear">
+            <summary>
+            Clears all pooled sparse maps from the pool.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftSparseMapPool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftSparseMapPool.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Pool.SwiftStackPool`1">
+            <summary>
+            A specialized pool for managing <see cref="T:SwiftCollections.SwiftStack`1"/> instances,
+            providing efficient reuse to minimize memory allocations and improve performance.
+            </summary>
+            <typeparam name="T">The type of elements in the stack.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftStackPool`1._lazyInstance">
+            <summary>
+            Shared instance of the stack pool, providing a globally accessible pool.
+            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Pool.SwiftStackPool`1.Shared">
+            <summary>
+            Gets the shared instance of the pool.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Pool.SwiftStackPool`1._disposed">
+            <summary>
+            Tracks whether the pool has been disposed.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftStackPool`1.Rent">
+            <summary>
+            Rents a stack instance from the pool. If the pool is empty, a new stack is created.
+            </summary>
+            <returns>A <see cref="T:SwiftCollections.SwiftStack`1"/> instance.</returns>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftStackPool`1.Release(SwiftCollections.SwiftStack{`0})">
+            <summary>
+            Releases a stack instance back to the pool for reuse.
+            </summary>
+            <param name="stack">The stack to release.</param>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftStackPool`1.Clear">
+            <summary>
+            Clears all pooled stacks from the pool.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Pool.SwiftStackPool`1.Dispose">
+            <summary>
+            Releases all resources used by the SwiftStackPool.
             </summary>
         </member>
         <member name="T:SwiftCollections.Pool.SwiftObjectPool`1">
@@ -2728,7 +3138,7 @@
         </member>
         <member name="T:SwiftCollections.Pool.SwiftPooledObject`1">
             <summary>
-            A struct that wraps an object rented from an <see cref="T:SwiftCollections.Pool.ISwiftObjectPool`1"/> and ensures it is automatically
+            A lease that wraps an object rented from an <see cref="T:SwiftCollections.Pool.ISwiftObjectPool`1"/> and ensures it is automatically
             released back to the pool when disposed. Designed to simplify resource management and avoid manual release errors.
             </summary>
             <typeparam name="T">The type of the object being pooled. Must be a reference type.</typeparam>
@@ -2745,7 +3155,7 @@
         </member>
         <member name="M:SwiftCollections.Pool.SwiftPooledObject`1.#ctor(`0,SwiftCollections.Pool.ISwiftObjectPool{`0})">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Pool.SwiftPooledObject`1"/> struct.
+            Initializes a new instance of the <see cref="T:SwiftCollections.Pool.SwiftPooledObject`1"/> class.
             </summary>
             <param name="value">The rented object.</param>
             <param name="pool">The pool that owns the object.</param>
@@ -3097,45 +3507,6 @@
             <param name="other">The other bounding volume to consider.</param>
             <returns>The cost metric of the union operation.</returns>
         </member>
-        <member name="T:SwiftCollections.SwiftArrayState`1">
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>T[]</b> Items<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionaryState`2">
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>System.Collections.Generic.KeyValuePair&lt;TKey, TValue&gt;[]</b> Items<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="T:SwiftCollections.SwiftBucketState`1">
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>T[]</b> Items<br/>
-            <b>bool[]</b> Allocated<br/>
-            <b>int[]</b> FreeIndices<br/>
-            <b>int</b> PeakCount<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="T:SwiftCollections.SwiftGenerationalBucketState`1">
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>T[]</b> Items<br/>
-            <b>bool[]</b> Allocated<br/>
-            <b>uint[]</b> Generations<br/>
-            <b>int[]</b> FreeIndices<br/>
-            <b>int</b> Peak<br/>
-            </code>
-            </remarks>
-        </member>
         <member name="T:SwiftCollections.Array2DState`1">
             <remarks>
             MemoryPack GenerateType: Object<br/>
@@ -3157,6 +3528,45 @@
             </code>
             </remarks>
         </member>
+        <member name="T:SwiftCollections.SwiftArrayState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:SwiftCollections.SwiftBucketState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            <b>bool[]</b> Allocated<br/>
+            <b>int[]</b> FreeIndices<br/>
+            <b>int</b> PeakCount<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionaryState`2">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>System.Collections.Generic.KeyValuePair&lt;TKey, TValue&gt;[]</b> Items<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:SwiftCollections.SwiftGenerationalBucketState`1">
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            <b>bool[]</b> Allocated<br/>
+            <b>uint[]</b> Generations<br/>
+            <b>int[]</b> FreeIndices<br/>
+            <b>int</b> Peak<br/>
+            </code>
+            </remarks>
+        </member>
         <member name="T:SwiftCollections.SwiftSparseSetState`1">
             <remarks>
             MemoryPack GenerateType: Object<br/>
@@ -3165,6 +3575,123 @@
             <b>T[]</b> DenseValues<br/>
             </code>
             </remarks>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticSink">
+            <summary>
+            Receives diagnostic events emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannel">
+            <summary>
+            Represents a named diagnostic channel with a configurable sink and minimum level.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/> class.
+            </summary>
+            <param name="name">The channel name. Blank names fall back to <c>Default</c>.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Name">
+            <summary>
+            Gets the channel name.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.MinimumLevel">
+            <summary>
+            Gets or sets the minimum level required for diagnostics to be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Sink">
+            <summary>
+            Gets or sets the sink that receives emitted diagnostics.
+            Assigning <c>null</c> restores the default no-op sink.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
+            <summary>
+            Determines whether the specified level is enabled for this channel.
+            </summary>
+            <param name="level">The level to evaluate.</param>
+            <returns><c>true</c> when the level is enabled; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Emits a diagnostic event when the specified level is enabled.
+            </summary>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The diagnostic message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticEvent">
+            <summary>
+            Represents a single diagnostic event emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticEvent.#ctor(System.String,SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticEvent"/> struct.
+            </summary>
+            <param name="channel">The channel that emitted the event.</param>
+            <param name="level">The severity level of the event.</param>
+            <param name="message">The event message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Channel">
+            <summary>
+            Gets the channel that emitted the event.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Level">
+            <summary>
+            Gets the severity level of the event.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Message">
+            <summary>
+            Gets the diagnostic message.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Source">
+            <summary>
+            Gets the optional source identifier.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticLevel">
+            <summary>
+            Defines the severity level for a diagnostic event.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.None">
+            <summary>
+            Diagnostics are disabled.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Info">
+            <summary>
+            Informational diagnostic output.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Warning">
+            <summary>
+            Warning diagnostic output.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Error">
+            <summary>
+            Error diagnostic output.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics">
+            <summary>
+            Provides access to shared diagnostics for SwiftCollections.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics.Shared">
+            <summary>
+            Gets the shared SwiftCollections diagnostics channel.
+            </summary>
         </member>
         <member name="T:SwiftCollections.SwiftExtensions">
             <summary>
@@ -3284,7 +3811,7 @@
         </member>
         <member name="F:SwiftCollections.SwiftHashTools.rng">
             <summary>
-            Provides a cryptographic random number generator for generating entropy.
+            Provides a cryptographic random number generator for collision-hardening entropy.
             </summary>
         </member>
         <member name="F:SwiftCollections.SwiftHashTools.data">
@@ -3341,9 +3868,40 @@
             Combines the hash codes of the provided objects using a DJB2-inspired mixing strategy.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicEqualityComparer``1">
+            <summary>
+            Gets the default comparer used by SwiftCollections for the specified type when no comparer is supplied.
+            String keys are hashed deterministically. Object keys hash strings deterministically, while other object-key
+            determinism still depends on the underlying key type's <see cref="M:System.Object.GetHashCode"/> implementation.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicStringEqualityComparer">
+            <summary>
+            Gets the deterministic default comparer used by SwiftCollections for strings.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicStringEqualityComparer(System.Int32)">
+            <summary>
+            Gets a deterministic string comparer using the supplied seed.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicObjectEqualityComparer">
+            <summary>
+            Gets the default comparer used by SwiftCollections for object keys.
+            Strings are hashed deterministically even when stored as objects. Other object keys still depend on their
+            runtime <see cref="M:System.Object.GetHashCode"/> implementations.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicObjectEqualityComparer(System.Int32)">
+            <summary>
+            Gets an object comparer using the supplied seed.
+            Strings are hashed deterministically even when stored as objects. Other object keys still depend on their
+            runtime <see cref="M:System.Object.GetHashCode"/> implementations.
+            </summary>
+        </member>
         <member name="M:SwiftCollections.SwiftHashTools.GetEntropy">
             <summary>
-            Generates a cryptographically strong random 64-bit integer for use as entropy.
+            Generates a cryptographically strong random 64-bit integer for collision-hardening entropy.
             </summary>
             <returns>A 64-bit integer filled with cryptographically strong random bytes.</returns>
         </member>
@@ -3440,6 +3998,32 @@
             <summary>
             Finalizer to ensure disposal if Dispose() is never called.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNull(System.Object,System.String)">
+            <inheritdoc cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0)">
+            <summary>
+            Throws an exception if the specified value is null and nulls are not allowed for TValue.
+            </summary>
+            <param name="value">The value to check.</param>
+            <param name="defaultValue">A default value of type TValue used to determine if nulls are illegal.</param>
+            <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String)">
+            <inheritdoc cref="T:System.ArgumentOutOfRangeException"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String)">
+            <inheritdoc cref="T:System.ArgumentOutOfRangeException"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String)">
+            <inheritdoc cref="T:System.ObjectDisposedException"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object)">
+            <inheritdoc cref="T:System.Collections.Generic.KeyNotFoundException"/>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfIndexInvalid(System.Int32,System.Int32)">
+            <inheritdoc cref="T:System.IndexOutOfRangeException"/>
         </member>
     </members>
 </doc>

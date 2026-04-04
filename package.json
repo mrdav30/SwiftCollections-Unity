@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections",
-    "version": "2.0.3",
+    "version": "3.0.0",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations. Requires FixedMathSharp-Unity.",
     "unity": "2020.3",
@@ -16,9 +16,7 @@
         "unity",
         "memory efficient"
     ],
-    "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.2.2"
-    },
+    "dependencies": {},
     "repository": {
         "type": "git",
         "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"

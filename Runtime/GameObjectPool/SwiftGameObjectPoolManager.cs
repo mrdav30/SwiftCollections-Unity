@@ -24,7 +24,7 @@ namespace SwiftCollections.Pool
         private SwiftGameObjectPoolManager()
         {
             _poolAsset = Resources.Load<SwiftGameObjectPoolAsset>("SwiftGameObjectPoolAsset");
-            if (_poolAsset == null) ThrowHelper.ThrowInvalidOperationException("SwiftGameObjectPoolAsset asset not found in Resources.");
+            SwiftThrowHelper.ThrowIfNull(_poolAsset, "SwiftGameObjectPoolAsset asset not found in Resources.");
             _poolAsset.Init();
         }
 

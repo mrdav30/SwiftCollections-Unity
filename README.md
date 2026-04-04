@@ -1,7 +1,5 @@
 # SwiftCollections-Unity
 
-==============
-
 ![SwiftCollections Icon](https://raw.githubusercontent.com/mrdav30/SwiftCollections/main/icon.png)
 
 **SwiftCollections** is a Unity package that provides high-performance, memory-efficient data structures optimized for game development and real-time applications.
@@ -54,8 +52,13 @@ If Unity shows compile errors after install, run **Tools → mrdav30 → Repair 
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE` file
-for details.
+This project is licensed under the MIT License.
+
+See the following files for details:
+
+- LICENSE – standard MIT license
+- NOTICE – additional terms regarding project branding and redistribution
+- COPYRIGHT – authorship information
 
 ---
 

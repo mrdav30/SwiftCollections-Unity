@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -46,7 +46,7 @@ namespace SwiftCollections.Editor
             new(
                 "com.mrdav30.fixedmathsharp",
                 "https://github.com/mrdav30/FixedMathSharp-Unity.git",
-                "v2.1.1"
+                "v2.2.0"
             )
         };
 
@@ -79,7 +79,7 @@ namespace SwiftCollections.Editor
             }
 
             var json = File.ReadAllText(ManifestPath);
-            var manifest = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
+            var manifest = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(json);
 
             if (!manifest.ContainsKey("dependencies") || manifest["dependencies"] is not Dictionary<string, object> dependencies)
             {
@@ -94,7 +94,7 @@ namespace SwiftCollections.Editor
 
             if (modified)
             {
-                var updated = JsonConvert.SerializeObject(manifest, Formatting.Indented);
+                var updated = JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true });
 
                 File.WriteAllText(ManifestPath, updated);
 

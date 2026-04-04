@@ -71,8 +71,9 @@ namespace SwiftCollections.Pool
         /// <param name="parent">The parent transform for the GameObject.</param>
         /// <returns>A pooled GameObject instance.</returns>
         public GameObject GetObject(Transform parent)
-        {
-            if (_prefab == null) ThrowHelper.ThrowInvalidOperationException("Prefab not assigned.");
+        {   
+            SwiftThrowHelper.ThrowIfNull(parent, nameof(parent));
+            SwiftThrowHelper.ThrowIfNull(_prefab, nameof(_prefab));
 
             GameObject retVal;
             if (_createdObjects.Count < _budget)

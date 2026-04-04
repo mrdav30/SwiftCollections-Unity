@@ -2,7 +2,8 @@
     "name": "SwiftCollections.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:27619889b8ba8c24980f49ee34dbb44a"
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:64c1e0e8ae81a464d87081f295cc3f26"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
