@@ -12,7 +12,7 @@ namespace SwiftCollections.Pool
         /// A lazily initialized singleton instance of the pooler.
         /// </summary>
         private static readonly Lazy<SwiftGameObjectPoolManager> _instance =
-            new Lazy<SwiftGameObjectPoolManager>(() => new SwiftGameObjectPoolManager());
+            new(() => new SwiftGameObjectPoolManager());
 
         /// <summary>
         /// Gets the shared singleton instance of the object pooler.
@@ -39,11 +39,33 @@ namespace SwiftCollections.Pool
         }
 
         /// <summary>
+        /// Attempts to get a pooled GameObject by ID without throwing when the pool is missing or exhausted.
+        /// </summary>
+        /// <param name="id">The pool name.</param>
+        /// <param name="gameObject">The pooled GameObject instance when successful.</param>
+        /// <returns><c>true</c> when an object was acquired; otherwise <c>false</c>.</returns>
+        public bool TryGetObject(string id, out GameObject gameObject)
+        {
+            return _poolAsset.TryGetObject(id, out gameObject);
+        }
+
+        /// <summary>
+        /// Releases a pooled GameObject back into the specified pool.
+        /// </summary>
+        /// <param name="id">The pool name.</param>
+        /// <param name="gameObject">The pooled instance to release.</param>
+        public void ReleaseObject(string id, GameObject gameObject)
+        {
+            _poolAsset.ReleaseObject(id, gameObject);
+        }
+
+        /// <summary>
         /// Gets the parent transform managing all pooled objects.
         /// </summary>
         /// <returns>The parent transform.</returns>
         public Transform GetParentTransform()
         {
+            _poolAsset.Init();
             return _poolAsset.ParentTransform;
         }
     }

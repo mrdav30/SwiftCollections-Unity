@@ -50,6 +50,50 @@ If Unity shows compile errors after install, run **Tools → mrdav30 → Repair 
 - **Unity3D Version:** 2022.3+
 - **Platforms:** Windows, Linux, macOS, WebGL, Mobile
 
+---
+
+## ♻️ GameObject Pooling
+
+This package includes a lightweight `GameObject` pool under `Runtime/GameObjectPool`.
+
+### Setup
+
+1. Create a pool asset via **Assets → Create → Utilities → ScriptableObjectPooler**.
+2. Save it as `Resources/SwiftGameObjectPoolAsset.asset` so `SwiftGameObjectPoolManager.Shared` can load it.
+3. Add one or more pool entries and configure:
+   `Pool Name` — string ID used at runtime.
+   `Prefab` — the object to spawn.
+   `Budget` — max live instances for that pool.
+   `Prewarm` — optionally create the full pool up front.
+
+### Usage
+
+```csharp
+using SwiftCollections.Pool;
+using UnityEngine;
+
+public class BulletSpawner : MonoBehaviour
+{
+    private const string BulletPoolId = "Bullet";
+
+    public void Fire(Vector3 position, Quaternion rotation)
+    {
+        if (!SwiftGameObjectPoolManager.Shared.TryGetObject(BulletPoolId, out GameObject bullet))
+            return;
+
+        bullet.transform.SetPositionAndRotation(position, rotation);
+        bullet.SetActive(true);
+    }
+
+    public void ReturnBullet(GameObject bullet)
+    {
+        SwiftGameObjectPoolManager.Shared.ReleaseObject(BulletPoolId, bullet);
+    }
+}
+```
+
+`TryGetObject(...)` returns `false` when the pool name is missing or every instance is currently checked out. If you prefer a throwing API, `GetObject(...)` is also available. Both methods return the pooled instance inactive, so configure it and enable it when ready. When you are finished with an instance, return it with `ReleaseObject(...)` so it can be reused.
+
 ## 📄 License
 
 This project is licensed under the MIT License.

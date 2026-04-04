@@ -3,7 +3,7 @@
     "version": "3.0.0",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations. Requires FixedMathSharp-Unity.",
-    "unity": "2020.3",
+    "unity": "2022.3",
     "author": {
         "name": "David Oravsky",
         "email": "david.oravsky@gmail.com",
