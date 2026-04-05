@@ -6,7 +6,7 @@ namespace SwiftCollections.Pool
     /// <summary>
     /// A ScriptableObject that manages multiple <see cref="SwiftGameObjectPool"/> instances.
     /// </summary>
-    [CreateAssetMenu(menuName = "Utilities/ScriptableObjectPooler")]
+    [CreateAssetMenu(menuName = "SwiftCollections/SwiftGameObjectPoolAsset", fileName = "SwiftGameObjectPoolAsset")]
     public class SwiftGameObjectPoolAsset : ScriptableObject, IDisposable
     {
         #region Unity Inspector Properties

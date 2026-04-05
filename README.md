@@ -58,7 +58,7 @@ This package includes a lightweight `GameObject` pool under `Runtime/GameObjectP
 
 ### Setup
 
-1. Create a pool asset via **Assets → Create → Utilities → ScriptableObjectPooler**.
+1. Create a pool asset via **Assets → Create → SwiftCollections → SwiftGameObjectPoolAsset**.
 2. Save it as `Resources/SwiftGameObjectPoolAsset.asset` so `SwiftGameObjectPoolManager.Shared` can load it.
 3. Add one or more pool entries and configure:
    `Pool Name` — string ID used at runtime.
@@ -93,6 +93,32 @@ public class BulletSpawner : MonoBehaviour
 ```
 
 `TryGetObject(...)` returns `false` when the pool name is missing or every instance is currently checked out. If you prefer a throwing API, `GetObject(...)` is also available. Both methods return the pooled instance inactive, so configure it and enable it when ready. When you are finished with an instance, return it with `ReleaseObject(...)` so it can be reused.
+
+## 📐 Bounds Helpers
+
+This package also includes runtime helpers for converting Unity `Bounds` into SwiftCollections query volumes:
+
+- `Bounds.ToBoundVolume()`
+- `Bounds.ToFixedBoundVolume()`
+
+## 📦 Sample Scene
+
+This repo includes a complete sample under `Samples/SwiftCollectionsDemo`.
+
+The sample includes:
+
+- `Scenes/DemoScene.unity`
+- pooled projectile, target, query volume, and HUD prefabs
+- sample scripts under `Samples/SwiftCollectionsDemo/Scripts`
+- `Resources/SwiftGameObjectPoolAsset.asset`
+- `SampleSceneGuide.md` with setup, tuning, and script notes
+
+The sample demonstrates:
+
+- explicit `GameObject` pooling with graceful exhaustion handling
+- `SwiftList`, `SwiftDictionary`, and `SwiftHashSet` in scene runtime state
+- `SwiftBVH<int>` broad-phase spatial queries against moving targets
+- live switching between `BVH Query` and `Linear Scan`
 
 ## 📄 License
 

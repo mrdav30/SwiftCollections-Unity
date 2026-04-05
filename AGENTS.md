@@ -18,7 +18,8 @@
 - Prefer SwiftCollections types and helpers over .NET/BCL collections whenever a suitable SwiftCollections type exists.
 - Do not introduce `List<>`, `Dictionary<>`, `HashSet<>`, `Stack<>`, or similar .NET collections in package code unless there is no SwiftCollections equivalent and the reason is explicit.
 - Keep this package as a thin Unity wrapper around SwiftCollections rather than re-implementing core collection behavior here.
-- Preserve Unity package structure and `.meta` files when moving or adding assets.
+- Preserve Unity package structure when moving or adding assets.
+- Agents do not need to generate associated Unity `*.meta` files for newly created assets. Unity Editor will regenerate them on load.
 
 ## GameObjectPool Guidance
 

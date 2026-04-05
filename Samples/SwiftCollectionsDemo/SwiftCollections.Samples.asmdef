@@ -1,0 +1,16 @@
+{
+    "name": "SwiftCollections.Samples",
+    "rootNamespace": "SwiftCollections.Samples",
+    "references": [
+        "SwiftCollections.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

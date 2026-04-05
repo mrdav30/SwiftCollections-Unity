@@ -20,5 +20,12 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
+    },
+    "samples": [
+    {
+      "displayName": "Demo Scene",
+      "description": "A sample scene demonstrating package usage",
+      "path": "Samples/SwiftCollectionsDemo/Scenes/DemoScene"
     }
+  ]
 }
