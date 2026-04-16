@@ -16,16 +16,6 @@ This package is a Unity-specific implementation of the [SwiftCollections](https:
 
 ---
 
-## 🧩 Dependencies
-
-SwiftCollections-Unity depends on the following Unity package:
-
-- [FixedMathSharp-Unity](https://github.com/mrdav30/FixedMathSharp-Unity)
-
-This dependency will be installed automatically by SwiftCollections-Unity.
-
----
-
 ## 🚀 Installation
 
 ### Quick Install
@@ -37,10 +27,6 @@ This dependency will be installed automatically by SwiftCollections-Unity.
 
 1. Download `.unitypackage` file from the [latest release](https://github.com/mrdav30/SwiftCollections-Unity/releases).
 2. Import the package via **Assets → Import Package → Custom Package...**.
-
-Dependencies install automatically.
-
-If Unity shows compile errors after install, run **Tools → mrdav30 → Repair com.mrdav30.swiftcollections Dependencies**
 
 ---
 
@@ -96,10 +82,9 @@ public class BulletSpawner : MonoBehaviour
 
 ## 📐 Bounds Helpers
 
-This package also includes runtime helpers for converting Unity `Bounds` into SwiftCollections query volumes:
+This package includes runtime helpers for converting Unity `Bounds` into SwiftCollections query volumes via `Bounds.ToBoundVolume()`.
 
-- `Bounds.ToBoundVolume()`
-- `Bounds.ToFixedBoundVolume()`
+For `FixedMathSharp` support, the companion package includes `Bounds.ToFixedBoundVolume()` which converts a Unity `Bounds` into a `FixedBoundVolume` that can be used with the fixed-point spatial queries in SwiftCollections.
 
 ## 📦 Sample Scene
 
