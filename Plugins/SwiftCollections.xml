@@ -3172,194 +3172,211 @@
         </member>
         <member name="T:SwiftCollections.Query.SwiftBVH`1">
             <summary>
-            Represents a Bounding Volume Hierarchy (BVH) optimized for spatial queries.
+            Represents a numerics-backed Bounding Volume Hierarchy (BVH) optimized for spatial queries.
             </summary>
         </member>
         <member name="M:SwiftCollections.Query.SwiftBVH`1.#ctor(System.Int32)">
             <summary>
             Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftBVH`1"/> class with the specified capacity.
             </summary>
+            <param name="capacity">Initial tree capacity.</param>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVH`1.NodePool">
+        <member name="T:SwiftCollections.Query.SwiftBVH`2">
+            <summary>
+            Represents a Bounding Volume Hierarchy (BVH) optimized for spatial queries.
+            </summary>
+            <remarks>
+            <para>
+            This class is not thread-safe. Concurrent access from multiple threads must be
+            serialized externally (e.g., with a lock or by limiting access to a single thread).
+            </para>
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftBVH`2"/> class with the specified capacity.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftBVH`2.NodePool">
             <summary>
             Gets the underlying pool of nodes used in the BVH.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVH`1.RootNode">
+        <member name="P:SwiftCollections.Query.SwiftBVH`2.RootNode">
             <summary>
             Gets the root node of the BVH.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVH`1.RootNodeIndex">
+        <member name="P:SwiftCollections.Query.SwiftBVH`2.RootNodeIndex">
             <summary>
             Gets the index of the root node in the BVH.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVH`1.Count">
+        <member name="P:SwiftCollections.Query.SwiftBVH`2.Count">
             <summary>
             Gets the total number of leaf nodes in the BVH.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.AllocateNode(`0,SwiftCollections.Query.IBoundVolume,System.Boolean)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.AllocateNode(`0,`1,System.Boolean)">
             <summary>
             Allocates a new node with the specified value, bounds, and leaf status.
             Reuses indices from the freelist when available.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.Insert(`0,SwiftCollections.Query.IBoundVolume)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.Insert(`0,`1)">
             <summary>
             Inserts a bounding volume with an associated value into the BVH.
             Ensures tree balance and updates hash buckets.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.InsertIntoTree(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.InsertIntoTree(System.Int32,System.Int32)">
             <summary>
             Inserts a node into the tree while maintaining tree balance.
             Adjusts parent-child relationships as necessary.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.InsertIntoBuckets(`0,System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.InsertIntoBuckets(`0,System.Int32)">
             <summary>
             Inserts a value into the hash bucket for fast lookup.
             Handles collisions with linear probing.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.UpdateEntryBounds(`0,SwiftCollections.Query.IBoundVolume)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.UpdateEntryBounds(`0,`1)">
             <summary>
             Updates the bounding volume of a node and propagates changes up the tree.
             Ensures consistency in parent bounds and subtree sizes.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.Remove(`0)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.Remove(`0)">
             <summary>
             Removes a value and its associated bounding volume from the BVH.
             Updates tree structure and clears hash bucket entries.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.RemoveFromBuckets(`0)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.RemoveFromBuckets(`0)">
             <summary>
             Removes an entry from the hash buckets, resolving collisions as necessary.
-            Throws an exception if the value is not found.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.RemoveFromTree(System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.RemoveFromTree(System.Int32)">
             <summary>
-            Recursively removes a node and updates the bounds and subtree sizes of parents.
-            Ensures integrity of the BVH structure.
+            Removes a leaf node from the tree, collapses its parent, and propagates
+            bound and subtree-size updates upward.  Every internal node is guaranteed
+            to have exactly two children after this operation completes.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.EnsureCapacity(System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.EnsureCapacity(System.Int32)">
             <summary>
             Ensures the BVH has sufficient capacity, resizing the node pool and buckets if needed.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.Resize(System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.Resize(System.Int32)">
             <summary>
             Resizes the internal node pool to accommodate additional nodes.
             Preserves existing nodes and reinitializes the expanded capacity.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.ResizeBuckets(System.Int32)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.ResizeBuckets(System.Int32)">
             <summary>
             Resizes and rehashes the hash buckets to maintain lookup efficiency.
             Rehashes existing nodes after resizing.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.GetCombinedBounds(SwiftCollections.Query.SwiftBVHNode{`0},SwiftCollections.Query.SwiftBVHNode{`0})">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.GetCombinedBounds(SwiftCollections.Query.SwiftBVHNode{`0,`1},SwiftCollections.Query.SwiftBVHNode{`0,`1})">
             <summary>
             Gets the combined bounding volume of two child nodes.
             Handles cases where one or both children are missing.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.Query(SwiftCollections.Query.IBoundVolume,System.Collections.Generic.ICollection{`0})">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.Query(`1,System.Collections.Generic.ICollection{`0})">
             <summary>
             Queries the BVH for values whose bounding volumes intersect with the specified volume.
             Uses a stack-based approach for efficient traversal.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.FindEntry(`0)">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.FindEntry(`0)">
             <summary>
             Finds the index of a node by its value in the BVH using hash buckets.
             Returns -1 if the value is not found.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVH`1.Clear">
+        <member name="M:SwiftCollections.Query.SwiftBVH`2.Clear">
             <summary>
             Clears the BVH, resetting all nodes, buckets, and metadata.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Query.SwiftBVHNode`1">
+        <member name="T:SwiftCollections.Query.SwiftBVHNode`2">
             <summary>
             Represents a node in a Bounding Volume Hierarchy (BVH).
             Stores spatial data and maintains hierarchical relationships.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.Value">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.Value">
             <summary>
             Gets or sets the value stored in the node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.Bounds">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.Bounds">
             <summary>
             Gets or sets the bounding volume of the node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.ParentIndex">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.ParentIndex">
             <summary>
             Gets or sets the index of the parent node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.HasParent">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.HasParent">
             <summary>
             Determines if the node has a parent.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.LeftChildIndex">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.LeftChildIndex">
             <summary>
             Gets or sets the index of the left child node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.HasLeftChild">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.HasLeftChild">
             <summary>
             Determines if the node has a left child.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.RightChildIndex">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.RightChildIndex">
             <summary>
             Gets or sets the index of the right child node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.HasRightChild">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.HasRightChild">
             <summary>
             Determines if the node has a right child.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.HasChildren">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.HasChildren">
             <summary>
             Determines if the node has any children.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.IsLeaf">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.IsLeaf">
             <summary>
             Gets or sets a value indicating whether this node is a leaf node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.SubtreeSize">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.SubtreeSize">
             <summary>
             Tracks the number of nodes in the subtree rooted at this node.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.IsAllocated">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.IsAllocated">
             <summary>
             Determines whether or not this node has been allocated from the pool or is a pooled instance
             </summary>
         </member>
-        <member name="P:SwiftCollections.Query.SwiftBVHNode`1.Default">
+        <member name="P:SwiftCollections.Query.SwiftBVHNode`2.Default">
             <summary>
-            Provides a custom default instance of <see cref="T:SwiftCollections.Query.SwiftBVHNode`1"/>.
+            Provides a custom default instance of <see cref="T:SwiftCollections.Query.SwiftBVHNode`2"/>.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftBVHNode`1.Reset">
+        <member name="M:SwiftCollections.Query.SwiftBVHNode`2.Reset">
             <summary>
             Resets the node to its default state.
             Clears all references and metadata.
@@ -3400,6 +3417,13 @@
             Marks the bounding volume as dirty, indicating its properties need recalculation.
             </summary>
         </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.#ctor(System.Numerics.Vector3,System.Numerics.Vector3)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.BoundVolume"/> struct with the specified minimum and maximum points.
+            </summary>
+            <param name="min">The minimum point of the bounding volume.</param>
+            <param name="max">The maximum point of the bounding volume.</param>
+        </member>
         <member name="P:SwiftCollections.Query.BoundVolume.Min">
             <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._min"/>
         </member>
@@ -3421,91 +3445,391 @@
             </summary>
         </member>
         <member name="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc cref="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
+            <inheritdoc />
         </member>
-        <member name="T:SwiftCollections.Query.FixedBoundVolume">
+        <member name="M:SwiftCollections.Query.BoundVolume.Intersects(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.GetCost(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.BoundsEquals(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Query.IBoundVolume`1">
             <summary>
-            Represents an axis-aligned bounding box (AABB) in 3D space using Fixed-Point Math.
+            Represents a strongly-typed bounding volume contract for spatial operations.
             </summary>
+            <typeparam name="TVolume">The concrete bounding volume type.</typeparam>
         </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._min">
-            <summary>
-            The minimum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._max">
-            <summary>
-            The maximum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._center">
-            <summary>
-            The center of the bounding volume as the midpoint of the minimum and maximum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._size">
-            <summary>
-            The size of the bounding volume as the difference between the maximum and minimum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._volume">
-            <summary>
-            The volume of the bounding box, calculated as the product of its dimensions.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.FixedBoundVolume._isDirty">
-            <summary>
-            Marks the bounding volume as dirty, indicating its properties need recalculation.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Min">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._min"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Max">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._max"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Center">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._center"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Size">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._size"/>
-        </member>
-        <member name="P:SwiftCollections.Query.FixedBoundVolume.Volume">
-            <inheritdoc cref="F:SwiftCollections.Query.FixedBoundVolume._volume"/>
-        </member>
-        <member name="M:SwiftCollections.Query.FixedBoundVolume.RecalculateMeta">
-            <summary>
-            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.FixedBoundVolume)">
-            <inheritdoc cref="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.IBoundVolume)"/>
-        </member>
-        <member name="T:SwiftCollections.Query.IBoundVolume">
-            <summary>
-            Represents a generic interface for a bounding volume, supporting spatial queries and operations.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.Union(SwiftCollections.Query.IBoundVolume)">
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.Union(`0)">
             <summary>
             Combines the current bounding volume with another, creating a new volume that encloses both.
             </summary>
             <param name="other">The other bounding volume to combine with.</param>
             <returns>A new bounding volume that contains both the current and other volumes.</returns>
         </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.Intersects(SwiftCollections.Query.IBoundVolume)">
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.Intersects(`0)">
             <summary>
             Determines whether the current bounding volume intersects with another.
             </summary>
             <param name="other">The other bounding volume to test for intersection.</param>
             <returns>True if the volumes intersect; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume.GetCost(SwiftCollections.Query.IBoundVolume)">
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.GetCost(`0)">
             <summary>
             Calculates the cost of combining the current bounding volume with another.
+            Used as the SAH insertion metric; returned as <see langword="long"/> to avoid
+            overflow in worlds with large coordinate ranges.
             </summary>
             <param name="other">The other bounding volume to consider.</param>
             <returns>The cost metric of the union operation.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.BoundsEquals(`0)">
+            <summary>
+            Determines whether the bounds represent the same spatial region.
+            </summary>
+            <param name="other">The other bounding volume to compare against.</param>
+            <returns>True when both bounds share the same minimum and maximum extents; otherwise, false.</returns>
+        </member>
+        <member name="T:SwiftCollections.Query.IOctreeBoundsPartitioner`1">
+            <summary>
+            Maps octree subdivision and containment behavior for a specific volume backend.
+            </summary>
+            <typeparam name="TVolume">The volume type used by the octree.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Query.IOctreeBoundsPartitioner`1.ContainsBounds(`0,`0)">
+            <summary>
+            Determines whether <paramref name="inner"/> is fully contained within <paramref name="outer"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.IOctreeBoundsPartitioner`1.CanSubdivide(`0)">
+            <summary>
+            Determines whether the supplied node bounds can be subdivided further.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.IOctreeBoundsPartitioner`1.TryGetContainingChildIndex(`0,`0,System.Int32@)">
+            <summary>
+            Attempts to resolve the child octant that fully contains the supplied entry bounds.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.IOctreeBoundsPartitioner`1.CreateChildBounds(`0,System.Int32)">
+            <summary>
+            Creates the child-octant bounds for the supplied parent bounds and child index.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftOctree`1">
+            <summary>
+            Represents a numerics-backed octree optimized for hierarchical spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`1.#ctor(SwiftCollections.Query.BoundVolume,SwiftCollections.Query.SwiftOctreeOptions,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftOctree`1"/> class.
+            </summary>
+            <param name="worldBounds">The immutable world bounds covered by the octree.</param>
+            <param name="options">Backend-neutral octree options.</param>
+            <param name="minNodeSize">The minimum child-node axis length allowed for numerics subdivision.</param>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftOctree`2">
+            <summary>
+            Represents a mutable octree that stores keyed bounding volumes within immutable world bounds.
+            </summary>
+            <typeparam name="TKey">The key used to identify each stored entry.</typeparam>
+            <typeparam name="TVolume">The volume type used for octree registration and queries.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.#ctor(`1,SwiftCollections.Query.SwiftOctreeOptions,SwiftCollections.Query.IOctreeBoundsPartitioner{`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftOctree`2"/> class.
+            </summary>
+            <param name="worldBounds">The immutable world bounds covered by the octree.</param>
+            <param name="options">Subdivision options for the octree.</param>
+            <param name="boundsPartitioner">The backend-owned partitioner that maps bounds into octants.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctree`2.Count">
+            <summary>
+            Gets the number of active entries stored in the octree.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctree`2.WorldBounds">
+            <summary>
+            Gets the immutable world bounds covered by this octree.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctree`2.Options">
+            <summary>
+            Gets the subdivision options used by this octree.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.Insert(`0,`1)">
+            <summary>
+            Inserts a new entry or replaces the bounds of an existing key.
+            </summary>
+            <param name="key">The entry key.</param>
+            <param name="bounds">The entry bounds.</param>
+            <returns><c>true</c> when a new key was added; <c>false</c> when an existing key was replaced.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.Remove(`0)">
+            <summary>
+            Removes an entry from the octree.
+            </summary>
+            <param name="key">The entry key.</param>
+            <returns><c>true</c> when the key existed and was removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.TryGetBounds(`0,`1@)">
+            <summary>
+            Attempts to retrieve the bounds registered for the supplied key.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.UpdateEntryBounds(`0,`1)">
+            <summary>
+            Updates the bounds for an existing entry.
+            </summary>
+            <param name="key">The entry key.</param>
+            <param name="newBounds">The replacement bounds.</param>
+            <returns><c>true</c> when the key existed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.Contains(`0)">
+            <summary>
+            Determines whether the octree contains the specified key.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.Query(`1,System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Queries the octree and returns only entries whose bounds intersect the supplied query volume.
+            </summary>
+            <param name="queryBounds">The bounds used to test for intersection.</param>
+            <param name="results">The collection that receives intersecting keys.</param>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctree`2.Clear">
+            <summary>
+            Removes all entries from the octree while preserving the configured world bounds.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftOctreeOptions">
+            <summary>
+            Controls node subdivision behavior for <see cref="T:SwiftCollections.Query.SwiftOctree`2"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctreeOptions.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftOctreeOptions"/> struct.
+            </summary>
+            <param name="maxDepth">The maximum child depth allowed below the root node.</param>
+            <param name="nodeCapacity">The maximum number of entries a node should hold before attempting to split.</param>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctreeOptions.#ctor(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftOctreeOptions"/> struct.
+            </summary>
+            <param name="maxDepth">The maximum child depth allowed below the root node.</param>
+            <param name="nodeCapacity">The maximum number of entries a node should hold before attempting to split.</param>
+            <param name="enableMergeOnRemove">Whether empty child regions should collapse back into their parent after removals.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctreeOptions.MaxDepth">
+            <summary>
+            Gets the maximum child depth allowed below the root node.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctreeOptions.NodeCapacity">
+            <summary>
+            Gets the preferred number of entries per node before subdivision is attempted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftOctreeOptions.EnableMergeOnRemove">
+            <summary>
+            Gets a value indicating whether nodes should merge after removals leave sparse children.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctreeOptions.Equals(SwiftCollections.Query.SwiftOctreeOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctreeOptions.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftOctreeOptions.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Query.ISpatialHashCellMapper`1">
+            <summary>
+            Maps a query volume to the inclusive cell range occupied by that volume.
+            </summary>
+            <typeparam name="TVolume">The volume type used by the spatial hash.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Query.ISpatialHashCellMapper`1.GetCellRange(`0,SwiftCollections.Query.SwiftSpatialHashCellIndex@,SwiftCollections.Query.SwiftSpatialHashCellIndex@)">
+            <summary>
+            Calculates the inclusive minimum and maximum occupied cell coordinates for the supplied volume.
+            </summary>
+            <param name="bounds">The volume to map into cell space.</param>
+            <param name="minCell">The minimum occupied cell coordinate.</param>
+            <param name="maxCell">The maximum occupied cell coordinate.</param>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftSpatialHash`1">
+            <summary>
+            Represents a numerics-backed spatial hash optimized for high-churn broad-phase spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`1.#ctor(System.Int32,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHash`1"/> class with the specified capacity and cell size.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`1.#ctor(System.Int32,System.Single,SwiftCollections.Query.SwiftSpatialHashOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHash`1"/> class with the specified capacity, cell size, and options.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftSpatialHash`2">
+            <summary>
+            Represents a mutable spatial hash that indexes keyed bounding volumes into deterministic integer grid cells.
+            </summary>
+            <typeparam name="TKey">The key used to identify each stored entry.</typeparam>
+            <typeparam name="TVolume">The volume type used for broad-phase registration and queries.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.#ctor(System.Int32,SwiftCollections.Query.ISpatialHashCellMapper{`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHash`2"/> class.
+            </summary>
+            <param name="capacity">The initial entry capacity.</param>
+            <param name="cellMapper">The mapper that projects volumes into deterministic cell coordinates.</param>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.#ctor(System.Int32,SwiftCollections.Query.ISpatialHashCellMapper{`1},SwiftCollections.Query.SwiftSpatialHashOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHash`2"/> class.
+            </summary>
+            <param name="capacity">The initial entry capacity.</param>
+            <param name="cellMapper">The mapper that projects volumes into deterministic cell coordinates.</param>
+            <param name="options">Spatial hash query options.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHash`2.Count">
+            <summary>
+            Gets the number of active entries stored in the spatial hash.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHash`2.Options">
+            <summary>
+            Gets the options used by this spatial hash.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.Insert(`0,`1)">
+            <summary>
+            Inserts a new entry or replaces the bounds of an existing key.
+            </summary>
+            <param name="key">The entry key.</param>
+            <param name="bounds">The entry bounds.</param>
+            <returns><c>true</c> when a new key was added; <c>false</c> when an existing key was replaced.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.Remove(`0)">
+            <summary>
+            Removes an entry from the spatial hash.
+            </summary>
+            <param name="key">The entry key.</param>
+            <returns><c>true</c> when the key existed and was removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.UpdateEntryBounds(`0,`1)">
+            <summary>
+            Updates the bounds for an existing entry.
+            </summary>
+            <param name="key">The entry key.</param>
+            <param name="newBounds">The replacement bounds.</param>
+            <returns><c>true</c> when the key existed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.Contains(`0)">
+            <summary>
+            Determines whether the spatial hash contains the specified key.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.TryGetBounds(`0,`1@)">
+            <summary>
+            Attempts to retrieve the bounds registered for the supplied key.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.Query(`1,System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Queries the spatial hash and returns only entries whose bounds intersect the supplied query volume.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.QueryNeighborhood(`1,System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Queries the spatial hash using the supplied query volume plus the configured neighborhood padding.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures the spatial hash can store the specified number of entries without growing its entry storage.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.Clear">
+            <summary>
+            Removes all entries and cell registrations from the spatial hash.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftSpatialHashCellIndex">
+            <summary>
+            Represents an integer cell coordinate in a spatial hash grid.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashCellIndex.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHashCellIndex"/> struct.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHashCellIndex.X">
+            <summary>
+            Gets the X-axis cell coordinate.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHashCellIndex.Y">
+            <summary>
+            Gets the Y-axis cell coordinate.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHashCellIndex.Z">
+            <summary>
+            Gets the Z-axis cell coordinate.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashCellIndex.Equals(SwiftCollections.Query.SwiftSpatialHashCellIndex)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashCellIndex.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashCellIndex.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashCellIndex.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftSpatialHashOptions">
+            <summary>
+            Controls neighborhood query behavior for <see cref="T:SwiftCollections.Query.SwiftSpatialHash`2"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHashOptions.Default">
+            <summary>
+            The default options value.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashOptions.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftSpatialHashOptions"/> struct.
+            </summary>
+            <param name="neighborhoodPadding">The number of additional cells to include around neighborhood queries.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.SwiftSpatialHashOptions.NeighborhoodPadding">
+            <summary>
+            Gets the number of extra cells queried beyond the mapped volume range when using neighborhood queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashOptions.Equals(SwiftCollections.Query.SwiftSpatialHashOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashOptions.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHashOptions.GetHashCode">
+            <inheritdoc />
         </member>
         <member name="T:SwiftCollections.Array2DState`1">
             <remarks>
