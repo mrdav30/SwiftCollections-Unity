@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SwiftCollections.FixedMathSharp</name>
+    </assembly>
+    <members>
+        <member name="T:SwiftCollections.Query.SwiftFixedBVH`1">
+            <summary>
+            Represents a fixed-point Bounding Volume Hierarchy (BVH) optimized for spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftFixedBVH`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedBVH`1"/> class with the specified capacity.
+            </summary>
+            <param name="capacity">Initial tree capacity.</param>
+        </member>
+        <member name="T:SwiftCollections.Query.FixedBoundVolume">
+            <summary>
+            Represents an axis-aligned bounding box (AABB) in 3D space using fixed-point math.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.#ctor(FixedMathSharp.Vector3d,FixedMathSharp.Vector3d)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.FixedBoundVolume"/> struct.
+            </summary>
+            <param name="min">The minimum point of the volume.</param>
+            <param name="max">The maximum point of the volume.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Min">
+            <summary>
+            Gets the minimum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Max">
+            <summary>
+            Gets the maximum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Center">
+            <summary>
+            Gets the center point of the bounding volume.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Size">
+            <summary>
+            Gets the axis-aligned size of the bounding volume.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Query.FixedBoundVolume.Volume">
+            <summary>
+            Gets the volume of the bounding box.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.Union(SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Creates a new volume that represents the union of this volume and the specified volume.
+            </summary>
+            <remarks>
+            The resulting volume is the smallest axis-aligned bounding box that fully contains both input volumes.
+            </remarks>
+            <param name="other">
+            The volume to combine with this volume. 
+            The resulting volume will encompass both this volume and the specified volume.
+            </param>
+            <returns>A new FixedBoundVolume that contains both this volume and the specified volume.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.Intersects(SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Determines whether this volume intersects with the specified volume.
+            </summary>
+            <param name="other">The volume to test for intersection with this volume.</param>
+            <returns>true if the volumes intersect; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.GetCost(SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Calculates the additional volume required to expand the current volume to fully contain the specified volume.
+            </summary>
+            <param name="other">The volume to be encompassed by the current volume.</param>
+            <returns>
+            The minimum additional volume needed to contain the specified volume. 
+            Returns 0 if the current volume already contains the specified volume.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.BoundsEquals(SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Determines whether the bounds of this volume are equal to those of the specified volume.
+            </summary>
+            <param name="other">A <see cref="T:SwiftCollections.Query.FixedBoundVolume"/> to compare with the current volume.</param>
+            <returns>true if both the minimum and maximum bounds of the volumes are equal; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.Equals(SwiftCollections.Query.FixedBoundVolume)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.op_Equality(SwiftCollections.Query.FixedBoundVolume,SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Determines whether two BoundVolume instances are equal.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.op_Inequality(SwiftCollections.Query.FixedBoundVolume,SwiftCollections.Query.FixedBoundVolume)">
+            <summary>
+            Determines whether two BoundVolume instances are not equal.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolume.ToString">
+            <summary>
+            Returns a string that represents the current object, including the minimum and maximum values.
+            </summary>
+            <returns>A string in the format "Min: {Min}, Max: {Max}" that displays the minimum and maximum values of the object.</returns>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftFixedOctree`1">
+            <summary>
+            Represents a fixed-point octree optimized for deterministic hierarchical spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftFixedOctree`1.#ctor(SwiftCollections.Query.FixedBoundVolume,SwiftCollections.Query.SwiftOctreeOptions,FixedMathSharp.Fixed64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedOctree`1"/> class.
+            </summary>
+            <param name="worldBounds">The immutable world bounds covered by the octree.</param>
+            <param name="options">Backend-neutral octree options.</param>
+            <param name="minNodeSize">The minimum child-node axis length allowed for fixed-point subdivision.</param>
+        </member>
+        <member name="T:SwiftCollections.Query.SwiftFixedSpatialHash`1">
+            <summary>
+            Represents a fixed-point spatial hash optimized for deterministic broad-phase spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftFixedSpatialHash`1.#ctor(System.Int32,FixedMathSharp.Fixed64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedSpatialHash`1"/> class with the specified capacity and cell size.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftFixedSpatialHash`1.#ctor(System.Int32,FixedMathSharp.Fixed64,SwiftCollections.Query.SwiftSpatialHashOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedSpatialHash`1"/> class with the specified capacity, cell size, and options.
+            </summary>
+        </member>
+    </members>
+</doc>

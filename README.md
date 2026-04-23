@@ -1,135 +1,54 @@
 # SwiftCollections-Unity
 
-![SwiftCollections Icon](https://raw.githubusercontent.com/mrdav30/SwiftCollections/main/icon.png)
+Unity package host for SwiftCollections.
 
-**SwiftCollections** is a Unity package that provides high-performance, memory-efficient data structures optimized for game development and real-time applications.
+This repository contains four installable Unity Package Manager variants. Choose
+one package only. The variants overlap and are not meant to be installed
+together.
 
-This package is a Unity-specific implementation of the [SwiftCollections](https://github.com/mrdav30/SwiftCollections) library.
+## Which Package Should I Use?
 
----
+| Package | Use it when | Install |
+| --- | --- | --- |
+| `com.mrdav30.swiftcollections` | You want the default SwiftCollections package for standard Unity and `Bounds` workflows. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections` |
+| `com.mrdav30.swiftcollections.lean` | You want the same core package without `MemoryPack`. Prefer this for Burst AOT or your own serialization stack. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean` |
+| `com.mrdav30.swiftcollections.fixedmathsharp` | You use `FixedMathSharp` and want SwiftCollections plus fixed-point query helpers such as `FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp` |
+| `com.mrdav30.swiftcollections.fixedmathsharp.lean` | You use `FixedMathSharp` and want the no-`MemoryPack` variant for Burst-oriented or custom-serialization setups. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean` |
 
-## 🛠️ Key Features
+## How The Variants Differ
 
-- **Optimized for Performance**: Designed for low time complexity and minimal memory allocations.
-- **Versatile Use Cases**: Suitable for data structures in 3D environments and complex spatial queries.
-- **Memory-Conscious Data Structures**: Custom allocators and lightweight collections minimize GC pressure.
+`Lean` variants:
 
----
+- Omit `MemoryPack`.
+- Prefer these when Burst AOT compatibility or a custom serialization layer is
+  more important than the default serialization path.
 
-## 🚀 Installation
+`FixedMathSharp` variants:
 
-### Quick Install
+- Are alternative SwiftCollections package choices, not add-on packages to stack
+  with the non-FixedMathSharp variants.
+- Add fixed-point query and bounds interop for projects that use
+  `FixedMathSharp`.
+- Use a non-FixedMathSharp variant if you only need the regular Unity
+  `Bounds.ToBoundVolume()` helpers.
 
-1. Open **Package Manager → + → Add package from Git URL** and paste:
-    <https://github.com/mrdav30/SwiftCollections-Unity.git>
+## FixedMathSharp Dependency Handling
 
-### Manual Installation
+The `*.fixedmathsharp*` packages include an editor-side dependency installer
+that attempts to add the matching `FixedMathSharp-Unity` Git dependency for
+you.
 
-1. Download `.unitypackage` file from the [latest release](https://github.com/mrdav30/SwiftCollections-Unity/releases).
-2. Import the package via **Assets → Import Package → Custom Package...**.
+If Unity does not resolve that dependency cleanly, use the matching install URL
+below or run the package repair menu item under `Tools > mrdav30`.
 
----
+- Standard dependency:
+  `https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp`
+- Lean dependency:
+  `https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean`
 
-## 🛠️ Compatibility
+## Notes
 
-- **.NET Standard:** 2.1
-- **Unity3D Version:** 2022.3+
-- **Platforms:** Windows, Linux, macOS, WebGL, Mobile
-
----
-
-## ♻️ GameObject Pooling
-
-This package includes a lightweight `GameObject` pool under `Runtime/GameObjectPool`.
-
-### Setup
-
-1. Create a pool asset via **Assets → Create → SwiftCollections → SwiftGameObjectPoolAsset**.
-2. Save it as `Resources/SwiftGameObjectPoolAsset.asset` so `SwiftGameObjectPoolManager.Shared` can load it.
-3. Add one or more pool entries and configure:
-   `Pool Name` — string ID used at runtime.
-   `Prefab` — the object to spawn.
-   `Budget` — max live instances for that pool.
-   `Prewarm` — optionally create the full pool up front.
-
-### Usage
-
-```csharp
-using SwiftCollections.Pool;
-using UnityEngine;
-
-public class BulletSpawner : MonoBehaviour
-{
-    private const string BulletPoolId = "Bullet";
-
-    public void Fire(Vector3 position, Quaternion rotation)
-    {
-        if (!SwiftGameObjectPoolManager.Shared.TryGetObject(BulletPoolId, out GameObject bullet))
-            return;
-
-        bullet.transform.SetPositionAndRotation(position, rotation);
-        bullet.SetActive(true);
-    }
-
-    public void ReturnBullet(GameObject bullet)
-    {
-        SwiftGameObjectPoolManager.Shared.ReleaseObject(BulletPoolId, bullet);
-    }
-}
-```
-
-`TryGetObject(...)` returns `false` when the pool name is missing or every instance is currently checked out. If you prefer a throwing API, `GetObject(...)` is also available. Both methods return the pooled instance inactive, so configure it and enable it when ready. When you are finished with an instance, return it with `ReleaseObject(...)` so it can be reused.
-
-## 📐 Bounds Helpers
-
-This package includes runtime helpers for converting Unity `Bounds` into SwiftCollections query volumes via `Bounds.ToBoundVolume()`.
-
-For `FixedMathSharp` support, the companion package includes `Bounds.ToFixedBoundVolume()` which converts a Unity `Bounds` into a `FixedBoundVolume` that can be used with the fixed-point spatial queries in SwiftCollections.
-
-## 📦 Sample Scene
-
-This repo includes a complete sample under `Samples/SwiftCollectionsDemo`.
-
-The sample includes:
-
-- `Scenes/DemoScene.unity`
-- pooled projectile, target, query volume, and HUD prefabs
-- sample scripts under `Samples/SwiftCollectionsDemo/Scripts`
-- `Resources/SwiftGameObjectPoolAsset.asset`
-- `SampleSceneGuide.md` with setup, tuning, and script notes
-
-The sample demonstrates:
-
-- explicit `GameObject` pooling with graceful exhaustion handling
-- `SwiftList`, `SwiftDictionary`, and `SwiftHashSet` in scene runtime state
-- `SwiftBVH<int>` broad-phase spatial queries against moving targets
-- live switching between `BVH Query` and `Linear Scan`
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-See the following files for details:
-
-- LICENSE – standard MIT license
-- NOTICE – additional terms regarding project branding and redistribution
-- COPYRIGHT – authorship information
-
----
-
-## 👥 Contributors
-
-- **mrdav30** - Lead Developer
-- Contributions are welcome! Feel free to submit pull requests or report issues.
-
----
-
-## 💬 Community & Support
-
-For questions, discussions, or general support, join the official Discord community:
-
-👉 **[Join the Discord Server](https://discord.gg/mhwK2QFNBA)**
-
-For bug reports or feature requests, please open an issue in this repository.
-
-We welcome feedback, contributors, and community discussion across all projects.
+- All packages in this repo target Unity `2022.3+`.
+- The underlying .NET library lives here:
+  [SwiftCollections](https://github.com/mrdav30/SwiftCollections)
+- Each package folder keeps a short, package-specific install README.

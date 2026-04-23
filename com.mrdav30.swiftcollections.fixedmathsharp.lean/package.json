@@ -1,0 +1,32 @@
+{
+    "name": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
+    "version": "4.0.1",
+    "displayName": "SwiftCollections.FixedMathSharp.Lean",
+    "description": "Companion package that provided fixed-point bounds to use in SwiftCollections query structures. MemoryPack not included. Requires FixedMathSharp-Unity.",
+    "unity": "2022.3",
+    "author": {
+        "name": "David Oravsky",
+        "email": "david.oravsky@gmail.com",
+        "url": "https://github.com/mrdav30"
+    },
+    "keywords": [
+        "collections",
+        "data structures",
+        "high performance",
+        "unity",
+        "memory efficient",
+        "deterministic"
+    ],
+    "dependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
+    },
+    "samples": [
+    {
+      "displayName": "Demo Scene",
+      "description": "A sample scene demonstrating package usage",
+      "path": "Samples/SwiftCollectionsDemo/Scenes/DemoScene"
+    }
+  ]
+}

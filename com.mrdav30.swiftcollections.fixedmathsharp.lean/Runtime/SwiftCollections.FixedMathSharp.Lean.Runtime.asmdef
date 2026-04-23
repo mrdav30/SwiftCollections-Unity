@@ -1,0 +1,16 @@
+{
+    "name": "SwiftCollections.FixedMathSharp.Lean.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ee06434641accdc4bbbc7acbdb9ac78f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
