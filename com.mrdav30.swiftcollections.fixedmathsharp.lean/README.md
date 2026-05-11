@@ -1,9 +1,10 @@
-# SwiftCollections for Unity (FixedMathSharp Lean Variant)
+# SwiftCollections for Unity (FixedMathSharp Lean Module)
 
-SwiftCollections variant for `FixedMathSharp` projects without `MemoryPack`.
+FixedMathSharp interop module for the lean SwiftCollections package.
 
-This is the Burst-friendlier FixedMathSharp option when you want to avoid the
-default serialization dependency. Install one SwiftCollections variant only.
+Use this package alongside `com.mrdav30.swiftcollections.lean` when you want
+the no-`MemoryPack` base package plus fixed-point query helpers such as
+`FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`.
 
 ## Install
 
@@ -13,6 +14,10 @@ default serialization dependency. Install one SwiftCollections variant only.
 
 This package includes an editor-side dependency installer that attempts to add
 the matching `FixedMathSharp-Unity` package automatically.
+
+This package also requires the lean SwiftCollections base package:
+
+`https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean`
 
 If Unity does not resolve that dependency cleanly, install it manually or run:
 
@@ -24,20 +29,16 @@ Manual dependency URL:
 
 ## When To Use This Package
 
-- You need SwiftCollections with `FixedMathSharp` interop.
-- You want the no-`MemoryPack` variant for Burst-oriented or custom-serialization
-  setups.
-- You want the FixedMathSharp package choice instead of the standard Unity-only
-  variants.
+- Your project already uses `com.mrdav30.swiftcollections.lean`.
+- You need `FixedMathSharp` interop for SwiftCollections query structures.
+- You want the module that matches the no-`MemoryPack` base package.
 
-## Choose Another Variant If
+## Choose The Standard Module If
 
-- Use `com.mrdav30.swiftcollections.fixedmathsharp` if you want the standard
-  FixedMathSharp-enabled build.
-- Use a non-FixedMathSharp variant if you do not need fixed-point query
-  volumes.
+- Use `com.mrdav30.swiftcollections.fixedmathsharp` only when your base package
+  is `com.mrdav30.swiftcollections`.
 
 ## Related
 
-- Repo overview and variant selection:
+- Repo overview and package selection:
   [SwiftCollections-Unity](https://github.com/mrdav30/SwiftCollections-Unity)

@@ -2,44 +2,47 @@
 
 Unity package host for SwiftCollections.
 
-This repository contains four installable Unity Package Manager variants. Choose
-one package only. The variants overlap and are not meant to be installed
-together.
+This repository contains two base Unity Package Manager packages and two
+optional FixedMathSharp modules. Choose one base package, then add the matching
+FixedMathSharp module only if your project uses `FixedMathSharp`.
 
-## Which Package Should I Use?
+## Which Packages Should I Use?
 
 | Package | Use it when | Install |
 | --- | --- | --- |
 | `com.mrdav30.swiftcollections` | You want the default SwiftCollections package for standard Unity and `Bounds` workflows. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections` |
 | `com.mrdav30.swiftcollections.lean` | You want the same core package without `MemoryPack`. Prefer this for Burst AOT or your own serialization stack. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean` |
-| `com.mrdav30.swiftcollections.fixedmathsharp` | You use `FixedMathSharp` and want SwiftCollections plus fixed-point query helpers such as `FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp` |
-| `com.mrdav30.swiftcollections.fixedmathsharp.lean` | You use `FixedMathSharp` and want the no-`MemoryPack` variant for Burst-oriented or custom-serialization setups. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean` |
+| `com.mrdav30.swiftcollections.fixedmathsharp` | You already use `com.mrdav30.swiftcollections` and need `FixedMathSharp` query helpers such as `FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp` |
+| `com.mrdav30.swiftcollections.fixedmathsharp.lean` | You already use `com.mrdav30.swiftcollections.lean` and need the matching no-`MemoryPack` FixedMathSharp module. | `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean` |
 
-## How The Variants Differ
+## How The Packages Fit Together
 
-`Lean` variants:
+Base packages:
 
-- Omit `MemoryPack`.
-- Prefer these when Burst AOT compatibility or a custom serialization layer is
-  more important than the default serialization path.
+- Install `com.mrdav30.swiftcollections` for the standard build.
+- Install `com.mrdav30.swiftcollections.lean` when you want the no-`MemoryPack`
+  build for Burst AOT or custom serialization workflows.
+- Do not install both base packages together.
 
-`FixedMathSharp` variants:
+FixedMathSharp modules:
 
-- Are alternative SwiftCollections package choices, not add-on packages to stack
-  with the non-FixedMathSharp variants.
-- Add fixed-point query and bounds interop for projects that use
-  `FixedMathSharp`.
-- Use a non-FixedMathSharp variant if you only need the regular Unity
-  `Bounds.ToBoundVolume()` helpers.
+- Install `com.mrdav30.swiftcollections.fixedmathsharp` alongside
+  `com.mrdav30.swiftcollections`.
+- Install `com.mrdav30.swiftcollections.fixedmathsharp.lean` alongside
+  `com.mrdav30.swiftcollections.lean`.
+- These modules add fixed-point query and bounds interop for projects that use
+  `FixedMathSharp`; they are not replacements for the base packages.
 
 ## FixedMathSharp Dependency Handling
 
-The `*.fixedmathsharp*` packages include an editor-side dependency installer
+The `*.fixedmathsharp*` modules include an editor-side dependency installer
 that attempts to add the matching `FixedMathSharp-Unity` Git dependency for
-you.
+you. They still require the matching SwiftCollections base package listed
+above.
 
-If Unity does not resolve that dependency cleanly, use the matching install URL
-below or run the package repair menu item under `Tools > mrdav30`.
+If Unity does not resolve the FixedMathSharp dependency cleanly, use the
+matching install URL below or run the package repair menu item under
+`Tools > mrdav30`.
 
 - Standard dependency:
   `https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp`

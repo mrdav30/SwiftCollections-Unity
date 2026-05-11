@@ -2,8 +2,9 @@
 
 Default SwiftCollections package for Unity.
 
-Choose this package when you want the standard SwiftCollections build for Unity.
-Install one SwiftCollections variant only.
+Choose this base package when you want the standard SwiftCollections build for
+Unity. Install the lean base package instead if you want the no-`MemoryPack`
+build.
 
 ## Install
 
@@ -15,14 +16,16 @@ Install one SwiftCollections variant only.
 - You want the standard build rather than the no-`MemoryPack` lean build.
 - You do not need `FixedMathSharp` fixed-point query helpers.
 
-## Choose Another Variant If
+## Optional Modules
 
-- Use `com.mrdav30.swiftcollections.lean` if you want SwiftCollections without
-  `MemoryPack`.
-- Use one of the `*.fixedmathsharp*` variants if you need
-  `FixedBoundVolume` or `Bounds.ToFixedBoundVolume()`.
+- Add `com.mrdav30.swiftcollections.fixedmathsharp` if this project also uses
+  `FixedMathSharp` and needs `FixedBoundVolume` or
+  `Bounds.ToFixedBoundVolume()`.
+- Do not pair this standard base package with
+  `com.mrdav30.swiftcollections.fixedmathsharp.lean`; that module is for the
+  lean base package.
 
 ## Related
 
-- Repo overview and variant selection:
+- Repo overview and package selection:
   [SwiftCollections-Unity](https://github.com/mrdav30/SwiftCollections-Unity)

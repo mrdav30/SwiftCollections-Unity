@@ -1,10 +1,10 @@
-# SwiftCollections for Unity (FixedMathSharp Variant)
+# SwiftCollections for Unity (FixedMathSharp Module)
 
-SwiftCollections variant for projects that use `FixedMathSharp`.
+FixedMathSharp interop module for the standard SwiftCollections package.
 
-Use this package when you want SwiftCollections plus fixed-point query helpers
-such as `FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`. Install one
-SwiftCollections variant only.
+Use this package alongside `com.mrdav30.swiftcollections` when you want
+fixed-point query helpers such as `FixedBoundVolume` and
+`Bounds.ToFixedBoundVolume()`.
 
 ## Install
 
@@ -14,6 +14,10 @@ SwiftCollections variant only.
 
 This package includes an editor-side dependency installer that attempts to add
 the matching `FixedMathSharp-Unity` package automatically.
+
+This package also requires the standard SwiftCollections base package:
+
+`https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections`
 
 If Unity does not resolve that dependency cleanly, install it manually or run:
 
@@ -25,18 +29,16 @@ Manual dependency URL:
 
 ## When To Use This Package
 
-- You need SwiftCollections with `FixedMathSharp` interop.
-- You want the standard FixedMathSharp-enabled build.
-- You do not want the lean no-`MemoryPack` variant.
+- Your project already uses `com.mrdav30.swiftcollections`.
+- You need `FixedMathSharp` interop for SwiftCollections query structures.
+- You want the module that matches the standard `MemoryPack` base package.
 
-## Choose Another Variant If
+## Choose The Lean Module If
 
-- Use `com.mrdav30.swiftcollections.fixedmathsharp.lean` if you want the
-  FixedMathSharp variant without `MemoryPack`.
-- Use a non-FixedMathSharp variant if you do not need fixed-point query
-  volumes.
+- Use `com.mrdav30.swiftcollections.fixedmathsharp.lean` only when your base
+  package is `com.mrdav30.swiftcollections.lean`.
 
 ## Related
 
-- Repo overview and variant selection:
+- Repo overview and package selection:
   [SwiftCollections-Unity](https://github.com/mrdav30/SwiftCollections-Unity)
