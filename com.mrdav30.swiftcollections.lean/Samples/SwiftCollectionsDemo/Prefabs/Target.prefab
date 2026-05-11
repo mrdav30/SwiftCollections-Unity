@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4660029423715651961}
-  - component: {fileID: 3886349750939231511}
+  - component: {fileID: 8470131438441856634}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 986847001883008904}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3886349750939231511
+--- !u!114 &8470131438441856634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,9 +42,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3701394881534063617}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad52ebb9143fd3246a8cf9d73aa5875d, type: 3}
+  m_Script: {fileID: 11500000, guid: 844612d1a5d4bba408be4d8923644a44, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SwiftCollections.Samples::SwiftCollections.Samples.TargetAgent
+  m_EditorClassIdentifier: SwiftCollections.Lean.Samples::SwiftCollections.Samples.TargetAgent
   _targetRenderer: {fileID: 0}
   _fallbackBoundsSize: {x: 1, y: 1, z: 1}
   _baseColor: {r: 0.2, g: 0.7, b: 1, a: 1}

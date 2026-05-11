@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82583cdcb8bd64c4d8ff602aacaeb73f, type: 3}
+  m_Script: {fileID: 11500000, guid: 66aacc9e5bf2ed3429ef70c43b467493, type: 3}
   m_Name: SwiftGameObjectPoolAsset
   m_EditorClassIdentifier: SwiftCollections.Runtime::SwiftCollections.Pool.SwiftGameObjectPoolAsset
   _pools:
   - _poolName: Projectile
-    _prefab: {fileID: 206959040316861348, guid: c4f7502209811fc46bf25e5f393b9fc4, type: 3}
-    _budget: 32
+    _prefab: {fileID: 206959040316861348, guid: 2431362d45ca67d44ab7f4ca371b1b43, type: 3}
+    _budget: 25
     _prewarm: 1

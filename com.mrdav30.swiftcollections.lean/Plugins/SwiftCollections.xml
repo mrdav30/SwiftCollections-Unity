@@ -701,7 +701,7 @@
             Gets or sets the lower 31 bits of the hash code associated with this entry.
             </summary>
             <remarks>
-            A value of -1 indicates that the entry is unused. 
+            A value of -1 indicates that the entry is a deleted probe tombstone.
             Only the lower 31 bits are used; the highest bit is reserved.</remarks>
         </member>
         <member name="F:SwiftCollections.SwiftDictionary`2.Entry.IsUsed">
@@ -5681,101 +5681,6 @@
             If null, an empty array is used.
             </param>
         </member>
-        <member name="T:SwiftCollections.SwiftStateJsonConverter`2">
-            <summary>
-            Provides a custom JSON converter for serializing and deserializing a collection type using a state-based approach.
-            </summary>
-            <remarks>
-            This converter serializes the collection as a JSON object containing a single 'State' property, which
-            holds the serialized state. 
-            During deserialization, the collection is reconstructed from the state using the provided factory function. 
-            This approach is useful for types where the full collection can be represented and restored from a state object.</remarks>
-            <typeparam name="TCollection">The collection type to convert. Must be a reference type.</typeparam>
-            <typeparam name="TState">The type representing the serializable state of the collection.</typeparam>
-        </member>
-        <member name="M:SwiftCollections.SwiftStateJsonConverter`2.#ctor(System.Func{`1,`0},System.Func{`0,`1})">
-            <summary>
-            Initializes a new instance of the SwiftStateJsonConverter class with the specified factory and state getter functions.
-            </summary>
-            <remarks>
-            Both factory and stateGetter are required to enable conversion between state 
-            and collection representations during JSON serialization and deserialization.
-            </remarks>
-            <param name="factory">A function that creates a collection of type TCollection from a state of type TState. Cannot be null.</param>
-            <param name="stateGetter">A function that creates a state of type TState from a collection of type TCollection. Cannot be null.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftStateJsonConverter`2.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            Reads and converts a JSON object into an instance of the collection type represented by <typeparamref name="TCollection"/>.
-            </summary>
-            <remarks>
-            The JSON input must be an object containing a single 'State' property. 
-            The method expects the reader to be positioned at the start of this object.
-            </remarks>
-            <param name="reader">
-            The reader positioned at the JSON to read. 
-            The reader must be at the start of a JSON object containing a 'State' property.
-            </param>
-            <param name="typeToConvert">
-            The type of the collection to convert the JSON to. 
-            This parameter is provided by the serialization infrastructure.
-            </param>
-            <param name="options">Options to control the behavior of the deserialization process.</param>
-            <returns>An instance of <typeparamref name="TCollection"/> deserialized from the JSON input.</returns>
-            <exception cref="T:System.Text.Json.JsonException">Thrown if the JSON is not in the expected format or if a deserialization error occurs.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftStateJsonConverter`2.Write(System.Text.Json.Utf8JsonWriter,`0,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            Writes the JSON representation of the specified collection object using the provided Utf8JsonWriter.
-            </summary>
-            <remarks>
-            The method writes a JSON object containing a single property named "State", which holds the serialized state of the collection. 
-            The serialization behavior may be influenced by the provided <see cref="T:System.Text.Json.JsonSerializerOptions"/>.
-            </remarks>
-            <param name="writer">The Utf8JsonWriter to which the JSON output is written. Must not be null.</param>
-            <param name="value">The collection object to serialize. Must not be null.</param>
-            <param name="options">The options to use when serializing the collection object.</param>
-        </member>
-        <member name="T:SwiftCollections.SwiftStateJsonConverterFactory">
-            <summary>
-            Provides a custom JsonConverterFactory for types that expose a 'State' property and 
-            a constructor accepting the state type, enabling serialization and deserialization based on the 'State' property.
-            </summary>
-            <remarks>
-            This factory is intended for use with types that encapsulate their state in a property named 'State' and 
-            can be constructed from that state. 
-            The factory creates converters that serialize the object's state and 
-            reconstruct the object during deserialization using the appropriate constructor. 
-            If the target type does not meet these requirements, converter creation will fail at runtime.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftStateJsonConverterFactory.CanConvert(System.Type)">
-            <summary>
-            Determines whether the specified type can be converted by this converter.
-            </summary>
-            <remarks>
-            This method checks for the presence of a property named "State" on the provided type,
-            regardless of its accessibility. 
-            Only types with such a property are considered convertible.
-            </remarks>
-            <param name="typeToConvert">The type to evaluate for conversion support.</param>
-            <returns>true if the type defines a property named "State"; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftStateJsonConverterFactory.CreateConverter(System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            Creates a custom JsonConverter for types that contain a 'State' property and a constructor accepting the state type.
-            </summary>
-            <remarks>
-            The target type must define a property named 'State' and a constructor that takes the state type as its only parameter. 
-            If these requirements are not met, an exception may be thrown at runtime.
-            </remarks>
-            <param name="typeToConvert">
-            The type for which to create a JsonConverter. 
-            Must have a 'State' property and a constructor that accepts the state type as a parameter.
-            </param>
-            <param name="options">The serialization options to use when creating the converter.</param>
-            <returns>A JsonConverter instance capable of serializing and deserializing the specified type using its 'State' property.</returns>
-        </member>
         <member name="T:SwiftCollections.Diagnostics.DiagnosticSink">
             <summary>
             Receives diagnostic events emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
@@ -5824,6 +5729,61 @@
             <param name="message">The diagnostic message.</param>
             <param name="source">An optional source identifier.</param>
         </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler,System.String)">
+            <summary>
+            Emits a diagnostic event from an interpolated message when the specified level is enabled.
+            Disabled levels do not evaluate formatted interpolation expressions.
+            </summary>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions">
+            <summary>
+            Provides interpolated diagnostic logging helpers for <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Info(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.InfoDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes an info diagnostic message without evaluating formatted expressions when info diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Warn(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.WarningDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes a warning diagnostic message without evaluating formatted expressions when warning diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Error(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.ErrorDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes an error diagnostic message without evaluating formatted expressions when error diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Log(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.DynamicDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes a dynamic-level diagnostic message without evaluating formatted expressions when the level is disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
         <member name="T:SwiftCollections.Diagnostics.DiagnosticEvent">
             <summary>
             Represents a single diagnostic event emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
@@ -5858,6 +5818,109 @@
             Gets the optional source identifier.
             </summary>
         </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler">
+            <summary>
+            Builds diagnostic messages for enabled diagnostic levels while allowing disabled levels
+            to skip formatted interpolation expression evaluation.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler"/> struct.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that will receive the message.</param>
+            <param name="level">The severity level being evaluated.</param>
+            <param name="isEnabled">
+            Set to <c>true</c> when formatted expressions should be evaluated; otherwise, <c>false</c>.
+            </param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.IsEnabled">
+            <summary>
+            Gets a value indicating whether this handler is actively building a diagnostic message.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendLiteral(System.String)">
+            <summary>
+            Appends a literal string segment.
+            </summary>
+            <param name="value">The literal string segment.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0)">
+            <summary>
+            Appends a formatted value.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
+            <summary>
+            Appends a formatted value using the specified format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
+            <summary>
+            Appends a formatted value with the specified alignment.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
+            <summary>
+            Appends a formatted value with the specified alignment and format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String)">
+            <summary>
+            Appends a string value.
+            </summary>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
+            <summary>
+            Appends a string value with the specified alignment.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
+            <summary>
+            Appends a string value with the specified alignment and format string.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
+            <summary>
+            Appends a character span.
+            </summary>
+            <param name="value">The span to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
+            <summary>
+            Appends a character span with the specified alignment.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
+            <summary>
+            Appends a character span with the specified alignment and format string.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
         <member name="T:SwiftCollections.Diagnostics.DiagnosticLevel">
             <summary>
             Defines the severity level for a diagnostic event.
@@ -5882,6 +5945,204 @@
             <summary>
             Error diagnostic output.
             </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticLogger">
+            <summary>
+            Provides reusable logger state and diagnostic channels for libraries built on SwiftCollections diagnostics.
+            </summary>
+            <remarks>
+            Static logger facades can delegate to a derived instance of this type while keeping their existing public API.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticLogger"/> class.
+            </summary>
+            <param name="channelName">The diagnostic channel name.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Name">
+            <summary>
+            Gets the logger name.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Channel">
+            <summary>
+            Gets the diagnostic channel used for normal diagnostics.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.DebugChannel">
+            <summary>
+            Gets the diagnostic channel used for verbose debug diagnostics.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.EnableDebugLogging">
+            <summary>
+            Gets or sets a value indicating whether verbose debug diagnostics should be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.MinimumLevel">
+            <summary>
+            Gets or sets the minimum severity required for normal diagnostics to be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler">
+            <summary>
+            Gets or sets the delegate used to write formatted log messages.
+            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter">
+            <summary>
+            Gets or sets the formatter used to transform log arguments into a final log entry.
+            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
+            <summary>
+            Determines whether normal diagnostics at the specified level are currently enabled.
+            </summary>
+            <param name="level">The diagnostic level to evaluate.</param>
+            <returns><see langword="true"/> when messages at <paramref name="level"/> will be emitted; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Writes a log message using the current <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter"/>.
+            </summary>
+            <param name="level">The severity level of the log message.</param>
+            <param name="message">The log message.</param>
+            <param name="source">The source of the log message.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Formats a log entry using a deterministic, source-first layout.
+            </summary>
+            <param name="level">The severity level of the log message.</param>
+            <param name="message">The log message.</param>
+            <param name="source">The source of the log message.</param>
+            <returns>A formatted log entry.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.HandleDiagnosticEvent(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+            <summary>
+            Receives diagnostics emitted by either channel.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.ResolveSource(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+            <summary>
+            Resolves the source value passed to <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler"/>.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+            <returns>The resolved source.</returns>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.IDiagnosticLevelProvider">
+            <summary>
+            Describes a fixed diagnostic level for an interpolated diagnostic message handler.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.IDiagnosticLevelProvider.Level">
+            <summary>
+            Gets the diagnostic level for this provider.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.InfoDiagnosticLevel">
+            <summary>
+            Provides the info diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.InfoDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.WarningDiagnosticLevel">
+            <summary>
+            Provides the warning diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.WarningDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.ErrorDiagnosticLevel">
+            <summary>
+            Provides the error diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.ErrorDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DynamicDiagnosticLevel">
+            <summary>
+            Provides a placeholder level for dynamic-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DynamicDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1">
+            <summary>
+            Builds interpolated diagnostic messages only when the requested diagnostic level is enabled.
+            </summary>
+            <typeparam name="TLevel">The fixed diagnostic level provider used by fixed-level helpers.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,System.Boolean@)">
+            <summary>
+            Initializes a new handler for a fixed-level diagnostic message.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
+            <summary>
+            Initializes a new handler for a dynamic-level diagnostic message.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="level">The diagnostic level being evaluated.</param>
+            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.IsEnabled">
+            <summary>
+            Gets whether the handler is actively building a diagnostic message.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendLiteral(System.String)">
+            <summary>
+            Appends a literal string segment.
+            </summary>
+            <param name="value">The literal string segment.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0)">
+            <summary>
+            Appends a formatted value.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.String)">
+            <summary>
+            Appends a formatted value using the specified format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32)">
+            <summary>
+            Appends a formatted value with the specified alignment.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32,System.String)">
+            <summary>
+            Appends a formatted value with the specified alignment and format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
         </member>
         <member name="T:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics">
             <summary>
@@ -6061,21 +6322,6 @@
             the methods returns `int.Max`.
             </remarks>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Runtime.CompilerServices.ITuple,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Combines the hash codes of the elements in a tuple using a DJB2-inspired mixing strategy.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[],System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Combines the hash codes of a set of objects using a DJB2-inspired mixing strategy.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[])">
-            <summary>
-            Combines the hash codes of the provided objects using a DJB2-inspired mixing strategy.
-            </summary>
-        </member>
         <member name="M:SwiftCollections.SwiftHashTools.IsWellKnownEqualityComparer(System.Object)">
             <summary>
             Determines whether the specified comparer is a recognized, well-known equality comparer supported by the system.
@@ -6145,6 +6391,36 @@
             Generates a cryptographically strong random 64-bit integer for collision-hardening entropy.
             </summary>
             <returns>A 64-bit integer filled with cryptographically strong random bytes.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Runtime.CompilerServices.ITuple,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines the hash codes of the elements in a tuple using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[],System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines the hash codes of a set of objects using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[])">
+            <summary>
+            Combines the hash codes of the provided objects using a DJB2-inspired mixing strategy.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32)">
+            <summary>
+            Combines two integer hash codes without allocating the object-array params path.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines three integer hash codes without allocating the object-array params path.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Combines four integer hash codes without allocating the object-array params path.
+            </summary>
         </member>
         <member name="M:SwiftCollections.SwiftHashTools.MurmurHash3(System.String,System.Int32)">
             <summary>
@@ -6288,6 +6564,33 @@
         </member>
         <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfIndexInvalid(System.Int32,System.Int32)">
             <inheritdoc cref="T:System.IndexOutOfRangeException"/>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerAttribute">
+            <summary>
+            Provides the compiler-recognized interpolated string handler marker for target frameworks that do not define it publicly.
+            </summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute">
+            <summary>
+            Provides the compiler-recognized argument binding marker for target frameworks that do not define it publicly.
+            </summary>
+        </member>
+        <member name="M:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.#ctor(System.String)">
+            <summary>
+            Initializes the attribute with one constructor argument name.
+            </summary>
+            <param name="argument">The method parameter name to pass to the interpolated string handler constructor.</param>
+        </member>
+        <member name="M:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.#ctor(System.String[])">
+            <summary>
+            Initializes the attribute with multiple constructor argument names.
+            </summary>
+            <param name="arguments">The method parameter names to pass to the interpolated string handler constructor.</param>
+        </member>
+        <member name="P:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.Arguments">
+            <summary>
+            Gets the method parameter names passed to the interpolated string handler constructor.
+            </summary>
         </member>
     </members>
 </doc>
