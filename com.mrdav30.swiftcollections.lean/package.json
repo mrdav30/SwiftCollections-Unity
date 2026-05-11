@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections.lean",
-    "version": "4.0.3",
+    "version": "4.0.4",
     "displayName": "SwiftCollections.Lean",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations. Does not include MemoryPack.",
     "unity": "2022.3",
