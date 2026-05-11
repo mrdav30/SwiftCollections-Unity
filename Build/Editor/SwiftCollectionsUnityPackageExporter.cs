@@ -20,7 +20,13 @@ namespace SwiftCollections.Build.Editor
                 "Assets/Packages/com.mrdav30.swiftcollections/package.json"),
             new PackageDefinition(
                 "Assets/Packages/com.mrdav30.swiftcollections.lean",
-                "Assets/Packages/com.mrdav30.swiftcollections.lean/package.json")
+                "Assets/Packages/com.mrdav30.swiftcollections.lean/package.json"),
+            new PackageDefinition(
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp",
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp/package.json"),
+            new PackageDefinition(
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean",
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json")
         };
 
         [MenuItem("Tools/SwiftCollections/Export Unity Packages")]

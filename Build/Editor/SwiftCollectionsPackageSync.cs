@@ -8,25 +8,42 @@ using UnityEngine;
 namespace SwiftCollections.Build.Editor
 {
     /// <summary>
-    /// Synchronizes shared managed source files from Build/Base into both package variants.
+    /// Synchronizes shared managed source files from Build overlays into package variants.
     /// </summary>
     public static class SwiftCollectionsPackageSync
     {
-        private const string BaseRootAssetPath = "Assets/Packages/Build/Base";
-
-        private static readonly string[] PackageRootAssetPaths =
-        {
-            "Assets/Packages/com.mrdav30.swiftcollections",
-            "Assets/Packages/com.mrdav30.swiftcollections.lean"
-        };
-
         // These paths are intentionally explicit so package-specific files can live beside
         // shared code without being deleted during sync.
-        private static readonly ManagedEntry[] ManagedEntries =
+        private static readonly ManagedEntry[] BaseManagedEntries =
         {
             ManagedEntry.Directory("Runtime/GameObjectPool"),
             ManagedEntry.File("Runtime/BoundVolume.Extensions.cs"),
             ManagedEntry.Directory("Samples/SwiftCollectionsDemo/Scripts")
+        };
+
+        private static readonly ManagedEntry[] FixedMathSharpManagedEntries =
+        {
+            ManagedEntry.File("Runtime/FixedBoundVolume.Extensions.cs")
+        };
+
+        private static readonly PackageOverlay[] PackageOverlays =
+        {
+            new PackageOverlay(
+                "Assets/Packages/Build/Base",
+                new[]
+                {
+                    "Assets/Packages/com.mrdav30.swiftcollections",
+                    "Assets/Packages/com.mrdav30.swiftcollections.lean"
+                },
+                BaseManagedEntries),
+            new PackageOverlay(
+                "Assets/Packages/Build/FixedMathSharp",
+                new[]
+                {
+                    "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp",
+                    "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean"
+                },
+                FixedMathSharpManagedEntries)
         };
 
         [MenuItem("Tools/SwiftCollections/Sync Managed Package Files")]
@@ -61,8 +78,11 @@ namespace SwiftCollections.Build.Editor
             AssetDatabase.StartAssetEditing();
             try
             {
-                foreach (var packageRootAssetPath in PackageRootAssetPaths)
-                    summary.Merge(SyncPackage(packageRootAssetPath));
+                foreach (var packageOverlay in PackageOverlays)
+                {
+                    foreach (var packageRootAssetPath in packageOverlay.PackageRootAssetPaths)
+                        summary.Merge(SyncPackage(packageOverlay, packageRootAssetPath));
+                }
             }
             finally
             {
@@ -75,38 +95,48 @@ namespace SwiftCollections.Build.Editor
             Debug.Log(
                 $"SwiftCollections package sync complete. " +
                 $"Copied {summary.CopiedFiles} files, deleted {summary.DeletedFiles} files, " +
-                $"removed {summary.DeletedDirectories} directories across {PackageRootAssetPaths.Length} packages.");
+                $"removed {summary.DeletedDirectories} directories across " +
+                $"{PackageOverlays.Length} overlays and {CountPackageRoots()} packages.");
         }
 
         private static void ValidatePaths()
         {
-            if (!Directory.Exists(ToAbsolutePath(BaseRootAssetPath)))
-                throw new DirectoryNotFoundException($"Shared package source folder not found: {BaseRootAssetPath}");
-
-            foreach (var packageRootAssetPath in PackageRootAssetPaths)
+            foreach (var packageOverlay in PackageOverlays)
             {
-                if (!Directory.Exists(ToAbsolutePath(packageRootAssetPath)))
-                    throw new DirectoryNotFoundException($"Package folder not found: {packageRootAssetPath}");
+                if (!Directory.Exists(ToAbsolutePath(packageOverlay.SourceRootAssetPath)))
+                {
+                    throw new DirectoryNotFoundException(
+                        $"Shared package source folder not found: {packageOverlay.SourceRootAssetPath}");
+                }
+
+                foreach (var packageRootAssetPath in packageOverlay.PackageRootAssetPaths)
+                {
+                    if (!Directory.Exists(ToAbsolutePath(packageRootAssetPath)))
+                        throw new DirectoryNotFoundException($"Package folder not found: {packageRootAssetPath}");
+                }
             }
         }
 
-        private static SyncSummary SyncPackage(string packageRootAssetPath)
+        private static SyncSummary SyncPackage(PackageOverlay packageOverlay, string packageRootAssetPath)
         {
             var summary = new SyncSummary();
 
-            foreach (var managedEntry in ManagedEntries)
+            foreach (var managedEntry in packageOverlay.ManagedEntries)
             {
                 summary.Merge(managedEntry.Kind == ManagedEntryKind.Directory
-                    ? SyncManagedDirectory(packageRootAssetPath, managedEntry.RelativePath)
-                    : SyncManagedFile(packageRootAssetPath, managedEntry.RelativePath));
+                    ? SyncManagedDirectory(packageOverlay.SourceRootAssetPath, packageRootAssetPath, managedEntry.RelativePath)
+                    : SyncManagedFile(packageOverlay.SourceRootAssetPath, packageRootAssetPath, managedEntry.RelativePath));
             }
 
             return summary;
         }
 
-        private static SyncSummary SyncManagedDirectory(string packageRootAssetPath, string relativePath)
+        private static SyncSummary SyncManagedDirectory(
+            string sourceRootAssetPath,
+            string packageRootAssetPath,
+            string relativePath)
         {
-            var sourceDirectory = ToAbsolutePath(CombineAssetPath(BaseRootAssetPath, relativePath));
+            var sourceDirectory = ToAbsolutePath(CombineAssetPath(sourceRootAssetPath, relativePath));
             var destinationDirectory = ToAbsolutePath(CombineAssetPath(packageRootAssetPath, relativePath));
             var summary = new SyncSummary();
 
@@ -141,9 +171,12 @@ namespace SwiftCollections.Build.Editor
             return summary;
         }
 
-        private static SyncSummary SyncManagedFile(string packageRootAssetPath, string relativePath)
+        private static SyncSummary SyncManagedFile(
+            string sourceRootAssetPath,
+            string packageRootAssetPath,
+            string relativePath)
         {
-            var sourcePath = ToAbsolutePath(CombineAssetPath(BaseRootAssetPath, relativePath));
+            var sourcePath = ToAbsolutePath(CombineAssetPath(sourceRootAssetPath, relativePath));
             var destinationPath = ToAbsolutePath(CombineAssetPath(packageRootAssetPath, relativePath));
             var summary = new SyncSummary();
 
@@ -264,6 +297,19 @@ namespace SwiftCollections.Build.Editor
             return true;
         }
 
+        private static int CountPackageRoots()
+        {
+            var packageRoots = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var packageOverlay in PackageOverlays)
+            {
+                foreach (var packageRootAssetPath in packageOverlay.PackageRootAssetPaths)
+                    packageRoots.Add(packageRootAssetPath);
+            }
+
+            return packageRoots.Count;
+        }
+
         private static bool IsMetaFile(string path)
         {
             return path.EndsWith(".meta", StringComparison.OrdinalIgnoreCase);
@@ -311,6 +357,23 @@ namespace SwiftCollections.Build.Editor
             public static ManagedEntry Directory(string relativePath)
             {
                 return new ManagedEntry(ManagedEntryKind.Directory, relativePath);
+            }
+        }
+
+        private struct PackageOverlay
+        {
+            public string SourceRootAssetPath { get; }
+            public string[] PackageRootAssetPaths { get; }
+            public ManagedEntry[] ManagedEntries { get; }
+
+            public PackageOverlay(
+                string sourceRootAssetPath,
+                string[] packageRootAssetPaths,
+                ManagedEntry[] managedEntries)
+            {
+                SourceRootAssetPath = sourceRootAssetPath;
+                PackageRootAssetPaths = packageRootAssetPaths;
+                ManagedEntries = managedEntries;
             }
         }
 

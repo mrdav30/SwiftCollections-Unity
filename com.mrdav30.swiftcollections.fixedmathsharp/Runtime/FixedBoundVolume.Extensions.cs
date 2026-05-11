@@ -1,4 +1,4 @@
-﻿using FixedMathSharp;
+using FixedMathSharp;
 using SwiftCollections.Query;
 using UnityEngine;
 

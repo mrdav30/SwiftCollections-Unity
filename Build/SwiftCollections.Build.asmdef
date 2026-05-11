@@ -1,7 +1,9 @@
 {
     "name": "SwiftCollections.Build",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:25973f42bc0474641aa6ba92144d656d"
+    ],
     "includePlatforms": [
         "Editor"
     ],
