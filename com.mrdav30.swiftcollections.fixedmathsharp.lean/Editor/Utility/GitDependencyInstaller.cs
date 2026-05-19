@@ -46,7 +46,7 @@ namespace SwiftCollections.Editor
             new(
                 "com.mrdav30.fixedmathsharp.lean",
                 "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean",
-                "v3.0.2"
+                "v4.0.0"
             )
         };
 
