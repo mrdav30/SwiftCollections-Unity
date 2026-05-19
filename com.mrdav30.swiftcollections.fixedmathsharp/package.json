@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections.fixedmathsharp",
-    "version": "4.0.5",
+    "version": "4.0.6",
     "displayName": "SwiftCollections.FixedMathSharp",
     "description": "Companion package that provided fixed-point bounds to use in SwiftCollections query structures. Requires FixedMathSharp-Unity.",
     "unity": "2022.3",
