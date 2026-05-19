@@ -423,7 +423,7 @@
         <member name="P:SwiftCollections.SwiftBucket`1.Item(System.Int32)">
             <summary>
             Gets or sets the element at the specified arrayIndex.
-            Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the arrayIndex is invalid or unallocated.
+            Throws <see cref="T:System.InvalidOperationException"/> if the arrayIndex is invalid or unallocated.
             </summary>
             <param name="index">The zero-based arrayIndex of the element to get or set.</param>
         </member>
@@ -6708,31 +6708,126 @@
             Methods are typically inlined by the compiler to minimize performance overhead.
             </remarks>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNull(System.Object,System.String)">
-            <inheritdoc cref="T:System.ArgumentNullException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNull(System.Object,System.String,System.String)">
+            <summary>
+            Throws an ArgumentNullException if the provided argument is null.
+            </summary>
+            <param name="argument">The argument to check for null.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0)">
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullGeneric``1(``0,System.String,System.String)">
+            <summary>
+            Throws an ArgumentNullException if the provided generic argument is null. 
+            This method is useful for validating reference types in a generic context where the type parameter may not be constrained to non-nullable types.
+            </summary>
+            <typeparam name="T">The type of the argument to check.</typeparam>
+            <param name="argument">The argument to check for null.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0,System.String)">
             <summary>
             Throws an exception if the specified value is null and nulls are not allowed for TValue.
             </summary>
             <param name="value">The value to check.</param>
             <param name="defaultValue">A default value of type TValue used to determine if nulls are illegal.</param>
+            <param name="message">An optional message to include in the exception.</param>
             <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String)">
-            <inheritdoc cref="T:System.ArgumentOutOfRangeException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String,System.String)">
+            <summary>
+            Throws an ArgumentOutOfRangeException if the specified value is negative, indicating that the argument must be a non-negative integer.
+            </summary>
+            <param name="value">The value to check.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String)">
-            <inheritdoc cref="T:System.ArgumentOutOfRangeException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String,System.String)">
+            <summary>
+            Throws an ArgumentOutOfRangeException if the specified value is negative or zero, indicating that the argument must be a positive integer.
+            </summary>
+            <param name="value">The value to check.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative or zero.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String)">
-            <inheritdoc cref="T:System.ObjectDisposedException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Int32,System.String,System.String)">
+            <summary>
+            Throws an ArgumentOutOfRangeException if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="actualValue">The value that caused the exception.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object)">
-            <inheritdoc cref="T:System.Collections.Generic.KeyNotFoundException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArrayIndexInvalid(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Throws an ArgumentOutOfRangeException if a copy destination index is outside [0, length].
+            </summary>
+            <param name="index">The destination index to check.</param>
+            <param name="length">The destination length.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the index is outside [0, length].</exception>
         </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfIndexInvalid(System.Int32,System.Int32)">
-            <inheritdoc cref="T:System.IndexOutOfRangeException"/>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an ArgumentException if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an InvalidOperationException if the specified condition is true, indicating that the object is in an invalid state for the attempted operation.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object in an invalid state.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true, indicating an invalid state.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an ObjectDisposedException if the specified condition is true, indicating that the object has been disposed and can no longer be used for the attempted operation.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object that has been disposed.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true, indicating that the object has been disposed.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object,System.String)">
+            <summary>
+            Throws a KeyNotFoundException if the specified index is negative, indicating that the key is invalid for the current collection or context.
+            </summary>
+            <param name="index">The index to check.</param>
+            <param name="key">The key associated with the index.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the index is negative, indicating an invalid key.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,System.String)">
+            <summary>
+            Throws a KeyNotFoundException if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="key">The key associated with the lookup.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfListIndexInvalid(System.Int32,System.Int32,System.String)">
+            <summary>
+            Throws an IndexOutOfRangeException if the specified index is outside the valid range defined by count, indicating that the index is invalid for the current collection or context.
+            </summary>
+            <param name="index">The index to check.</param>
+            <param name="count">The total number of elements in the collection.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when the index is outside the valid range.</exception>
         </member>
         <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerAttribute">
             <summary>

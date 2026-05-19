@@ -2,7 +2,7 @@
     "name": "SwiftCollections.FixedMathSharp.Lean.Runtime",
     "rootNamespace": "",
     "references": [
-        "GUID:ee06434641accdc4bbbc7acbdb9ac78f"
+        "FixedMathSharp.Lean.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,9 +1,7 @@
 {
     "name": "SwiftCollections.Lean.Runtime",
     "rootNamespace": "",
-    "references": [
-        "GUID:d166b72a8a4733941852f169793bc2c4"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
