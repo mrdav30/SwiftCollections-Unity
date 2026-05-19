@@ -16,6 +16,9 @@ namespace SwiftCollections.Build.Editor
         // shared code without being deleted during sync.
         private static readonly ManagedEntry[] BaseManagedEntries =
         {
+            ManagedEntry.File("COPYRIGHT"),
+            ManagedEntry.File("LICENSE"),
+            ManagedEntry.File("NOTICE"),
             ManagedEntry.Directory("Runtime/GameObjectPool"),
             ManagedEntry.File("Runtime/BoundVolume.Extensions.cs"),
             ManagedEntry.Directory("Samples/SwiftCollectionsDemo/Scripts")
