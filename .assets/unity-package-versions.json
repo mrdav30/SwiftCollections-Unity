@@ -1,0 +1,41 @@
+{
+  "packageRoot": ".",
+  "packageVersion": "5.0.0",
+  "dependencyVersions": {
+    "FixedMathSharpUnity": "v5.0.0"
+  },
+  "packages": [
+    {
+      "path": "com.mrdav30.swiftcollections",
+      "updatePackageVersion": true
+    },
+    {
+      "path": "com.mrdav30.swiftcollections.lean",
+      "updatePackageVersion": true
+    },
+    {
+      "path": "com.mrdav30.swiftcollections.fixedmathsharp",
+      "updatePackageVersion": true,
+      "installer": "Editor/Utility/GitDependencyInstaller.cs",
+      "dependencies": [
+        {
+          "name": "com.mrdav30.fixedmathsharp",
+          "gitUrl": "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp",
+          "versionKey": "FixedMathSharpUnity"
+        }
+      ]
+    },
+    {
+      "path": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
+      "updatePackageVersion": true,
+      "installer": "Editor/Utility/GitDependencyInstaller.cs",
+      "dependencies": [
+        {
+          "name": "com.mrdav30.fixedmathsharp.lean",
+          "gitUrl": "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean",
+          "versionKey": "FixedMathSharpUnity"
+        }
+      ]
+    }
+  ]
+}

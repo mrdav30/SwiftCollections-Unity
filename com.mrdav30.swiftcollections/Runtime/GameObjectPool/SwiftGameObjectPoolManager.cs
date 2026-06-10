@@ -1,3 +1,11 @@
+//=======================================================================
+// SwiftGameObjectPoolManager.cs
+//=======================================================================
+// MIT License, Copyright (c) 2024–present David Oravsky (mrdav30)
+// See LICENSE file in the project root for full license information.
+//=======================================================================
+
+using SwiftCollections.Diagnostics;
 using System;
 using UnityEngine;
 
@@ -24,7 +32,7 @@ namespace SwiftCollections.Pool
         private SwiftGameObjectPoolManager()
         {
             _poolAsset = Resources.Load<SwiftGameObjectPoolAsset>("SwiftGameObjectPoolAsset");
-            SwiftThrowHelper.ThrowIfNull(_poolAsset, "SwiftGameObjectPoolAsset asset not found in Resources.");
+            SwiftThrowHelper.ThrowIfNull(_poolAsset, nameof(_poolAsset));
             _poolAsset.Init();
         }
 

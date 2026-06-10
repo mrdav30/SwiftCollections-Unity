@@ -1,6 +1,8 @@
 # SwiftCollections-Unity
 
-Unity package host for SwiftCollections.
+[![Build](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml)
+
+Unity package host for [SwiftCollections](https://github.com/mrdav30/SwiftCollections).
 
 This repository contains two base Unity Package Manager packages and two
 optional FixedMathSharp modules. Choose one base package, then add the matching

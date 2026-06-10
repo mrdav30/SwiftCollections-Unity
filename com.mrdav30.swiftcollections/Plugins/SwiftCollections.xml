@@ -84,7 +84,7 @@
         <member name="T:SwiftCollections.SwiftIntStack">
             <summary>
             A minimal and efficient stack implementation for integers.
-            Optimized for internal use in within the SwiftCollections library.
+            Optimized for internal use within the SwiftCollections library.
             </summary>
         </member>
         <member name="F:SwiftCollections.SwiftIntStack.DefaultCapacity">
@@ -115,7 +115,7 @@
         </member>
         <member name="M:SwiftCollections.SwiftIntStack.#ctor(System.Int32[],System.Int32)">
             <summary>
-            Initializes a new instance of the IntStack class using the specified array as the underlying storage and sets
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftIntStack"/> class using the specified array as the underlying storage and sets
             the initial number of elements in the stack.
             </summary>
             <remarks>This constructor allows advanced scenarios where the stack is initialized with a pre-existing
@@ -148,7 +148,7 @@
         </member>
         <member name="M:SwiftCollections.SwiftIntStack.Reset">
             <summary>
-            Resets the stack to it's initial state.
+            Resets the stack while preserving its current capacity.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftIntStack.Clear">
@@ -2718,7 +2718,7 @@
             <remarks>
             MemoryPack GenerateType: Object<br/>
             <code>
-            <b>SwiftCollections.SwiftSparseSetState&lt;T&gt;</b> State<br/>
+            <b>SwiftCollections.SwiftSparseMapState&lt;T&gt;</b> State<br/>
             </code>
             </remarks>
         </member>
@@ -2756,7 +2756,7 @@
             </param>
             <param name="denseCapacity">Initial dense storage capacity for values.</param>
         </member>
-        <member name="M:SwiftCollections.SwiftSparseMap`1.#ctor(SwiftCollections.SwiftSparseSetState{`0})">
+        <member name="M:SwiftCollections.SwiftSparseMap`1.#ctor(SwiftCollections.SwiftSparseMapState{`0})">
             <summary>
             Initializes a new instance of the SwiftSparseMap class using the specified state.
             </summary>
@@ -2831,10 +2831,10 @@
         </member>
         <member name="P:SwiftCollections.SwiftSparseMap`1.State">
             <summary>
-            Gets or sets the current state of the sparse set, including the used dense keys and values.
+            Gets or sets the current state of the sparse map, including the used dense keys and values.
             </summary>
             <remarks>
-            The state includes only the active elements in the set. 
+            The state includes only the active elements in the map. 
             Setting this property replaces the current contents with the provided state. 
             The setter is intended for internal use, such as serialization or deserialization scenarios.
             </remarks>
@@ -2961,6 +2961,229 @@
             <param name="count">When this method returns, contains the number of valid key-value pairs in the dense arrays.</param>
         </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.CloneTo(System.Collections.Generic.ICollection{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftSparseSet">
+            <summary>
+            Represents a high-performance sparse set for externally supplied non-negative integer IDs.
+            Provides O(1) Add, Remove, Contains, and densely packed iteration.
+            </summary>
+            <remarks>
+            <para>
+            <see cref="T:SwiftCollections.SwiftSparseSet"/> is intended for membership workloads where the caller already owns
+            compact integer IDs, such as entity handles, body IDs, or slot indices.
+            </para>
+            <para>
+            Internally, IDs are stored in a dense array for cache-friendly iteration while a sparse lookup
+            table maps each ID directly to its dense position. Removal uses swap-back, so iteration order is
+            not stable.
+            </para>
+            <para>
+            Memory usage scales with the highest stored ID rather than only the number of IDs. For arbitrary,
+            huge, or widely spaced keys, prefer <see cref="T:SwiftCollections.SwiftHashSet`1"/> with <c>int</c> keys.
+            </para>
+            </remarks>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftArrayState&lt;int&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="F:SwiftCollections.SwiftSparseSet.DefaultDenseCapacity">
+            <summary>
+            Represents the default initial capacity for dense ID storage.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftSparseSet.DefaultSparseCapacity">
+            <summary>
+            Represents the default initial capacity for sparse ID lookup.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSparseSet"/> class with default sparse and dense capacities.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSparseSet"/> class with matching sparse and dense capacities.
+            </summary>
+            <param name="capacity">The initial sparse and dense capacity.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSparseSet"/> class with explicit sparse and dense capacities.
+            </summary>
+            <param name="sparseCapacity">
+            Initial sparse lookup capacity. This should track the highest expected ID plus one,
+            not just the number of stored IDs.
+            </param>
+            <param name="denseCapacity">Initial dense storage capacity for IDs.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.#ctor(SwiftCollections.SwiftArrayState{System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSparseSet"/> class using the specified state.
+            </summary>
+            <param name="state">The state object that provides the initial IDs. Cannot be null.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.Count">
+            <summary>
+            Gets the number of IDs contained in the set.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.DenseCapacity">
+            <summary>
+            Capacity of the dense ID storage.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.SparseCapacity">
+            <summary>
+            Capacity of the sparse lookup table.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.IsSynchronized">
+            <summary>
+            Gets a value indicating whether access to the collection is synchronized.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.SyncRoot">
+            <summary>
+            Gets an object that can be used to synchronize access to the collection.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.DenseKeys">
+            <summary>
+            Returns the dense ID array. Only the range [0..Count) is populated.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.Keys">
+            <summary>
+            Gets a span containing the current IDs in dense iteration order.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.State">
+            <summary>
+            Gets or sets the current state of the sparse set.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Contains(System.Int32)">
+            <summary>
+            Determines whether the set contains the specified ID.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.ContainsKey(System.Int32)">
+            <summary>
+            Determines whether the set contains the specified key. Alias for <see cref="M:SwiftCollections.SwiftSparseSet.Contains(System.Int32)"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Add(System.Int32)">
+            <summary>
+            Adds the specified ID if it is not already present.
+            </summary>
+            <returns>true if the ID was added; false if it was already present.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.TryAdd(System.Int32)">
+            <summary>
+            Adds the specified ID if it is not already present.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Remove(System.Int32)">
+            <summary>
+            Removes the specified ID from the set.
+            </summary>
+            <returns>true if the ID was found and removed; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Clear">
+            <summary>
+            Removes all IDs from the set without reducing capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.ExceptWith(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.IntersectWith(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.IsProperSubsetOf(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.IsProperSupersetOf(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.IsSubsetOf(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.IsSupersetOf(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Overlaps(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.SetEquals(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.SymmetricExceptWith(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.UnionWith(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.EnsureDenseCapacity(System.Int32)">
+            <summary>
+            Ensures that dense storage can hold at least the specified number of IDs.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.EnsureSparseCapacity(System.Int32)">
+            <summary>
+            Ensures that the sparse lookup table has at least the specified capacity.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.TrimExcess">
+            <summary>
+            Reduces unused dense and sparse capacity while preserving all IDs.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.AsReadOnlySpan">
+            <summary>
+            Returns a read-only span over the populated dense ID range.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.GetDense(System.Int32[]@,System.Int32@)">
+            <summary>
+            Retrieves the backing dense ID array and current count.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.CopyTo(System.Int32[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.System#Collections#ICollection#CopyTo(System.Array,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.CloneTo(System.Collections.Generic.ICollection{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.GetEnumerator">
+            <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
+        </member>
+        <member name="T:SwiftCollections.SwiftSparseSet.SwiftSparseSetEnumerator">
+            <summary>
+            Supports iteration over IDs in a <see cref="T:SwiftCollections.SwiftSparseSet"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseSet.SwiftSparseSetEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.SwiftSparseSetEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.SwiftSparseSetEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.SwiftSparseSetEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftStack`1">
@@ -3203,6 +3426,788 @@
         </member>
         <member name="M:SwiftCollections.SwiftStack`1.SwiftStackEnumerator.Dispose">
             <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticSink">
+            <summary>
+            Receives diagnostic events emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannel">
+            <summary>
+            Represents a named diagnostic channel with a configurable sink and minimum level.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/> class.
+            </summary>
+            <param name="name">The channel name. Blank names fall back to <c>Default</c>.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Name">
+            <summary>
+            Gets the channel name.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.MinimumLevel">
+            <summary>
+            Gets or sets the minimum level required for diagnostics to be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Sink">
+            <summary>
+            Gets or sets the sink that receives emitted diagnostics.
+            Assigning <c>null</c> restores the default no-op sink.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
+            <summary>
+            Determines whether the specified level is enabled for this channel.
+            </summary>
+            <param name="level">The level to evaluate.</param>
+            <returns><c>true</c> when the level is enabled; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Emits a diagnostic event when the specified level is enabled.
+            </summary>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The diagnostic message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler,System.String)">
+            <summary>
+            Emits a diagnostic event from an interpolated message when the specified level is enabled.
+            Disabled levels do not evaluate formatted interpolation expressions.
+            </summary>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions">
+            <summary>
+            Provides interpolated diagnostic logging helpers for <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Info(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.InfoDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes an info diagnostic message without evaluating formatted expressions when info diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Warn(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.WarningDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes a warning diagnostic message without evaluating formatted expressions when warning diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Error(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.ErrorDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes an error diagnostic message without evaluating formatted expressions when error diagnostics are disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Log(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.DynamicDiagnosticLevel},System.String,System.String,System.String)">
+            <summary>
+            Writes a dynamic-level diagnostic message without evaluating formatted expressions when the level is disabled.
+            </summary>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="level">The severity level of the diagnostic event.</param>
+            <param name="message">The interpolated diagnostic message.</param>
+            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
+            <param name="method">The calling method name, automatically captured.</param>
+            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticEvent">
+            <summary>
+            Represents a single diagnostic event emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticEvent.#ctor(System.String,SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticEvent"/> struct.
+            </summary>
+            <param name="channel">The channel that emitted the event.</param>
+            <param name="level">The severity level of the event.</param>
+            <param name="message">The event message.</param>
+            <param name="source">An optional source identifier.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Channel">
+            <summary>
+            Gets the channel that emitted the event.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Level">
+            <summary>
+            Gets the severity level of the event.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Message">
+            <summary>
+            Gets the diagnostic message.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Source">
+            <summary>
+            Gets the optional source identifier.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler">
+            <summary>
+            Builds diagnostic messages for enabled diagnostic levels while allowing disabled levels
+            to skip formatted interpolation expression evaluation.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler"/> struct.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that will receive the message.</param>
+            <param name="level">The severity level being evaluated.</param>
+            <param name="isEnabled">
+            Set to <c>true</c> when formatted expressions should be evaluated; otherwise, <c>false</c>.
+            </param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.IsEnabled">
+            <summary>
+            Gets a value indicating whether this handler is actively building a diagnostic message.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendLiteral(System.String)">
+            <summary>
+            Appends a literal string segment.
+            </summary>
+            <param name="value">The literal string segment.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0)">
+            <summary>
+            Appends a formatted value.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
+            <summary>
+            Appends a formatted value using the specified format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
+            <summary>
+            Appends a formatted value with the specified alignment.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
+            <summary>
+            Appends a formatted value with the specified alignment and format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String)">
+            <summary>
+            Appends a string value.
+            </summary>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
+            <summary>
+            Appends a string value with the specified alignment.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
+            <summary>
+            Appends a string value with the specified alignment and format string.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
+            <summary>
+            Appends a character span.
+            </summary>
+            <param name="value">The span to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
+            <summary>
+            Appends a character span with the specified alignment.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
+            <summary>
+            Appends a character span with the specified alignment and format string.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticLevel">
+            <summary>
+            Defines the severity level for a diagnostic event.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.None">
+            <summary>
+            Diagnostics are disabled.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Info">
+            <summary>
+            Informational diagnostic output.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Warning">
+            <summary>
+            Warning diagnostic output.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Error">
+            <summary>
+            Error diagnostic output.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticLogger">
+            <summary>
+            Provides reusable logger state and diagnostic channels for libraries built on SwiftCollections diagnostics.
+            </summary>
+            <remarks>
+            Static logger facades can delegate to a derived instance of this type while keeping their existing public API.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticLogger"/> class.
+            </summary>
+            <param name="channelName">The diagnostic channel name.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Name">
+            <summary>
+            Gets the logger name.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Channel">
+            <summary>
+            Gets the diagnostic channel used for normal diagnostics.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.DebugChannel">
+            <summary>
+            Gets the diagnostic channel used for verbose debug diagnostics.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.EnableDebugLogging">
+            <summary>
+            Gets or sets a value indicating whether verbose debug diagnostics should be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.MinimumLevel">
+            <summary>
+            Gets or sets the minimum severity required for normal diagnostics to be emitted.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler">
+            <summary>
+            Gets or sets the delegate used to write formatted log messages.
+            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter">
+            <summary>
+            Gets or sets the formatter used to transform log arguments into a final log entry.
+            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
+            <summary>
+            Determines whether normal diagnostics at the specified level are currently enabled.
+            </summary>
+            <param name="level">The diagnostic level to evaluate.</param>
+            <returns><see langword="true"/> when messages at <paramref name="level"/> will be emitted; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Writes a log message using the current <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter"/>.
+            </summary>
+            <param name="level">The severity level of the log message.</param>
+            <param name="message">The log message.</param>
+            <param name="source">The source of the log message.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+            <summary>
+            Formats a log entry using a deterministic, source-first layout.
+            </summary>
+            <param name="level">The severity level of the log message.</param>
+            <param name="message">The log message.</param>
+            <param name="source">The source of the log message.</param>
+            <returns>A formatted log entry.</returns>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.HandleDiagnosticEvent(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+            <summary>
+            Receives diagnostics emitted by either channel.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.ResolveSource(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+            <summary>
+            Resolves the source value passed to <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler"/>.
+            </summary>
+            <param name="diagnostic">The emitted diagnostic event.</param>
+            <returns>The resolved source.</returns>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.IDiagnosticLevelProvider">
+            <summary>
+            Describes a fixed diagnostic level for an interpolated diagnostic message handler.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.IDiagnosticLevelProvider.Level">
+            <summary>
+            Gets the diagnostic level for this provider.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.InfoDiagnosticLevel">
+            <summary>
+            Provides the info diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.InfoDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.WarningDiagnosticLevel">
+            <summary>
+            Provides the warning diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.WarningDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.ErrorDiagnosticLevel">
+            <summary>
+            Provides the error diagnostic level for fixed-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.ErrorDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DynamicDiagnosticLevel">
+            <summary>
+            Provides a placeholder level for dynamic-level interpolated logging.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DynamicDiagnosticLevel.Level">
+            <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1">
+            <summary>
+            Builds interpolated diagnostic messages only when the requested diagnostic level is enabled.
+            </summary>
+            <typeparam name="TLevel">The fixed diagnostic level provider used by fixed-level helpers.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,System.Boolean@)">
+            <summary>
+            Initializes a new handler for a fixed-level diagnostic message.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
+            <summary>
+            Initializes a new handler for a dynamic-level diagnostic message.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="channel">The diagnostic channel that receives the message.</param>
+            <param name="level">The diagnostic level being evaluated.</param>
+            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.IsEnabled">
+            <summary>
+            Gets whether the handler is actively building a diagnostic message.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendLiteral(System.String)">
+            <summary>
+            Appends a literal string segment.
+            </summary>
+            <param name="value">The literal string segment.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0)">
+            <summary>
+            Appends a formatted value.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.String)">
+            <summary>
+            Appends a formatted value using the specified format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32)">
+            <summary>
+            Appends a formatted value with the specified alignment.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32,System.String)">
+            <summary>
+            Appends a formatted value with the specified alignment and format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics">
+            <summary>
+            Provides access to shared diagnostics for SwiftCollections.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics.Shared">
+            <summary>
+            Gets the shared SwiftCollections diagnostics channel.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.SwiftThrowHelper">
+            <summary>
+            Provides allocation-conscious guard helpers for throwing common exceptions.
+            </summary>
+            <remarks>
+            Validation methods keep the success path small and route exception creation through no-inline throw helpers.
+            Interpolated custom messages are condition-gated so formatted expressions are not evaluated unless the guard throws.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNull(System.Object,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentNullException"/> if the provided argument is null.
+            </summary>
+            <param name="argument">The argument to check for null.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNullGeneric``1(``0,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentNullException"/> if the provided generic argument is null.
+            </summary>
+            <typeparam name="T">The type of the argument to check.</typeparam>
+            <param name="argument">The argument to check for null.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentNullException"/> if the specified value is null and nulls are not legal for <typeparamref name="TValue"/>.
+            </summary>
+            <typeparam name="TValue">The value type used to determine whether null is legal.</typeparam>
+            <param name="value">The value to check.</param>
+            <param name="defaultValue">A default value of type <typeparamref name="TValue"/> used to determine if nulls are illegal.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the value is null and nulls are illegal.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified value is negative.
+            </summary>
+            <param name="value">The value to check.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified value is negative or zero.
+            </summary>
+            <param name="value">The value to check.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative or zero.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="actualValue">The value that caused the exception.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="actualValue">The value that caused the exception.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="actualValue">The value that caused the exception.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArrayIndexInvalid(System.Int32,System.Int32,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if a copy destination index is outside [0, length].
+            </summary>
+            <param name="index">The destination index to check.</param>
+            <param name="length">The destination length.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the index is outside [0, length].</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentException"/> if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.InvalidOperationException"/> if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object in an invalid state.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.InvalidOperationException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.InvalidOperationException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object in an invalid state.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ObjectDisposedException"/> if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object that has been disposed.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ObjectDisposedException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws an <see cref="T:System.ObjectDisposedException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="objectName">The name of the object that has been disposed.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object)">
+            <summary>
+            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> if the specified index is negative.
+            </summary>
+            <param name="index">The index to check.</param>
+            <param name="key">The key associated with the index.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the index is negative.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,System.String)">
+            <summary>
+            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="key">The key associated with the lookup.</param>
+            <param name="message">An optional message to include in the exception.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
+            <summary>
+            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> with a lazily formatted message if the specified condition is true.
+            </summary>
+            <param name="condition">The condition to evaluate.</param>
+            <param name="key">The key associated with the lookup.</param>
+            <param name="message">The interpolated exception message.</param>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfListIndexInvalid(System.Int32,System.Int32)">
+            <summary>
+            Throws an <see cref="T:System.IndexOutOfRangeException"/> if the specified index is outside the valid range defined by count.
+            </summary>
+            <param name="index">The index to check.</param>
+            <param name="count">The total number of elements in the collection.</param>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when the index is outside the valid range.</exception>
+        </member>
+        <member name="T:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler">
+            <summary>
+            Builds exception messages only when the guarded throw condition is true.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.#ctor(System.Int32,System.Int32,System.Boolean,System.Boolean@)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler"/> struct.
+            </summary>
+            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
+            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
+            <param name="condition">The throw condition that controls whether formatting occurs.</param>
+            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
+        </member>
+        <member name="P:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.IsEnabled">
+            <summary>
+            Gets whether this handler is actively building an exception message.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendLiteral(System.String)">
+            <summary>
+            Appends a literal string segment.
+            </summary>
+            <param name="value">The literal string segment.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0)">
+            <summary>
+            Appends a formatted value.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
+            <summary>
+            Appends a formatted value using the specified format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
+            <summary>
+            Appends a formatted value with the specified alignment.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
+            <summary>
+            Appends a formatted value with the specified alignment and format string.
+            </summary>
+            <typeparam name="T">The type of value to append.</typeparam>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String)">
+            <summary>
+            Appends a string value.
+            </summary>
+            <param name="value">The value to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
+            <summary>
+            Appends a string value with the specified alignment.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
+            <summary>
+            Appends a string value with the specified alignment and format string.
+            </summary>
+            <param name="value">The value to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
+            <summary>
+            Appends a character span.
+            </summary>
+            <param name="value">The span to append.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
+            <summary>
+            Appends a character span with the specified alignment.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+        </member>
+        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
+            <summary>
+            Appends a character span with the specified alignment and format string.
+            </summary>
+            <param name="value">The span to append.</param>
+            <param name="alignment">The minimum width for the formatted value.</param>
+            <param name="format">The format string to apply.</param>
         </member>
         <member name="T:SwiftCollections.Dimensions.SwiftBoolArray2D">
             <summary>
@@ -3636,7 +4641,7 @@
         <member name="T:SwiftCollections.SwiftDeterministicObjectEqualityComparer">
             <summary>
             Provides a deterministic object comparer used by SwiftCollections when no comparer is supplied.
-            Strings are hashed via <see cref="M:SwiftCollections.SwiftHashTools.MurmurHash3(System.String,System.Int32)"/> to avoid runtime-dependent string hashes.
+            Strings are hashed via <see cref="M:SwiftCollections.Utility.SwiftHashTools.MurmurHash3(System.String,System.Int32)"/> to avoid runtime-dependent string hashes.
             </summary>
         </member>
         <member name="T:SwiftCollections.SwiftDeterministicStringEqualityComparer">
@@ -3735,6 +4740,216 @@
             Returns a hash code for the current comparer.
             </summary>
             <returns>A hash code for the current comparer.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftExtensions">
+            <summary>
+            Provides extension methods for collection manipulation and utility functions.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[],System.Func{``0})">
+            <summary>
+            Populates an array with values generated by a specified provider function.
+            </summary>
+            <typeparam name="T">The type of the elements in the array.</typeparam>
+            <param name="array">The array to populate.</param>
+            <param name="provider">A function that generates a value for each element in the array.</param>
+            <returns>The populated array.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[],System.Func{System.Int32,``0})">
+            <summary>
+            Populates an array with values generated by a provider function that accepts the current index.
+            </summary>
+            <typeparam name="T">The type of the elements in the array.</typeparam>
+            <param name="array">The array to populate.</param>
+            <param name="provider">A function that generates a value for each element based on its index.</param>
+            <returns>The populated array.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[])">
+            <summary>
+            Populates an array with new instances of the specified type. 
+            The type must have a parameterless constructor.
+            </summary>
+            <typeparam name="T">The type of the elements in the array.</typeparam>
+            <param name="array">The array to populate.</param>
+            <returns>The populated array.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.TryIndex``1(``0[],System.Int32,``0@)">
+            <summary>
+            Attempts to retrieve an element from the array at the specified index.
+            Returns true if the index is valid and the element is retrieved; otherwise, returns false.
+            </summary>
+            <typeparam name="T">The type of elements in the array.</typeparam>
+            <param name="array">The array from which to retrieve the element.</param>
+            <param name="index">The index of the element to retrieve.</param>
+            <param name="result">
+            When this method returns, contains the element at the specified index if the index is valid;
+            otherwise, the default value for the type of the element.
+            </param>
+            <returns>
+            True if the element at the specified index was retrieved successfully; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.Shuffle``1(System.Collections.Generic.IEnumerable{``0},System.Random)">
+            <summary>
+            An iterator that yields the elements of the source collection in a random order using the specified random number generator.
+            </summary>
+            <typeparam name="T">The type of elements in the collection.</typeparam>
+            <param name="source">The collection to shuffle.</param>
+            <param name="rng">The random number generator to use for shuffling.</param>
+            <returns>An iterator that yields the shuffled elements.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.ShuffleInPlace``1(System.Collections.Generic.IList{``0},System.Random)">
+            <summary>
+            Shuffles the elements of the list in place using the specified random number generator.
+            </summary>
+            <typeparam name="T">The type of elements in the list.</typeparam>
+            <param name="list">The list to shuffle.</param>
+            <param name="rng">The random number generator to use for shuffling.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.IsPopulated``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines whether a sequence contains any elements.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"> The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check for emptiness.</param>
+            <returns>
+            true if the source sequence contains any elements; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.IsPopulatedSafe``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines whether the collection is not null and contains any elements.
+            </summary>
+            <typeparam name="T">The type of elements in the collection.</typeparam>
+            <param name="source">The collection to check.</param>
+            <returns>
+            True if the collection is not null and contains at least one element; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Gets the element at the specified index from the end (1-based).
+            For example, FromEnd(1) returns the last item, FromEnd(2) returns second-to-last.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(SwiftCollections.SwiftList{``0},System.Int32)">
+            <summary>
+            Gets the element at the specified index from the end (1-based) from SwiftList.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.PopLast``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the last item in the sequence.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.SkipFromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Bypasses a specified number of elements from the end and then returns the remaining elements.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftExtensions.SecondToLast``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the second-to-last item in the sequence.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.Lazy.SwiftLazyDisposable`1">
+            <summary>
+            A lazily initialized disposable object.
+            This class extends <see cref="T:System.Lazy`1"/> to support <see cref="T:System.IDisposable"/> objects,
+            ensuring proper resource cleanup when disposed.
+            </summary>
+            <typeparam name="T">The type of the lazily initialized object, which must implement <see cref="T:System.IDisposable"/>.</typeparam>
+        </member>
+        <member name="F:SwiftCollections.Lazy.SwiftLazyDisposable`1._disposed">
+            <summary>
+            Indicates whether the lazy instance has been disposed.
+            Prevents multiple disposal attempts, ensuring safe resource cleanup.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class.
+             When lazy initialization occurs, the default constructor is used.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor(System.Boolean)">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class.
+             When lazy initialization occurs, the default constructor of the target type
+             and the specified initialization mode are used.
+            </summary>
+            <param name="isThreadSafe">
+             true to make this instance usable concurrently by multiple threads;
+             false to make the instance usable by only one thread at a time. 
+            </param>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor(System.Threading.LazyThreadSafetyMode)">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class
+             that uses the default constructor of T and the specified thread-safety mode.
+            </summary>
+            <param name="mode">
+             One of the enumeration values that specifies the thread safety mode. 
+            </param>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor(System.Func{`0})">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class.
+             When lazy initialization occurs, the specified initialization function is used.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Boolean)">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class.
+             When lazy initialization occurs, the specified initialization function
+             and initialization mode are used.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+            <param name="isThreadSafe">
+             true to make this instance usable concurrently by multiple threads;
+             false to make this instance usable by only one thread at a time. 
+            </param>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)">
+            <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> class
+             using the specified initialization function and thread-safety mode.
+            </summary>
+            <param name="valueFactory">
+             The delegate that is invoked to produce the lazily initialized value when it is needed. 
+            </param>
+            <param name="mode">
+             One of the enumeration values that specifies the thread safety mode. 
+            </param>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.ToString">
+            <summary>
+            Returns a string that represents the current state of the object.
+            </summary>
+            <remarks>
+            This method provides a user-friendly description of the object's state, 
+            which can be useful for debugging or logging purposes.
+            </remarks>
+            <returns>
+            A string representation of the value if it has been created; otherwise, 
+            a string indicating that the value has not been created.
+            </returns>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.Dispose">
+            <summary>
+            Disposes the lazily initialized value if it has been created.
+            Ensures that disposal is only performed once.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Lazy.SwiftLazyDisposable`1.Finalize">
+            <summary>
+            Finalizer to ensure disposal if Dispose() is never called.
+            </summary>
         </member>
         <member name="T:SwiftCollections.Observable.SwiftObservableProperty`1">
             <summary>
@@ -4230,7 +5445,7 @@
         <member name="F:SwiftCollections.Pool.SwiftDictionaryPool`2._lazyInstance">
             <summary>
             Shared instance of the dictionary pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftDictionaryPool`2.Shared">
@@ -4288,7 +5503,7 @@
         <member name="F:SwiftCollections.Pool.SwiftHashSetPool`1._lazyInstance">
             <summary>
             Shared instance of the hash set pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftHashSetPool`1.Shared">
@@ -4346,7 +5561,7 @@
         <member name="F:SwiftCollections.Pool.SwiftListPool`1._lazyInstance">
             <summary>
             Shared instance of the hash set pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftListPool`1.Shared">
@@ -4404,7 +5619,7 @@
         <member name="F:SwiftCollections.Pool.SwiftPackedSetPool`1._lazyInstance">
             <summary>
             Shared instance of the packed set pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftPackedSetPool`1.Shared">
@@ -4458,7 +5673,7 @@
         <member name="F:SwiftCollections.Pool.SwiftQueuePool`1._lazyInstance">
             <summary>
             Shared instance of the queue pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftQueuePool`1.Shared">
@@ -4516,7 +5731,7 @@
         <member name="F:SwiftCollections.Pool.SwiftSparseMapPool`1._lazyInstance">
             <summary>
             Shared instance of the sparse map pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftSparseMapPool`1.Shared">
@@ -4582,7 +5797,7 @@
         <member name="F:SwiftCollections.Pool.SwiftStackPool`1._lazyInstance">
             <summary>
             Shared instance of the stack pool, providing a globally accessible pool.
-            Uses <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
+            Uses <see cref="T:SwiftCollections.Lazy.SwiftLazyDisposable`1"/> to ensure lazy initialization and proper disposal.
             </summary>
         </member>
         <member name="P:SwiftCollections.Pool.SwiftStackPool`1.Shared">
@@ -5022,141 +6237,6 @@
             Clears all references and metadata.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Query.BoundVolume">
-            <summary>
-            Represents an axis-aligned bounding box (AABB) in 3D space.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._min">
-            <summary>
-            The minimum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._max">
-            <summary>
-            The maximum point of the bounding volume.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._center">
-            <summary>
-            The center of the bounding volume as the midpoint of the minimum and maximum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._size">
-            <summary>
-            The size of the bounding volume as the difference between the maximum and minimum points.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._volume">
-            <summary>
-            The volume of the bounding box, calculated as the product of its dimensions.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Query.BoundVolume._isDirty">
-            <summary>
-            Marks the bounding volume as dirty, indicating its properties need recalculation.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.#ctor(System.Numerics.Vector3,System.Numerics.Vector3)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Query.BoundVolume"/> struct with the specified minimum and maximum points.
-            </summary>
-            <param name="min">The minimum point of the bounding volume.</param>
-            <param name="max">The maximum point of the bounding volume.</param>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Min">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._min"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Max">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._max"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Center">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._center"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Size">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._size"/>
-        </member>
-        <member name="P:SwiftCollections.Query.BoundVolume.Volume">
-            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._volume"/>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.RecalculateMeta">
-            <summary>
-            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.Intersects(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.GetCost(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.BoundsEquals(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.Equals(SwiftCollections.Query.BoundVolume)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.Equals(System.Object)">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.op_Equality(SwiftCollections.Query.BoundVolume,SwiftCollections.Query.BoundVolume)">
-            <summary>
-            Determines whether two BoundVolume instances are equal.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.op_Inequality(SwiftCollections.Query.BoundVolume,SwiftCollections.Query.BoundVolume)">
-            <summary>
-            Determines whether two BoundVolume instances are not equal.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.GetHashCode">
-            <inheritdoc />
-        </member>
-        <member name="M:SwiftCollections.Query.BoundVolume.ToString">
-            <summary>
-            Returns a string that represents the current object, including the minimum and maximum values.
-            </summary>
-            <returns>A string in the format "Min: {Min}, Max: {Max}" that displays the minimum and maximum values of the object.</returns>
-        </member>
-        <member name="T:SwiftCollections.Query.IBoundVolume`1">
-            <summary>
-            Represents a strongly-typed bounding volume contract for spatial operations.
-            </summary>
-            <typeparam name="TVolume">The concrete bounding volume type.</typeparam>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume`1.Union(`0)">
-            <summary>
-            Combines the current bounding volume with another, creating a new volume that encloses both.
-            </summary>
-            <param name="other">The other bounding volume to combine with.</param>
-            <returns>A new bounding volume that contains both the current and other volumes.</returns>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume`1.Intersects(`0)">
-            <summary>
-            Determines whether the current bounding volume intersects with another.
-            </summary>
-            <param name="other">The other bounding volume to test for intersection.</param>
-            <returns>True if the volumes intersect; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume`1.GetCost(`0)">
-            <summary>
-            Calculates the cost of combining the current bounding volume with another.
-            Used as the SAH insertion metric; returned as <see langword="long"/> to avoid
-            overflow in worlds with large coordinate ranges.
-            </summary>
-            <param name="other">The other bounding volume to consider.</param>
-            <returns>The cost metric of the union operation.</returns>
-        </member>
-        <member name="M:SwiftCollections.Query.IBoundVolume`1.BoundsEquals(`0)">
-            <summary>
-            Determines whether the bounds represent the same spatial region.
-            </summary>
-            <param name="other">The other bounding volume to compare against.</param>
-            <returns>True when both bounds share the same minimum and maximum extents; otherwise, false.</returns>
-        </member>
         <member name="T:SwiftCollections.Query.IOctreeBoundsPartitioner`1">
             <summary>
             Maps octree subdivision and containment behavior for a specific volume backend.
@@ -5324,6 +6404,141 @@
         </member>
         <member name="M:SwiftCollections.Query.SwiftOctreeOptions.GetHashCode">
             <inheritdoc />
+        </member>
+        <member name="T:SwiftCollections.Query.BoundVolume">
+            <summary>
+            Represents an axis-aligned bounding box (AABB) in 3D space.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._min">
+            <summary>
+            The minimum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._max">
+            <summary>
+            The maximum point of the bounding volume.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._center">
+            <summary>
+            The center of the bounding volume as the midpoint of the minimum and maximum points.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._size">
+            <summary>
+            The size of the bounding volume as the difference between the maximum and minimum points.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._volume">
+            <summary>
+            The volume of the bounding box, calculated as the product of its dimensions.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.Query.BoundVolume._isDirty">
+            <summary>
+            Marks the bounding volume as dirty, indicating its properties need recalculation.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.#ctor(System.Numerics.Vector3,System.Numerics.Vector3)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.BoundVolume"/> struct with the specified minimum and maximum points.
+            </summary>
+            <param name="min">The minimum point of the bounding volume.</param>
+            <param name="max">The maximum point of the bounding volume.</param>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Min">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._min"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Max">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._max"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Center">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._center"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Size">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._size"/>
+        </member>
+        <member name="P:SwiftCollections.Query.BoundVolume.Volume">
+            <inheritdoc cref="F:SwiftCollections.Query.BoundVolume._volume"/>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.RecalculateMeta">
+            <summary>
+            Forces recalculation of the bounding volume's metadata, such as center, size, and volume.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.Union(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.Intersects(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.GetCost(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.BoundsEquals(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.Equals(SwiftCollections.Query.BoundVolume)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.op_Equality(SwiftCollections.Query.BoundVolume,SwiftCollections.Query.BoundVolume)">
+            <summary>
+            Determines whether two BoundVolume instances are equal.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.op_Inequality(SwiftCollections.Query.BoundVolume,SwiftCollections.Query.BoundVolume)">
+            <summary>
+            Determines whether two BoundVolume instances are not equal.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SwiftCollections.Query.BoundVolume.ToString">
+            <summary>
+            Returns a string that represents the current object, including the minimum and maximum values.
+            </summary>
+            <returns>A string in the format "Min: {Min}, Max: {Max}" that displays the minimum and maximum values of the object.</returns>
+        </member>
+        <member name="T:SwiftCollections.Query.IBoundVolume`1">
+            <summary>
+            Represents a strongly-typed bounding volume contract for spatial operations.
+            </summary>
+            <typeparam name="TVolume">The concrete bounding volume type.</typeparam>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.Union(`0)">
+            <summary>
+            Combines the current bounding volume with another, creating a new volume that encloses both.
+            </summary>
+            <param name="other">The other bounding volume to combine with.</param>
+            <returns>A new bounding volume that contains both the current and other volumes.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.Intersects(`0)">
+            <summary>
+            Determines whether the current bounding volume intersects with another.
+            </summary>
+            <param name="other">The other bounding volume to test for intersection.</param>
+            <returns>True if the volumes intersect; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.GetCost(`0)">
+            <summary>
+            Calculates the cost of combining the current bounding volume with another.
+            Used as the SAH insertion metric; returned as <see langword="long"/> to avoid
+            overflow in worlds with large coordinate ranges.
+            </summary>
+            <param name="other">The other bounding volume to consider.</param>
+            <returns>The cost metric of the union operation.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.IBoundVolume`1.BoundsEquals(`0)">
+            <summary>
+            Determines whether the bounds represent the same spatial region.
+            </summary>
+            <param name="other">The other bounding volume to compare against.</param>
+            <returns>True when both bounds share the same minimum and maximum extents; otherwise, false.</returns>
         </member>
         <member name="T:SwiftCollections.Query.ISpatialHashCellMapper`1">
             <summary>
@@ -5810,15 +7025,15 @@
             </param>
             <param name="peak">The highest index that has been allocated in the bucket. Must be greater than or equal to zero.</param>
         </member>
-        <member name="T:SwiftCollections.SwiftSparseSetState`1">
+        <member name="T:SwiftCollections.SwiftSparseMapState`1">
             <summary>
-            Represents the immutable state of a sparse set, containing the dense keys and associated values.
+            Represents the immutable state of a sparse map, containing the dense keys and associated values.
             </summary>
             <remarks>
-            This structure is typically used to serialize or inspect the contents of a sparse set. 
-            The arrays are guaranteed to be non-null, but may be empty if the set contains no elements.
+            This structure is typically used to serialize or inspect the contents of a sparse map. 
+            The arrays are guaranteed to be non-null, but may be empty if the map contains no elements.
             </remarks>
-            <typeparam name="T">The type of values stored in the sparse set.</typeparam>
+            <typeparam name="T">The type of values stored in the sparse map.</typeparam>
             <remarks>
             MemoryPack GenerateType: Object<br/>
             <code>
@@ -5827,22 +7042,22 @@
             </code>
             </remarks>
         </member>
-        <member name="F:SwiftCollections.SwiftSparseSetState`1.DenseKeys">
+        <member name="F:SwiftCollections.SwiftSparseMapState`1.DenseKeys">
             <summary>
             Gets the collection of dense keys associated with this instance.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftSparseSetState`1.DenseValues">
+        <member name="F:SwiftCollections.SwiftSparseMapState`1.DenseValues">
             <summary>
             Gets the array containing the dense values for this instance.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftSparseSetState`1.#ctor(System.Int32[],`0[])">
+        <member name="M:SwiftCollections.SwiftSparseMapState`1.#ctor(System.Int32[],`0[])">
             <summary>
-            Initializes a new instance of the SwiftSparseSetState class with the specified dense keys and values.
+            Initializes a new instance of the SwiftSparseMapState class with the specified dense keys and values.
             </summary>
             <param name="denseKeys">
-            An array of integers representing the dense keys to initialize the set with. 
+            An array of integers representing the dense keys to initialize the map with. 
             If null, an empty array is used.
             </param>
             <param name="denseValues">
@@ -5850,626 +7065,42 @@
             If null, an empty array is used.
             </param>
         </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticSink">
-            <summary>
-            Receives diagnostic events emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannel">
-            <summary>
-            Represents a named diagnostic channel with a configurable sink and minimum level.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/> class.
-            </summary>
-            <param name="name">The channel name. Blank names fall back to <c>Default</c>.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Name">
-            <summary>
-            Gets the channel name.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.MinimumLevel">
-            <summary>
-            Gets or sets the minimum level required for diagnostics to be emitted.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Sink">
-            <summary>
-            Gets or sets the sink that receives emitted diagnostics.
-            Assigning <c>null</c> restores the default no-op sink.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
-            <summary>
-            Determines whether the specified level is enabled for this channel.
-            </summary>
-            <param name="level">The level to evaluate.</param>
-            <returns><c>true</c> when the level is enabled; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Emits a diagnostic event when the specified level is enabled.
-            </summary>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The diagnostic message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler,System.String)">
-            <summary>
-            Emits a diagnostic event from an interpolated message when the specified level is enabled.
-            Disabled levels do not evaluate formatted interpolation expressions.
-            </summary>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions">
-            <summary>
-            Provides interpolated diagnostic logging helpers for <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Info(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.InfoDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes an info diagnostic message without evaluating formatted expressions when info diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Warn(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.WarningDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes a warning diagnostic message without evaluating formatted expressions when warning diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Error(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.ErrorDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes an error diagnostic message without evaluating formatted expressions when error diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Log(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.DynamicDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes a dynamic-level diagnostic message without evaluating formatted expressions when the level is disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticEvent">
-            <summary>
-            Represents a single diagnostic event emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticEvent.#ctor(System.String,SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticEvent"/> struct.
-            </summary>
-            <param name="channel">The channel that emitted the event.</param>
-            <param name="level">The severity level of the event.</param>
-            <param name="message">The event message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Channel">
-            <summary>
-            Gets the channel that emitted the event.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Level">
-            <summary>
-            Gets the severity level of the event.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Message">
-            <summary>
-            Gets the diagnostic message.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Source">
-            <summary>
-            Gets the optional source identifier.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler">
-            <summary>
-            Builds diagnostic messages for enabled diagnostic levels while allowing disabled levels
-            to skip formatted interpolation expression evaluation.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler"/> struct.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that will receive the message.</param>
-            <param name="level">The severity level being evaluated.</param>
-            <param name="isEnabled">
-            Set to <c>true</c> when formatted expressions should be evaluated; otherwise, <c>false</c>.
-            </param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.IsEnabled">
-            <summary>
-            Gets a value indicating whether this handler is actively building a diagnostic message.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendLiteral(System.String)">
-            <summary>
-            Appends a literal string segment.
-            </summary>
-            <param name="value">The literal string segment.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0)">
-            <summary>
-            Appends a formatted value.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
-            <summary>
-            Appends a formatted value using the specified format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
-            <summary>
-            Appends a formatted value with the specified alignment.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
-            <summary>
-            Appends a formatted value with the specified alignment and format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String)">
-            <summary>
-            Appends a string value.
-            </summary>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
-            <summary>
-            Appends a string value with the specified alignment.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
-            <summary>
-            Appends a string value with the specified alignment and format string.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
-            <summary>
-            Appends a character span.
-            </summary>
-            <param name="value">The span to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
-            <summary>
-            Appends a character span with the specified alignment.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
-            <summary>
-            Appends a character span with the specified alignment and format string.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticLevel">
-            <summary>
-            Defines the severity level for a diagnostic event.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.None">
-            <summary>
-            Diagnostics are disabled.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Info">
-            <summary>
-            Informational diagnostic output.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Warning">
-            <summary>
-            Warning diagnostic output.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Error">
-            <summary>
-            Error diagnostic output.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticLogger">
-            <summary>
-            Provides reusable logger state and diagnostic channels for libraries built on SwiftCollections diagnostics.
-            </summary>
-            <remarks>
-            Static logger facades can delegate to a derived instance of this type while keeping their existing public API.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticLogger"/> class.
-            </summary>
-            <param name="channelName">The diagnostic channel name.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Name">
-            <summary>
-            Gets the logger name.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Channel">
-            <summary>
-            Gets the diagnostic channel used for normal diagnostics.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.DebugChannel">
-            <summary>
-            Gets the diagnostic channel used for verbose debug diagnostics.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.EnableDebugLogging">
-            <summary>
-            Gets or sets a value indicating whether verbose debug diagnostics should be emitted.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.MinimumLevel">
-            <summary>
-            Gets or sets the minimum severity required for normal diagnostics to be emitted.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler">
-            <summary>
-            Gets or sets the delegate used to write formatted log messages.
-            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter">
-            <summary>
-            Gets or sets the formatter used to transform log arguments into a final log entry.
-            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
-            <summary>
-            Determines whether normal diagnostics at the specified level are currently enabled.
-            </summary>
-            <param name="level">The diagnostic level to evaluate.</param>
-            <returns><see langword="true"/> when messages at <paramref name="level"/> will be emitted; otherwise, <see langword="false"/>.</returns>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Writes a log message using the current <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter"/>.
-            </summary>
-            <param name="level">The severity level of the log message.</param>
-            <param name="message">The log message.</param>
-            <param name="source">The source of the log message.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Formats a log entry using a deterministic, source-first layout.
-            </summary>
-            <param name="level">The severity level of the log message.</param>
-            <param name="message">The log message.</param>
-            <param name="source">The source of the log message.</param>
-            <returns>A formatted log entry.</returns>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.HandleDiagnosticEvent(SwiftCollections.Diagnostics.DiagnosticEvent@)">
-            <summary>
-            Receives diagnostics emitted by either channel.
-            </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.ResolveSource(SwiftCollections.Diagnostics.DiagnosticEvent@)">
-            <summary>
-            Resolves the source value passed to <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler"/>.
-            </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
-            <returns>The resolved source.</returns>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.IDiagnosticLevelProvider">
-            <summary>
-            Describes a fixed diagnostic level for an interpolated diagnostic message handler.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.IDiagnosticLevelProvider.Level">
-            <summary>
-            Gets the diagnostic level for this provider.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.InfoDiagnosticLevel">
-            <summary>
-            Provides the info diagnostic level for fixed-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.InfoDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.WarningDiagnosticLevel">
-            <summary>
-            Provides the warning diagnostic level for fixed-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.WarningDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.ErrorDiagnosticLevel">
-            <summary>
-            Provides the error diagnostic level for fixed-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.ErrorDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DynamicDiagnosticLevel">
-            <summary>
-            Provides a placeholder level for dynamic-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DynamicDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1">
-            <summary>
-            Builds interpolated diagnostic messages only when the requested diagnostic level is enabled.
-            </summary>
-            <typeparam name="TLevel">The fixed diagnostic level provider used by fixed-level helpers.</typeparam>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,System.Boolean@)">
-            <summary>
-            Initializes a new handler for a fixed-level diagnostic message.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
-            <summary>
-            Initializes a new handler for a dynamic-level diagnostic message.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="level">The diagnostic level being evaluated.</param>
-            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.IsEnabled">
-            <summary>
-            Gets whether the handler is actively building a diagnostic message.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendLiteral(System.String)">
-            <summary>
-            Appends a literal string segment.
-            </summary>
-            <param name="value">The literal string segment.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0)">
-            <summary>
-            Appends a formatted value.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.String)">
-            <summary>
-            Appends a formatted value using the specified format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32)">
-            <summary>
-            Appends a formatted value with the specified alignment.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32,System.String)">
-            <summary>
-            Appends a formatted value with the specified alignment and format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics">
-            <summary>
-            Provides access to shared diagnostics for SwiftCollections.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics.Shared">
-            <summary>
-            Gets the shared SwiftCollections diagnostics channel.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftExtensions">
-            <summary>
-            Provides extension methods for collection manipulation and utility functions.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[],System.Func{``0})">
-            <summary>
-            Populates an array with values generated by a specified provider function.
-            </summary>
-            <typeparam name="T">The type of the elements in the array.</typeparam>
-            <param name="array">The array to populate.</param>
-            <param name="provider">A function that generates a value for each element in the array.</param>
-            <returns>The populated array.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[],System.Func{System.Int32,``0})">
-            <summary>
-            Populates an array with values generated by a provider function that accepts the current index.
-            </summary>
-            <typeparam name="T">The type of the elements in the array.</typeparam>
-            <param name="array">The array to populate.</param>
-            <param name="provider">A function that generates a value for each element based on its index.</param>
-            <returns>The populated array.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Populate``1(``0[])">
-            <summary>
-            Populates an array with new instances of the specified type. 
-            The type must have a parameterless constructor.
-            </summary>
-            <typeparam name="T">The type of the elements in the array.</typeparam>
-            <param name="array">The array to populate.</param>
-            <returns>The populated array.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.TryIndex``1(``0[],System.Int32,``0@)">
-            <summary>
-            Attempts to retrieve an element from the array at the specified index.
-            Returns true if the index is valid and the element is retrieved; otherwise, returns false.
-            </summary>
-            <typeparam name="T">The type of elements in the array.</typeparam>
-            <param name="array">The array from which to retrieve the element.</param>
-            <param name="index">The index of the element to retrieve.</param>
-            <param name="result">
-            When this method returns, contains the element at the specified index if the index is valid;
-            otherwise, the default value for the type of the element.
-            </param>
-            <returns>
-            True if the element at the specified index was retrieved successfully; otherwise, false.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.Shuffle``1(System.Collections.Generic.IEnumerable{``0},System.Random)">
-            <summary>
-            An iterator that yields the elements of the source collection in a random order using the specified random number generator.
-            </summary>
-            <typeparam name="T">The type of elements in the collection.</typeparam>
-            <param name="source">The collection to shuffle.</param>
-            <param name="rng">The random number generator to use for shuffling.</param>
-            <returns>An iterator that yields the shuffled elements.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.ShuffleInPlace``1(System.Collections.Generic.IList{``0},System.Random)">
-            <summary>
-            Shuffles the elements of the list in place using the specified random number generator.
-            </summary>
-            <typeparam name="T">The type of elements in the list.</typeparam>
-            <param name="list">The list to shuffle.</param>
-            <param name="rng">The random number generator to use for shuffling.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.IsPopulated``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Determines whether a sequence contains any elements.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="source"> The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check for emptiness.</param>
-            <returns>
-            true if the source sequence contains any elements; otherwise, false.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.IsPopulatedSafe``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Determines whether the collection is not null and contains any elements.
-            </summary>
-            <typeparam name="T">The type of elements in the collection.</typeparam>
-            <param name="source">The collection to check.</param>
-            <returns>
-            True if the collection is not null and contains at least one element; otherwise, false.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
-            <summary>
-            Gets the element at the specified index from the end (1-based).
-            For example, FromEnd(1) returns the last item, FromEnd(2) returns second-to-last.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.FromEnd``1(SwiftCollections.SwiftList{``0},System.Int32)">
-            <summary>
-            Gets the element at the specified index from the end (1-based) from SwiftList.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.PopLast``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Returns the last item in the sequence.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.SkipFromEnd``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
-            <summary>
-            Bypasses a specified number of elements from the end and then returns the remaining elements.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftExtensions.SecondToLast``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Returns the second-to-last item in the sequence.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftHashTools">
+        <member name="T:SwiftCollections.Utility.SwiftHashTools">
             <summary>
             Provides utility functions for generating, combining, and working with hash codes.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftHashTools.rng">
+        <member name="F:SwiftCollections.Utility.SwiftHashTools.rng">
             <summary>
             Provides a cryptographic random number generator for collision-hardening entropy.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftHashTools.data">
+        <member name="F:SwiftCollections.Utility.SwiftHashTools.data">
             <summary>
             Stores random bytes used for entropy generation.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftHashTools.currentIndex">
+        <member name="F:SwiftCollections.Utility.SwiftHashTools.currentIndex">
             <summary>
             Tracks the current index in the entropy data buffer.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftHashTools.lockObj">
+        <member name="F:SwiftCollections.Utility.SwiftHashTools.lockObj">
             <summary>
             Synchronization object for thread-safe operations.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftHashTools.s_SerializationInfoTable">
+        <member name="F:SwiftCollections.Utility.SwiftHashTools.s_SerializationInfoTable">
             <summary>
             Holds serialization information for objects during the serialization process.
             </summary>
         </member>
-        <member name="P:SwiftCollections.SwiftHashTools.SerializationInfoTable">
+        <member name="P:SwiftCollections.Utility.SwiftHashTools.SerializationInfoTable">
             <summary>
             Gets the table that stores serialization information for objects.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.IsPowerOfTwo(System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.IsPowerOfTwo(System.Int32)">
             <summary>
             Determines whether the specified integer is a power of two.
             </summary>
@@ -6477,7 +7108,7 @@
             <param name="x">The integer value to test.</param>
             <returns>true if the value of x is a power of two; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.NextPowerOfTwo(System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.NextPowerOfTwo(System.Int32)">
             <summary>
             Calculates the smallest power of two that is greater than or equal to the specified integer.
             This method is used to ensure that capacities are powers of two, enabling optimizations
@@ -6491,7 +7122,7 @@
             the methods returns `int.Max`.
             </remarks>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.IsWellKnownEqualityComparer(System.Object)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.IsWellKnownEqualityComparer(System.Object)">
             <summary>
             Determines whether the specified comparer is a recognized, well-known equality comparer supported by the system.
             </summary>
@@ -6506,38 +7137,38 @@
             </param>
             <returns>true if the comparer is a well-known equality comparer; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicEqualityComparer``1">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetDeterministicEqualityComparer``1">
             <summary>
             Gets the default comparer used by SwiftCollections for the specified type when no comparer is supplied.
             String keys are hashed deterministically. Object keys hash strings deterministically, while other object-key
             determinism still depends on the underlying key type's <see cref="M:System.Object.GetHashCode"/> implementation.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicStringEqualityComparer">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetDeterministicStringEqualityComparer">
             <summary>
             Gets the deterministic default comparer used by SwiftCollections for strings.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicStringEqualityComparer(System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetDeterministicStringEqualityComparer(System.Int32)">
             <summary>
             Gets a deterministic string comparer using the supplied seed.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicObjectEqualityComparer">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetDeterministicObjectEqualityComparer">
             <summary>
             Gets the default comparer used by SwiftCollections for object keys.
             Strings are hashed deterministically even when stored as objects. Other object keys still depend on their
             runtime <see cref="M:System.Object.GetHashCode"/> implementations.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetDeterministicObjectEqualityComparer(System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetDeterministicObjectEqualityComparer(System.Int32)">
             <summary>
             Gets an object comparer using the supplied seed.
             Strings are hashed deterministically even when stored as objects. Other object keys still depend on their
             runtime <see cref="M:System.Object.GetHashCode"/> implementations.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetSwiftEqualityComparer(System.Object)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetSwiftEqualityComparer(System.Object)">
             <summary>
             Returns an IEqualityComparer instance optimized for use with Swift serialization, based on the specified comparer.
             </summary>
@@ -6555,43 +7186,43 @@
             Returns a specialized comparer for strings or objects, depending on the input.
             </returns>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.GetEntropy">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.GetEntropy">
             <summary>
             Generates a cryptographically strong random 64-bit integer for collision-hardening entropy.
             </summary>
             <returns>A 64-bit integer filled with cryptographically strong random bytes.</returns>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Runtime.CompilerServices.ITuple,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Runtime.CompilerServices.ITuple,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Combines the hash codes of the elements in a tuple using a DJB2-inspired mixing strategy.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[],System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Object[],System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Combines the hash codes of a set of objects using a DJB2-inspired mixing strategy.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Object[])">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Object[])">
             <summary>
             Combines the hash codes of the provided objects using a DJB2-inspired mixing strategy.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32)">
             <summary>
             Combines two integer hash codes without allocating the object-array params path.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32)">
             <summary>
             Combines three integer hash codes without allocating the object-array params path.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.CombineHashCodes(System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
             Combines four integer hash codes without allocating the object-array params path.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftHashTools.MurmurHash3(System.String,System.Int32)">
+        <member name="M:SwiftCollections.Utility.SwiftHashTools.MurmurHash3(System.String,System.Int32)">
             <summary>
             Computes a hash code for a string using the MurmurHash3 algorithm, incorporating entropy for randomization.
             </summary>
@@ -6599,235 +7230,21 @@
             <param name="seed">The seed value for the hash function.</param>
             <returns>An integer hash code for the string.</returns>
         </member>
-        <member name="T:SwiftCollections.SwiftLazyDisposable`1">
+        <member name="T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute">
             <summary>
-            A lazily initialized disposable object.
-            This class extends <see cref="T:System.Lazy`1"/> to support <see cref="T:System.IDisposable"/> objects,
-            ensuring proper resource cleanup when disposed.
-            </summary>
-            <typeparam name="T">The type of the lazily initialized object, which must implement <see cref="T:System.IDisposable"/>.</typeparam>
-        </member>
-        <member name="F:SwiftCollections.SwiftLazyDisposable`1._disposed">
-            <summary>
-            Indicates whether the lazy instance has been disposed.
-            Prevents multiple disposal attempts, ensuring safe resource cleanup.
+            Provides the compiler-recognized caller argument expression marker for target frameworks that do not define it publicly.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor">
+        <member name="M:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute.#ctor(System.String)">
             <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
-             When lazy initialization occurs, the default constructor is used.
+            Initializes the attribute with the source parameter name.
             </summary>
+            <param name="parameterName">The method parameter whose call-site expression should be captured.</param>
         </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Boolean)">
+        <member name="P:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute.ParameterName">
             <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
-             When lazy initialization occurs, the default constructor of the target type
-             and the specified initialization mode are used.
+            Gets the method parameter whose call-site expression should be captured.
             </summary>
-            <param name="isThreadSafe">
-             true to make this instance usable concurrently by multiple threads;
-             false to make the instance usable by only one thread at a time. 
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Threading.LazyThreadSafetyMode)">
-            <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class
-             that uses the default constructor of T and the specified thread-safety mode.
-            </summary>
-            <param name="mode">
-             One of the enumeration values that specifies the thread safety mode. 
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0})">
-            <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
-             When lazy initialization occurs, the specified initialization function is used.
-            </summary>
-            <param name="valueFactory">
-             The delegate that is invoked to produce the lazily initialized value when it is needed. 
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Boolean)">
-            <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class.
-             When lazy initialization occurs, the specified initialization function
-             and initialization mode are used.
-            </summary>
-            <param name="valueFactory">
-             The delegate that is invoked to produce the lazily initialized value when it is needed. 
-            </param>
-            <param name="isThreadSafe">
-             true to make this instance usable concurrently by multiple threads;
-             false to make this instance usable by only one thread at a time. 
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)">
-            <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftLazyDisposable`1"/> class
-             using the specified initialization function and thread-safety mode.
-            </summary>
-            <param name="valueFactory">
-             The delegate that is invoked to produce the lazily initialized value when it is needed. 
-            </param>
-            <param name="mode">
-             One of the enumeration values that specifies the thread safety mode. 
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.ToString">
-            <summary>
-            Returns a string that represents the current state of the object.
-            </summary>
-            <remarks>
-            This method provides a user-friendly description of the object's state, 
-            which can be useful for debugging or logging purposes.
-            </remarks>
-            <returns>
-            A string representation of the value if it has been created; otherwise, 
-            a string indicating that the value has not been created.
-            </returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.Dispose">
-            <summary>
-            Disposes the lazily initialized value if it has been created.
-            Ensures that disposal is only performed once.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftLazyDisposable`1.Finalize">
-            <summary>
-            Finalizer to ensure disposal if Dispose() is never called.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftThrowHelper">
-            <summary>
-            Provides helper methods for throwing common exceptions in a consistent and efficient manner. 
-            These methods are intended to simplify argument and state validation throughout the codebase.
-            </summary>
-            <remarks>
-            This class centralizes exception throwing logic to improve code clarity and reduce repetitive validation code. 
-            Methods are typically inlined by the compiler to minimize performance overhead.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNull(System.Object,System.String,System.String)">
-            <summary>
-            Throws an ArgumentNullException if the provided argument is null.
-            </summary>
-            <param name="argument">The argument to check for null.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullGeneric``1(``0,System.String,System.String)">
-            <summary>
-            Throws an ArgumentNullException if the provided generic argument is null. 
-            This method is useful for validating reference types in a generic context where the type parameter may not be constrained to non-nullable types.
-            </summary>
-            <typeparam name="T">The type of the argument to check.</typeparam>
-            <param name="argument">The argument to check for null.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0,System.String)">
-            <summary>
-            Throws an exception if the specified value is null and nulls are not allowed for TValue.
-            </summary>
-            <param name="value">The value to check.</param>
-            <param name="defaultValue">A default value of type TValue used to determine if nulls are illegal.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentNullException">The value is null and TValue is a value type.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String,System.String)">
-            <summary>
-            Throws an ArgumentOutOfRangeException if the specified value is negative, indicating that the argument must be a non-negative integer.
-            </summary>
-            <param name="value">The value to check.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String,System.String)">
-            <summary>
-            Throws an ArgumentOutOfRangeException if the specified value is negative or zero, indicating that the argument must be a positive integer.
-            </summary>
-            <param name="value">The value to check.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative or zero.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Int32,System.String,System.String)">
-            <summary>
-            Throws an ArgumentOutOfRangeException if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="actualValue">The value that caused the exception.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArrayIndexInvalid(System.Int32,System.Int32,System.String,System.String)">
-            <summary>
-            Throws an ArgumentOutOfRangeException if a copy destination index is outside [0, length].
-            </summary>
-            <param name="index">The destination index to check.</param>
-            <param name="length">The destination length.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the index is outside [0, length].</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an ArgumentException if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an InvalidOperationException if the specified condition is true, indicating that the object is in an invalid state for the attempted operation.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object in an invalid state.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true, indicating an invalid state.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an ObjectDisposedException if the specified condition is true, indicating that the object has been disposed and can no longer be used for the attempted operation.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object that has been disposed.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true, indicating that the object has been disposed.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object,System.String)">
-            <summary>
-            Throws a KeyNotFoundException if the specified index is negative, indicating that the key is invalid for the current collection or context.
-            </summary>
-            <param name="index">The index to check.</param>
-            <param name="key">The key associated with the index.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the index is negative, indicating an invalid key.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,System.String)">
-            <summary>
-            Throws a KeyNotFoundException if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="key">The key associated with the lookup.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftThrowHelper.ThrowIfListIndexInvalid(System.Int32,System.Int32,System.String)">
-            <summary>
-            Throws an IndexOutOfRangeException if the specified index is outside the valid range defined by count, indicating that the index is invalid for the current collection or context.
-            </summary>
-            <param name="index">The index to check.</param>
-            <param name="count">The total number of elements in the collection.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.IndexOutOfRangeException">Thrown when the index is outside the valid range.</exception>
         </member>
         <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerAttribute">
             <summary>

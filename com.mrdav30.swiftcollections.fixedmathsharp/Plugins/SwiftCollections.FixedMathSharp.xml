@@ -15,6 +15,19 @@
             </summary>
             <param name="capacity">Initial tree capacity.</param>
         </member>
+        <member name="T:SwiftCollections.Query.SwiftFixedOctree`1">
+            <summary>
+            Represents a fixed-point octree optimized for deterministic hierarchical spatial queries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftFixedOctree`1.#ctor(SwiftCollections.Query.FixedBoundVolume,SwiftCollections.Query.SwiftOctreeOptions,FixedMathSharp.Fixed64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedOctree`1"/> class.
+            </summary>
+            <param name="worldBounds">The immutable world bounds covered by the octree.</param>
+            <param name="options">Backend-neutral octree options.</param>
+            <param name="minNodeSize">The minimum child-node axis length allowed for fixed-point subdivision.</param>
+        </member>
         <member name="T:SwiftCollections.Query.FixedBoundVolume">
             <summary>
             Represents an axis-aligned bounding box (AABB) in 3D space using fixed-point math.
@@ -114,18 +127,38 @@
             </summary>
             <returns>A string in the format "Min: {Min}, Max: {Max}" that displays the minimum and maximum values of the object.</returns>
         </member>
-        <member name="T:SwiftCollections.Query.SwiftFixedOctree`1">
+        <member name="T:SwiftCollections.Query.FixedBoundVolumeFactory">
             <summary>
-            Represents a fixed-point octree optimized for deterministic hierarchical spatial queries.
+            Creates <see cref="T:SwiftCollections.Query.FixedBoundVolume"/> instances from FixedMathSharp bounds types.
             </summary>
         </member>
-        <member name="M:SwiftCollections.Query.SwiftFixedOctree`1.#ctor(SwiftCollections.Query.FixedBoundVolume,SwiftCollections.Query.SwiftOctreeOptions,FixedMathSharp.Fixed64)">
+        <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundBox)">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Query.SwiftFixedOctree`1"/> class.
+            Creates a fixed query volume from a FixedMathSharp bounding box.
             </summary>
-            <param name="worldBounds">The immutable world bounds covered by the octree.</param>
-            <param name="options">Backend-neutral octree options.</param>
-            <param name="minNodeSize">The minimum child-node axis length allowed for fixed-point subdivision.</param>
+            <param name="bounds">The source bounding box.</param>
+            <returns>A query volume using the source bounds minimum and maximum corners.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundArea)">
+            <summary>
+            Creates a fixed query volume from a FixedMathSharp bounding area.
+            </summary>
+            <param name="bounds">The source bounding area.</param>
+            <returns>A query volume using the source bounds minimum and maximum corners.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundSphere)">
+            <summary>
+            Creates a fixed query volume from a FixedMathSharp bounding sphere.
+            </summary>
+            <param name="bounds">The source bounding sphere.</param>
+            <returns>A query volume using the sphere's enclosing minimum and maximum corners.</returns>
+        </member>
+        <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundFrustum)">
+            <summary>
+            Creates a fixed query volume from a FixedMathSharp bounding frustum.
+            </summary>
+            <param name="bounds">The source bounding frustum.</param>
+            <returns>A query volume using the frustum's enclosing minimum and maximum corners.</returns>
         </member>
         <member name="T:SwiftCollections.Query.SwiftFixedSpatialHash`1">
             <summary>
