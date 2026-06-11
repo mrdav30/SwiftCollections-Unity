@@ -30,24 +30,42 @@ jobs:
       matrix:
         include:
           - package_display_name: SwiftCollections
+            test_family: base
+            dependency_flavor: standard
             package_name: com.mrdav30.swiftcollections
             package_path: com.mrdav30.swiftcollections
             runtime_assembly: SwiftCollections.Runtime
             artifact_suffix: standard
           - package_display_name: SwiftCollections Lean
+            test_family: base
+            dependency_flavor: lean
             package_name: com.mrdav30.swiftcollections.lean
             package_path: com.mrdav30.swiftcollections.lean
             runtime_assembly: SwiftCollections.Lean.Runtime
             artifact_suffix: lean
           - package_display_name: SwiftCollections FixedMathSharp
+            test_family: fixedmathsharp
+            dependency_flavor: standard
             package_name: com.mrdav30.swiftcollections.fixedmathsharp
             package_path: com.mrdav30.swiftcollections.fixedmathsharp
-            runtime_assembly: SwiftCollections.Runtime
+            base_package_name: com.mrdav30.swiftcollections
+            base_package_path: com.mrdav30.swiftcollections
+            fixedmathsharp_package_name: com.mrdav30.fixedmathsharp
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp#v5.0.0
+            fixedmathsharp_runtime_assembly: FixedMathSharp.Runtime
+            runtime_assembly: SwiftCollections.FixedMathSharp.Runtime
             artifact_suffix: standard-fixedmathsharp
           - package_display_name: SwiftCollections FixedMathSharp Lean
+            test_family: fixedmathsharp
+            dependency_flavor: lean
             package_name: com.mrdav30.swiftcollections.fixedmathsharp.lean
             package_path: com.mrdav30.swiftcollections.fixedmathsharp.lean
-            runtime_assembly: SwiftCollections.Lean.Runtime
+            base_package_name: com.mrdav30.swiftcollections.lean
+            base_package_path: com.mrdav30.swiftcollections.lean
+            fixedmathsharp_package_name: com.mrdav30.fixedmathsharp.lean
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean#v5.0.0
+            fixedmathsharp_runtime_assembly: FixedMathSharp.Lean.Runtime
+            runtime_assembly: SwiftCollections.FixedMathSharp.Lean.Runtime
             artifact_suffix: lean-fixedmathsharp
 
     steps:
@@ -68,15 +86,43 @@ jobs:
           mkdir -p "$project_path/Packages"
           mkdir -p "$project_path/ProjectSettings"
 
-          cp Tests/EditMode/*.cs "$project_path/Assets/Tests/EditMode/"
+          if [[ "${{ matrix.dependency_flavor }}" == "standard" ]]; then
+            precompiled_references='                  "nunit.framework.dll",
+                  "SwiftCollections.dll",
+                  "Chronicler.dll",
+                  "MemoryPack.Core.dll",
+                  "Microsoft.Bcl.AsyncInterfaces.dll",
+                  "System.Collections.Immutable.dll",
+                  "System.IO.Pipelines.dll",
+                  "System.Runtime.CompilerServices.Unsafe.dll",
+                  "System.Text.Encodings.Web.dll",
+                  "System.Text.Json.dll"'
+          else
+            precompiled_references='                  "nunit.framework.dll",
+                  "SwiftCollections.dll",
+                  "Chronicler.dll",
+                  "Microsoft.Bcl.AsyncInterfaces.dll",
+                  "System.IO.Pipelines.dll",
+                  "System.Runtime.CompilerServices.Unsafe.dll",
+                  "System.Text.Encodings.Web.dll",
+                  "System.Text.Json.dll"'
+          fi
 
-          cat > "$project_path/Assets/Tests/EditMode/SwiftCollections.Unity.Tests.EditMode.asmdef" <<JSON
+          if [[ "${{ matrix.test_family }}" == "fixedmathsharp" ]]; then
+            cp Tests/EditMode.FixedMathSharp/*.cs "$project_path/Assets/Tests/EditMode/"
+            assembly_references='                  "${{ matrix.runtime_assembly }}",
+                  "${{ matrix.fixedmathsharp_runtime_assembly }}",
+                  "UnityEngine.TestRunner",
+                  "UnityEditor.TestRunner"'
+            precompiled_references="$precompiled_references"',
+                  "SwiftCollections.FixedMathSharp.dll",
+                  "FixedMathSharp.dll"'
+
+            cat > "$project_path/Assets/Tests/EditMode/SwiftCollections.Unity.Tests.EditMode.asmdef" <<JSON
           {
               "name": "SwiftCollections.Unity.Tests.EditMode",
               "references": [
-                  "${{ matrix.runtime_assembly }}",
-                  "UnityEngine.TestRunner",
-                  "UnityEditor.TestRunner"
+          ${assembly_references}
               ],
               "includePlatforms": [
                   "Editor"
@@ -85,8 +131,7 @@ jobs:
               "allowUnsafeCode": false,
               "overrideReferences": true,
               "precompiledReferences": [
-                  "nunit.framework.dll",
-                  "SwiftCollections.dll"
+          ${precompiled_references}
               ],
               "autoReferenced": false,
               "defineConstraints": [
@@ -96,7 +141,47 @@ jobs:
           }
           JSON
 
-          cat > "$project_path/Packages/manifest.json" <<JSON
+            cat > "$project_path/Packages/manifest.json" <<JSON
+          {
+            "dependencies": {
+              "${{ matrix.base_package_name }}": "file:../../../${{ matrix.base_package_path }}",
+              "${{ matrix.package_name }}": "file:../../../${{ matrix.package_path }}",
+              "${{ matrix.fixedmathsharp_package_name }}": "${{ matrix.fixedmathsharp_package_url }}",
+              "com.unity.modules.physics": "1.0.0",
+              "com.unity.test-framework": "1.6.0"
+            }
+          }
+          JSON
+          else
+            cp Tests/EditMode/*.cs "$project_path/Assets/Tests/EditMode/"
+            assembly_references='                  "${{ matrix.runtime_assembly }}",
+                  "UnityEngine.TestRunner",
+                  "UnityEditor.TestRunner"'
+
+            cat > "$project_path/Assets/Tests/EditMode/SwiftCollections.Unity.Tests.EditMode.asmdef" <<JSON
+          {
+              "name": "SwiftCollections.Unity.Tests.EditMode",
+              "references": [
+          ${assembly_references}
+              ],
+              "includePlatforms": [
+                  "Editor"
+              ],
+              "excludePlatforms": [],
+              "allowUnsafeCode": false,
+              "overrideReferences": true,
+              "precompiledReferences": [
+          ${precompiled_references}
+              ],
+              "autoReferenced": false,
+              "defineConstraints": [
+                  "UNITY_INCLUDE_TESTS"
+              ],
+              "versionDefines": []
+          }
+          JSON
+
+            cat > "$project_path/Packages/manifest.json" <<JSON
           {
             "dependencies": {
               "${{ matrix.package_name }}": "file:../../../${{ matrix.package_path }}",
@@ -105,6 +190,7 @@ jobs:
             }
           }
           JSON
+          fi
 
           cat > "$project_path/ProjectSettings/ProjectVersion.txt" <<'EOF'
           m_EditorVersion: 6000.3.9f1
@@ -115,7 +201,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .ci/unity-project/Library
-          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/package.json') }}
+          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'Tests/EditMode.FixedMathSharp/**/*.cs', 'Tests/EditMode.FixedMathSharp/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json') }}
           restore-keys: |
             unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-
 
