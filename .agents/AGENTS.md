@@ -2,44 +2,65 @@
 
 ## Repo Scope
 
-- The actual Git repo root is the `SwiftCollections-Unity` directory, not the outer Unity project root.
-- This repo ships the Unity package `com.mrdav30.swiftcollections` and is currently at version `3.0.0`.
+- The actual Git repo root is `SwiftCollections-Unity`; this workspace usually opens at `Assets/Packages`.
+- Current package version is `5.0.0`, tracked in `.assets/unity-package-versions.json` and each package `package.json`.
+- This repo hosts Unity Package Manager wrappers for the upstream SwiftCollections library. Most core data-structure behavior lives in the precompiled `SwiftCollections.dll`, not in Unity-side source.
+- Prefer optimized, low time-complexity code. Avoid band-aid fixes that hide a design or data-structure problem.
 
-## Package Layout
+## Package Matrix
 
-- `Plugins/SwiftCollections.dll` is the precompiled core library. Most collection behavior lives there, not in this repo.
-- `Plugins/SwiftCollections.xml` is useful for API discovery when the core source is not locally available.
-- `Runtime/` contains the package runtime assembly. The main custom Unity-side logic currently lives under `Runtime/GameObjectPool/`.
-- `Editor/Utility/GitDependencyInstaller.cs` manages required Unity package dependencies.
-- `README.md`, `package.json`, `LICENSE`, `NOTICE`, and `COPYRIGHT` are part of the shipped package surface.
+- `com.mrdav30.swiftcollections` is the standard base package. It includes the MemoryPack-enabled SwiftCollections plugin and Unity helpers such as `Bounds.ToBoundVolume()`.
+- `com.mrdav30.swiftcollections.lean` is the no-MemoryPack base package. Do not install it alongside the standard base package.
+- `com.mrdav30.swiftcollections.fixedmathsharp` is the FixedMathSharp companion for the standard base package.
+- `com.mrdav30.swiftcollections.fixedmathsharp.lean` is the FixedMathSharp companion for the lean base package.
+- FixedMathSharp companions require the matching SwiftCollections base package and the matching FixedMathSharp-Unity package. The current dependency version is `v5.0.0`.
+
+## Source Layout
+
+- `Build/Base` is the shared source overlay for both base package variants.
+- `Build/FixedMathSharp` is the shared source overlay for both FixedMathSharp companion variants.
+- `Build/Editor/SwiftCollectionsPackageSync.cs` syncs managed overlay files into the package folders.
+- `Build/Editor/SwiftCollectionsUnityPackageExporter.cs` exports all four package folders after syncing overlays.
+- `com.mrdav30.swiftcollections*/Plugins` contains precompiled upstream assemblies, PDBs, and XML docs.
+- `Runtime/` files in package folders are Unity-side wrapper code. Keep them thin; changes to core collections usually belong in `/mnt/f/gamedevrepos/SwiftCollections`.
+- `Editor/Utility/GitDependencyInstaller.cs` exists only in FixedMathSharp companion packages and manages the FixedMathSharp Unity Git dependency.
+- `Tests/EditMode` contains base-package Unity EditMode tests.
+- `Tests/EditMode.FixedMathSharp` contains FixedMathSharp companion EditMode tests.
 
 ## Coding Expectations
 
-- Prefer SwiftCollections types and helpers over .NET/BCL collections whenever a suitable SwiftCollections type exists.
-- Do not introduce `List<>`, `Dictionary<>`, `HashSet<>`, `Stack<>`, or similar .NET collections in package code unless there is no SwiftCollections equivalent and the reason is explicit.
-- Keep this package as a thin Unity wrapper around SwiftCollections rather than re-implementing core collection behavior here.
-- Preserve Unity package structure when moving or adding assets.
-- Agents do not need to generate associated Unity `*.meta` files for newly created assets. Unity Editor will regenerate them on load.
+- Prefer SwiftCollections types and helpers over BCL collections when a suitable SwiftCollections type exists.
+- Do not introduce `List<>`, `Dictionary<>`, `HashSet<>`, `Stack<>`, or similar hot-path BCL collections in package runtime code without a clear reason.
+- Keep checkout, release, lookup, and query paths at their intended complexity. Do not replace O(1) operations with scans.
+- Preserve package variant boundaries. Standard code may reference MemoryPack-enabled plugin dependencies; lean code must stay no-MemoryPack.
+- Preserve Unity package structure and tracked `.meta` files when moving or adding committed assets, asmdefs, tests, prefabs, or package content.
+- Do not commit generated Unity `Library`, `Temp`, `.ci/unity-project`, or export output artifacts.
 
 ## GameObjectPool Guidance
 
-- Treat the GameObject pool as a true reusable pool, not a round-robin allocator that steals live instances.
-- Pool checkout and return paths should stay `O(1)`. Avoid scans over all created objects in hot paths.
-- Preserve explicit return-to-pool semantics. If an object is checked out, callers are expected to release it back to the pool.
+- Treat the GameObject pool as a reusable pool, not a round-robin allocator that steals live instances.
+- Pool checkout and return paths should stay O(1). Avoid scans over all created objects in hot paths.
+- Preserve explicit return-to-pool semantics. Checked-out objects are expected to be released back to the pool.
 - `SwiftGameObjectPoolManager.Shared` loads `Resources/SwiftGameObjectPoolAsset` by name.
 - The shared pool root is intended to survive scene loads, so be careful with lifetime and disposal changes.
 
-## Dependencies
+## Dependency Guidance
 
-- The editor installer currently ensures `com.mrdav30.fixedmathsharp` is present via Git URL.
-- If dependency behavior changes, update both the installer logic and any user-facing installation docs.
+- FixedMathSharp companion packages install either `com.mrdav30.fixedmathsharp` or `com.mrdav30.fixedmathsharp.lean` via Git URL.
+- If dependency behavior changes, update the package installer, `.assets/unity-package-versions.json`, package READMEs, the root README, and the CI workflow matrix together.
+- Test asmdefs use `overrideReferences`, so they must explicitly list precompiled plugin DLL dependencies. Standard tests need MemoryPack-related DLLs; lean tests omit MemoryPack and `System.Collections.Immutable`.
 
 ## Verification
 
-- There are currently no automated tests set up for this package.
-- Command-line `dotnet build` may fail outside a proper Unity environment because Unity-generated `.csproj` files can reference local Unity analyzers and source generators that are not available on every machine.
-- Prefer verification in the Unity Editor when possible, and call out environment limitations clearly when CLI validation is incomplete.
+- Primary CI is `.github/workflows/build-and-test.yml`.
+- The workflow creates a temporary Unity project, installs one package variant per matrix row, and runs `SwiftCollections.Unity.Tests.EditMode` with `game-ci/unity-test-runner@v4`.
+- Base package rows copy `Tests/EditMode/*.cs`; FixedMathSharp rows copy `Tests/EditMode.FixedMathSharp/*.cs`.
+- The Unity test matrix covers standard, lean, FixedMathSharp, and FixedMathSharp lean packages on Unity `6000.3.9f1`.
+- Local `dotnet build` is not a substitute for Unity package validation because these packages depend on Unity asmdefs, plugin resolution, and Unity-generated project state.
+- Useful lightweight checks before CI: parse the workflow YAML, parse checked-in asmdef JSON, and run `git diff --check`.
 
-## Known Project Context
+## Documentation Expectations
 
-- The runtime code in this repo is intentionally small. If a change seems to belong in the core data-structure library rather than Unity integration, it probably belongs in the upstream SwiftCollections project instead.
+- Keep the root README concise and user-facing: package choice, install URLs, dependency pairing, and test status.
+- Put operational guidance for agents here rather than bloating the README.
+- When package layout, dependencies, or CI behavior changes, update README and AGENTS in the same pass.
