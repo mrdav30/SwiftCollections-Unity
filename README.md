@@ -1,6 +1,6 @@
 # SwiftCollections-Unity
 
-[![Build](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml)
+[![build-and-test](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml)
 
 Unity Package Manager host for [SwiftCollections](https://github.com/mrdav30/SwiftCollections).
 
