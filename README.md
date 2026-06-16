@@ -6,7 +6,6 @@ Unity Package Manager host for [SwiftCollections](https://github.com/mrdav30/Swi
 
 This repository ships two base Unity packages and two optional FixedMathSharp companion packages. Choose one base package, then add the matching FixedMathSharp companion only if your project uses fixed-point query volumes.
 
-- Current package version: `5.0.0`
 - Supported Unity version: `2022.3+`
 
 ## Packages
@@ -30,6 +29,37 @@ FixedMathSharp companions:
 - Install `com.mrdav30.swiftcollections.fixedmathsharp` with `com.mrdav30.swiftcollections`.
 - Install `com.mrdav30.swiftcollections.fixedmathsharp.lean` with `com.mrdav30.swiftcollections.lean`.
 - The companions add fixed-point bounds interop; they do not replace the base packages.
+
+## Unity Serialization
+
+The upstream SwiftCollections types are runtime collection types. They keep the core JSON, MemoryPack, and state serialization contracts, but Unity does not persist their contents when used directly as serialized fields. For Unity authoring data, use the adapters in `SwiftCollections.Unity` and consume the real collection through `Runtime`.
+
+| Serialized field type | Runtime type | Unity backing shape | Notes |
+| --- | --- | --- | --- |
+| `SerializedSwiftList<T>` | `SwiftList<T>` | `T[]` | Ordered list data. |
+| `SerializedSwiftDictionary<TKey, TValue>` | `SwiftDictionary<TKey, TValue>` | key/value entry array | Duplicate keys are invalid. |
+| `SerializedSwiftArray2D<T>` | `SwiftArray2D<T>` | width, height, flat `T[]` | Data length must equal `width * height`. |
+| `SerializedSwiftArray3D<T>` | `SwiftArray3D<T>` | width, height, depth, flat `T[]` | Data length must equal `width * height * depth`. |
+| `SerializedSwiftSparseSet` | `SwiftSparseSet` | `int[]` | IDs must be non-negative and unique. |
+| `SerializedSwiftSparseMap<T>` | `SwiftSparseMap<T>` | integer key/value entry array | Keys must be non-negative and unique. |
+| `SerializedSwiftBiDictionary<TLeft, TRight>` | `SwiftBiDictionary<TLeft, TRight>` | left/right entry array | Left and right keys must each be unique. |
+
+Generic item, key, and value types must themselves be Unity-serializable.
+
+```csharp
+using SwiftCollections;
+using SwiftCollections.Unity;
+using UnityEngine;
+
+public sealed class SpawnTableAsset : ScriptableObject
+{
+    [SerializeField] private SerializedSwiftList<int> _spawnIds = new SerializedSwiftList<int>();
+    [SerializeField] private SerializedSwiftDictionary<string, int> _weights = new SerializedSwiftDictionary<string, int>();
+
+    public SwiftList<int> SpawnIds => _spawnIds.Runtime;
+    public SwiftDictionary<string, int> Weights => _weights.Runtime;
+}
+```
 
 ## FixedMathSharp Dependency
 

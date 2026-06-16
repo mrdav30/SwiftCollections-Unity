@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations.",
     "unity": "2022.3",

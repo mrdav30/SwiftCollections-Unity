@@ -20,6 +20,7 @@ namespace SwiftCollections.Build.Editor
             ManagedEntry.File("LICENSE"),
             ManagedEntry.File("NOTICE"),
             ManagedEntry.Directory("Runtime/GameObjectPool"),
+            ManagedEntry.Directory("Runtime/Serialization"),
             ManagedEntry.File("Runtime/BoundVolume.Extensions.cs"),
             ManagedEntry.Directory("Samples/SwiftCollectionsDemo/Scripts")
         };
