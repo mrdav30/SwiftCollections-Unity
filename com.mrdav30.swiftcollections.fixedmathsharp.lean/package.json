@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
-    "version": "5.0.2",
+    "version": "5.0.3",
     "displayName": "SwiftCollections.FixedMathSharp.Lean",
     "description": "Companion package that provided fixed-point bounds to use in SwiftCollections query structures. MemoryPack not included. Requires FixedMathSharp-Unity.",
     "unity": "2022.3",
