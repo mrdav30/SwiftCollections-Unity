@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections",
-    "version": "5.0.3",
+    "version": "5.1.0",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations.",
     "unity": "2022.3",
@@ -23,10 +23,10 @@
         "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
     },
     "samples": [
-    {
-      "displayName": "Demo Scene",
-      "description": "A sample scene demonstrating package usage",
-      "path": "Samples/SwiftCollectionsDemo/Scenes/DemoScene"
-    }
-  ]
+        {
+            "displayName": "Demo Scene",
+            "description": "A sample scene demonstrating package usage",
+            "path": "Samples/SwiftCollectionsDemo"
+        }
+    ]
 }

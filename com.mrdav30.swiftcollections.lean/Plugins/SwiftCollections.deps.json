@@ -1,0 +1,130 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.1/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.1": {},
+    ".NETStandard,Version=v2.1/": {
+      "SwiftCollections/5.1.0": {
+        "dependencies": {
+          "Chronicler.Core.Lean": "0.2.1",
+          "System.Text.Json": "10.0.9"
+        },
+        "runtime": {
+          "SwiftCollections.dll": {}
+        }
+      },
+      "Chronicler.Core.Lean/0.2.1": {
+        "dependencies": {
+          "System.Text.Json": "10.0.9"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Chronicler.dll": {
+            "assemblyVersion": "0.2.1.0",
+            "fileVersion": "0.2.1.0"
+          }
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces/10.0.9": {
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
+            "assemblyVersion": "10.0.0.9",
+            "fileVersion": "10.0.926.27113"
+          }
+        }
+      },
+      "System.IO.Pipelines/10.0.9": {
+        "runtime": {
+          "lib/netstandard2.0/System.IO.Pipelines.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.926.27113"
+          }
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/6.1.2": {
+        "runtime": {
+          "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.100.225.20307"
+          }
+        }
+      },
+      "System.Text.Encodings.Web/10.0.9": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.926.27113"
+          }
+        }
+      },
+      "System.Text.Json/10.0.9": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "10.0.9",
+          "System.IO.Pipelines": "10.0.9",
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2",
+          "System.Text.Encodings.Web": "10.0.9"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Text.Json.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.926.27113"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SwiftCollections/5.1.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Chronicler.Core.Lean/0.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-G31B/geXYmArupqpk2PoM0AQBMjJaKjfu2EbTQMgu6AJS9YVLbtdK1J2Zjsc8FBM8qVyidaka41WZSvQSQH44g==",
+      "path": "chronicler.core.lean/0.2.1",
+      "hashPath": "chronicler.core.lean.0.2.1.nupkg.sha512"
+    },
+    "Microsoft.Bcl.AsyncInterfaces/10.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Aq7M8lG6BrHeatqKqncVm9m55ec34k6nnfPRLe/PvGg+b/pAsRM2ejofeKmCLjTXMa+5NGXm382f8CG/D5WDow==",
+      "path": "microsoft.bcl.asyncinterfaces/10.0.9",
+      "hashPath": "microsoft.bcl.asyncinterfaces.10.0.9.nupkg.sha512"
+    },
+    "System.IO.Pipelines/10.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-raEAXJHu1ERuQnLhfaMUhK19A+i/CLHH5tFWi+azKxq2O4kzgvdeNuZTzMzyT7pyM1+zE2Pqb2g/DXJsuPp/LQ==",
+      "path": "system.io.pipelines/10.0.9",
+      "hashPath": "system.io.pipelines.10.0.9.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/6.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2hBr6zdbIBTDE3EhK7NSVNdX58uTK6iHW/P/Axmm9sl1xoGSLqDvMtpecn226TNwHByFokYwJmt/aQQNlO5CRw==",
+      "path": "system.runtime.compilerservices.unsafe/6.1.2",
+      "hashPath": "system.runtime.compilerservices.unsafe.6.1.2.nupkg.sha512"
+    },
+    "System.Text.Encodings.Web/10.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-65bbI+LWcVgq1mzPtv6bJF+ZXeeIawld/puK9ixD1l3gJGM2IU4gkYbZoKLVjsXJXbrZqSRf86RlKf1TcCTY1Q==",
+      "path": "system.text.encodings.web/10.0.9",
+      "hashPath": "system.text.encodings.web.10.0.9.nupkg.sha512"
+    },
+    "System.Text.Json/10.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mD4f7hUvjXEbLAnROibQswbYguGnfzN17gtkuqAHU1a0gJsqe7LXtV+0tItJsYrCBBpPYHiHFlLtjzG2ZEt5uQ==",
+      "path": "system.text.json/10.0.9",
+      "hashPath": "system.text.json.10.0.9.nupkg.sha512"
+    }
+  }
+}

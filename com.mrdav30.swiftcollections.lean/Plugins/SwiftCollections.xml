@@ -1668,6 +1668,9 @@
             <summary>
             Adds the elements of the specified collection to the end of the SwiftList.
             </summary>
+            <remarks>
+            Known-count sources reserve capacity before enumeration to avoid repeated growth.
+            </remarks>
         </member>
         <member name="M:SwiftCollections.SwiftList`1.AddRange(`0[])">
             <summary>
@@ -1706,16 +1709,16 @@
             Reverses the order of the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/>.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftList`1.Sort">
+        <member name="M:SwiftCollections.SwiftList`1.SortInPlace(System.Collections.Generic.IComparer{`0})">
             <summary>
-            Sorts the elements in the <see cref="T:SwiftCollections.SwiftList`1"/> using the <see cref="T:System.IComparable"/> interface implementation of each element of the _innerArray.
+            Sorts the populated elements of the <see cref="T:SwiftCollections.SwiftList`1"/> in place.
             </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftList`1.Sort(System.Collections.Generic.IComparer{`0})">
-            <summary>
-            Sorts the elements in the entire <see cref="T:SwiftCollections.SwiftList`1"/> using the specified comparer.
-            </summary>
-            <param name="comparer">The comparer to use for comparing elements.</param>
+            <remarks>
+            The sort is performed over the active <c>[0..Count)</c> range of the backing array and does not
+            allocate additional collection storage. Pass a comparer to define a custom order; otherwise the
+            default comparer for <typeparamref name="T"/> is used.
+            </remarks>
+            <param name="comparer">The comparer to use, or <c>null</c> to use the default comparer.</param>
         </member>
         <member name="M:SwiftCollections.SwiftList`1.Clear">
             <summary>
@@ -2172,8 +2175,7 @@
             Adds the elements of the specified collection to the end of the queue.
             </summary>
             <remarks>
-            If the specified collection implements <see cref="T:System.Collections.Generic.ICollection`1"/>, the queue's capacity is increased once to accommodate the new elements, 
-            improving performance for large collections.
+            Known-count sources reserve capacity before enumeration to avoid repeated growth.
             </remarks>
             <param name="items">The collection of elements to add to the queue. Cannot be null.</param>
         </member>
@@ -2467,7 +2469,7 @@
             Adds a range of elements to the collection, ensuring they are sorted and merged efficiently.
             </summary>
             <remarks>
-            This will compact the array for efficiency.
+            This compacts the active item range for efficiency. Known-count sources reuse existing capacity when possible.
             </remarks>
         </member>
         <member name="M:SwiftCollections.SwiftSortedList`1.PopMin">
@@ -2900,6 +2902,27 @@
             </param>
             <param name="count">When this method returns, contains the number of valid key-value pairs in the dense arrays.</param>
         </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.CopyKeysTo(SwiftCollections.SwiftList{System.Int32})">
+            <summary>
+            Replaces the destination list contents with this map's keys in dense iteration order.
+            </summary>
+            <remarks>
+            The destination list is reused and only grows when its current capacity is smaller than
+            <see cref="P:SwiftCollections.SwiftSparseMap`1.Count"/>. Use <see cref="M:SwiftCollections.SwiftSparseMap`1.CopySortedKeysTo(SwiftCollections.SwiftList{System.Int32})"/> when stable ascending
+            key order is required.
+            </remarks>
+            <param name="destination">The caller-owned list that receives the keys.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.CopySortedKeysTo(SwiftCollections.SwiftList{System.Int32})">
+            <summary>
+            Replaces the destination list contents with this map's keys sorted in ascending order.
+            </summary>
+            <remarks>
+            This method is intended for reusable hot-path scratch buffers that need deterministic key order
+            without constructing a persistent sorted collection.
+            </remarks>
+            <param name="destination">The caller-owned list that receives the sorted keys.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.CloneTo(System.Collections.Generic.ICollection{`0})">
             <inheritdoc/>
         </member>
@@ -3090,6 +3113,27 @@
             <summary>
             Retrieves the backing dense ID array and current count.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.CopyKeysTo(SwiftCollections.SwiftList{System.Int32})">
+            <summary>
+            Replaces the destination list contents with this set's keys in dense iteration order.
+            </summary>
+            <remarks>
+            The destination list is reused and only grows when its current capacity is smaller than
+            <see cref="P:SwiftCollections.SwiftSparseSet.Count"/>. Use <see cref="M:SwiftCollections.SwiftSparseSet.CopySortedKeysTo(SwiftCollections.SwiftList{System.Int32})"/> when stable ascending
+            key order is required.
+            </remarks>
+            <param name="destination">The caller-owned list that receives the keys.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.CopySortedKeysTo(SwiftCollections.SwiftList{System.Int32})">
+            <summary>
+            Replaces the destination list contents with this set's keys sorted in ascending order.
+            </summary>
+            <remarks>
+            This method is intended for reusable hot-path scratch buffers that need deterministic key order
+            without constructing a persistent sorted collection.
+            </remarks>
+            <param name="destination">The caller-owned list that receives the sorted keys.</param>
         </member>
         <member name="M:SwiftCollections.SwiftSparseSet.CopyTo(System.Int32[],System.Int32)">
             <inheritdoc/>
@@ -4316,12 +4360,12 @@
         </member>
         <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.AddRange(`0[0:,0:])">
             <summary>
-            Adds the provides source into the current 2D Array.
+            Overwrites the current 2D array with the provided source.
             </summary>
             <remarks>
-            Will overwrite current values.
+            Existing backing storage is reused when the flattened source length matches.
             </remarks>
-            <param name="source"></param>
+            <param name="source">The source values to copy.</param>
         </member>
         <member name="M:SwiftCollections.Dimensions.SwiftArray2D`1.Fill(`0)">
             <summary>
@@ -5108,6 +5152,9 @@
             <summary>
             Adds the elements of the specified collection to the end of the current collection.
             </summary>
+            <remarks>
+            Known-count sources reserve capacity before enumeration while preserving per-item notifications.
+            </remarks>
             <param name="items">The collection whose elements should be added to the end of the collection. Cannot be null.</param>
         </member>
         <member name="M:SwiftCollections.Observable.SwiftObservableList`1.AddRange(`0[])">
