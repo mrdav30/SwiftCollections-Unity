@@ -1,7 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Build/Base/Samples~/SwiftCollectionsDemo.meta
 guid: 7914a5591f8694d4ea41fcdd1b9383fb
 folderAsset: yes
 DefaultImporter:
+========
+guid: ff6975905c6cb8646bffaf3220e15e00
+TextScriptImporter:
+>>>>>>>> 713d8f3f7012337e3592d1e42106d7796cade8b0:com.mrdav30.swiftcollections/Plugins/SwiftCollections.deps.json.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
