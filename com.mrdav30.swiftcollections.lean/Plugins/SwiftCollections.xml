@@ -1720,6 +1720,15 @@
             </remarks>
             <param name="comparer">The comparer to use, or <c>null</c> to use the default comparer.</param>
         </member>
+        <member name="M:SwiftCollections.SwiftList`1.SortInPlace``1(``0)">
+            <summary>
+            Sorts the populated elements of the <see cref="T:SwiftCollections.SwiftList`1"/> in place using a struct comparer.
+            </summary>
+            <remarks>
+            This overload avoids boxing struct comparers and lets the JIT devirtualize comparer calls in hot paths.
+            </remarks>
+            <param name="comparer">The comparer to use.</param>
+        </member>
         <member name="M:SwiftCollections.SwiftList`1.Clear">
             <summary>
             Removes all elements from the <see cref="T:SwiftCollections.SwiftList`1"/>, resetting its count to zero.
