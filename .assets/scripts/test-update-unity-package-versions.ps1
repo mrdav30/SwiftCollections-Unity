@@ -49,9 +49,13 @@ function New-TestRepo {
   "dependencyVersions": {
     "FixedMathSharpUnity": "v4.0.0"
   },
-  "packages": [
+    "packages": [
     {
       "path": "com.mrdav30.swiftcollections",
+      "updatePackageVersion": true
+    },
+    {
+      "path": "com.mrdav30.swiftcollections.lean",
       "updatePackageVersion": true
     },
     {
@@ -62,6 +66,18 @@ function New-TestRepo {
         {
           "name": "com.mrdav30.fixedmathsharp",
           "gitUrl": "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp",
+          "versionKey": "FixedMathSharpUnity"
+        }
+      ]
+    },
+    {
+      "path": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
+      "updatePackageVersion": true,
+      "installer": "Editor/Utility/GitDependencyInstaller.cs",
+      "dependencies": [
+        {
+          "name": "com.mrdav30.fixedmathsharp.lean",
+          "gitUrl": "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean",
           "versionKey": "FixedMathSharpUnity"
         }
       ]
@@ -78,11 +94,27 @@ function New-TestRepo {
 }
 '@
 
+    New-TestFile -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.lean/package.json") -Content @'
+{
+    "name": "com.mrdav30.swiftcollections.lean",
+    "version": "4.0.5",
+    "displayName": "SwiftCollections.Lean"
+}
+'@
+
     New-TestFile -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp/package.json") -Content @'
 {
     "name": "com.mrdav30.swiftcollections.fixedmathsharp",
     "version": "4.0.5",
     "displayName": "SwiftCollections.FixedMathSharp"
+}
+'@
+
+    New-TestFile -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json") -Content @'
+{
+    "name": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
+    "version": "4.0.5",
+    "displayName": "SwiftCollections.FixedMathSharp.Lean"
 }
 '@
 
@@ -92,6 +124,17 @@ private static readonly Dependency[] RequiredDependencies =
     new(
         "com.mrdav30.fixedmathsharp",
         "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp",
+        "v3.0.2"
+    )
+};
+'@
+
+    New-TestFile -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp.lean/Editor/Utility/GitDependencyInstaller.cs") -Content @'
+private static readonly Dependency[] RequiredDependencies =
+{
+    new(
+        "com.mrdav30.fixedmathsharp.lean",
+        "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean",
         "v3.0.2"
     )
 };
@@ -135,12 +178,18 @@ function Test-DryRunReportsChangesWithoutMutatingFiles {
 
     Assert-Contains -Text $output -Expected "DRY-RUN" -Message "Dry-run output should identify the mode."
     Assert-Contains -Text $output -Expected "com.mrdav30.swiftcollections/package.json version 4.0.5 -> 4.0.6" -Message "Dry-run should report package version drift."
+    Assert-Contains -Text $output -Expected "com.mrdav30.swiftcollections.lean/package.json version 4.0.5 -> 4.0.6" -Message "Dry-run should report lean package version drift."
     Assert-Contains -Text $output -Expected "com.mrdav30.fixedmathsharp dependency version v3.0.2 -> v4.0.0" -Message "Dry-run should report installer dependency drift."
+    Assert-Contains -Text $output -Expected "com.mrdav30.fixedmathsharp.lean dependency version v3.0.2 -> v4.0.0" -Message "Dry-run should report lean installer dependency drift."
 
     Assert-Equal -Expected "4.0.5" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections/package.json")) -Message "Dry-run must not mutate package.json."
+    Assert-Equal -Expected "4.0.5" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections.lean/package.json")) -Message "Dry-run must not mutate lean package.json."
 
     $installer = Get-Content -Raw -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp/Editor/Utility/GitDependencyInstaller.cs")
     Assert-Contains -Text $installer -Expected '"v3.0.2"' -Message "Dry-run must not mutate installer versions."
+
+    $leanInstaller = Get-Content -Raw -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp.lean/Editor/Utility/GitDependencyInstaller.cs")
+    Assert-Contains -Text $leanInstaller -Expected '"v3.0.2"' -Message "Dry-run must not mutate lean installer versions."
 }
 
 function Test-ApplyUpdatesPackageAndInstallerVersions {
@@ -149,10 +198,15 @@ function Test-ApplyUpdatesPackageAndInstallerVersions {
 
     Assert-Contains -Text $output -Expected "APPLY" -Message "Apply output should identify the mode."
     Assert-Equal -Expected "4.0.6" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections/package.json")) -Message "Apply should update package.json."
+    Assert-Equal -Expected "4.0.6" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections.lean/package.json")) -Message "Apply should update lean package.json."
     Assert-Equal -Expected "4.0.6" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp/package.json")) -Message "Apply should update every configured package.json."
+    Assert-Equal -Expected "4.0.6" -Actual (Get-PackageVersion (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json")) -Message "Apply should update every configured lean package.json."
 
     $installer = Get-Content -Raw -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp/Editor/Utility/GitDependencyInstaller.cs")
     Assert-Contains -Text $installer -Expected '"v4.0.0"' -Message "Apply should update installer versions."
+
+    $leanInstaller = Get-Content -Raw -Path (Join-Path $repoRoot "com.mrdav30.swiftcollections.fixedmathsharp.lean/Editor/Utility/GitDependencyInstaller.cs")
+    Assert-Contains -Text $leanInstaller -Expected '"v4.0.0"' -Message "Apply should update lean installer versions."
 }
 
 function Test-ValidateOnlyFailsWhenFilesDrift {

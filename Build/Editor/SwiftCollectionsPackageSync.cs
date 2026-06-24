@@ -12,6 +12,9 @@ namespace SwiftCollections.Build.Editor
     /// </summary>
     public static class SwiftCollectionsPackageSync
     {
+        private const string AuthoringSamplesRelativePath = "Samples";
+        private const string DistributableSamplesRelativePath = "Samples~";
+
         // These paths are intentionally explicit so package-specific files can live beside
         // shared code without being deleted during sync.
         private static readonly ManagedEntry[] BaseManagedEntries =
@@ -22,7 +25,7 @@ namespace SwiftCollections.Build.Editor
             ManagedEntry.Directory("Runtime/GameObjectPool"),
             ManagedEntry.Directory("Runtime/Serialization"),
             ManagedEntry.File("Runtime/BoundVolume.Extensions.cs"),
-            ManagedEntry.Directory("Samples~/SwiftCollectionsDemo/Scripts")
+            ManagedEntry.Directory("Samples/SwiftCollectionsDemo/Scripts")
         };
 
         private static readonly ManagedEntry[] FixedMathSharpManagedEntries =
@@ -39,7 +42,8 @@ namespace SwiftCollections.Build.Editor
                     "Assets/Packages/com.mrdav30.swiftcollections",
                     "Assets/Packages/com.mrdav30.swiftcollections.lean"
                 },
-                BaseManagedEntries),
+                BaseManagedEntries,
+                true),
             new PackageOverlay(
                 "Assets/Packages/Build/FixedMathSharp",
                 new[]
@@ -47,7 +51,8 @@ namespace SwiftCollections.Build.Editor
                     "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp",
                     "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean"
                 },
-                FixedMathSharpManagedEntries)
+                FixedMathSharpManagedEntries,
+                false)
         };
 
         [MenuItem("Tools/SwiftCollections/Sync Managed Package Files")]
@@ -125,6 +130,9 @@ namespace SwiftCollections.Build.Editor
         {
             var summary = new SyncSummary();
 
+            if (packageOverlay.HydrateAuthoringSamples)
+                summary.Merge(EnsureAuthoringSamples(packageRootAssetPath));
+
             foreach (var managedEntry in packageOverlay.ManagedEntries)
             {
                 summary.Merge(managedEntry.Kind == ManagedEntryKind.Directory
@@ -132,6 +140,23 @@ namespace SwiftCollections.Build.Editor
                     : SyncManagedFile(packageOverlay.SourceRootAssetPath, packageRootAssetPath, managedEntry.RelativePath));
             }
 
+            return summary;
+        }
+
+        private static SyncSummary EnsureAuthoringSamples(string packageRootAssetPath)
+        {
+            var summary = new SyncSummary();
+            var authoringDirectory = ToAbsolutePath(CombineAssetPath(packageRootAssetPath, AuthoringSamplesRelativePath));
+
+            if (Directory.Exists(authoringDirectory))
+                return summary;
+
+            var distributableDirectory = ToAbsolutePath(CombineAssetPath(packageRootAssetPath, DistributableSamplesRelativePath));
+            if (!Directory.Exists(distributableDirectory))
+                return summary;
+
+            CopyDirectory(distributableDirectory, authoringDirectory, ref summary);
+            DeleteMetaFileIfPresent(authoringDirectory);
             return summary;
         }
 
@@ -277,6 +302,26 @@ namespace SwiftCollections.Build.Editor
                 File.Delete(metaPath);
         }
 
+        private static void CopyDirectory(string sourceDirectory, string destinationDirectory, ref SyncSummary summary)
+        {
+            Directory.CreateDirectory(destinationDirectory);
+
+            foreach (var directoryPath in Directory.EnumerateDirectories(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                var relativePath = Path.GetRelativePath(sourceDirectory, directoryPath);
+                Directory.CreateDirectory(Path.Combine(destinationDirectory, relativePath));
+            }
+
+            foreach (var filePath in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                var relativePath = Path.GetRelativePath(sourceDirectory, filePath);
+                var destinationPath = Path.Combine(destinationDirectory, relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath) ?? destinationDirectory);
+                File.Copy(filePath, destinationPath, true);
+                summary.CopiedFiles++;
+            }
+        }
+
         private static bool FilesAreEqual(string sourcePath, string destinationPath)
         {
             if (!File.Exists(destinationPath))
@@ -369,15 +414,18 @@ namespace SwiftCollections.Build.Editor
             public string SourceRootAssetPath { get; }
             public string[] PackageRootAssetPaths { get; }
             public ManagedEntry[] ManagedEntries { get; }
+            public bool HydrateAuthoringSamples { get; }
 
             public PackageOverlay(
                 string sourceRootAssetPath,
                 string[] packageRootAssetPaths,
-                ManagedEntry[] managedEntries)
+                ManagedEntry[] managedEntries,
+                bool hydrateAuthoringSamples)
             {
                 SourceRootAssetPath = sourceRootAssetPath;
                 PackageRootAssetPaths = packageRootAssetPaths;
                 ManagedEntries = managedEntries;
+                HydrateAuthoringSamples = hydrateAuthoringSamples;
             }
         }
 

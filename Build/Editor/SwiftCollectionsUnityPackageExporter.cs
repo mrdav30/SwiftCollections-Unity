@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -12,21 +13,27 @@ namespace SwiftCollections.Build.Editor
     public static class SwiftCollectionsUnityPackageExporter
     {
         private const string OutputPathArgument = "-swiftCollectionsUnityPackageOutputPath";
+        private const string AuthoringSamplesRelativePath = "Samples";
+        private const string DistributableSamplesRelativePath = "Samples~";
 
         private static readonly PackageDefinition[] Packages =
         {
             new PackageDefinition(
                 "Assets/Packages/com.mrdav30.swiftcollections",
-                "Assets/Packages/com.mrdav30.swiftcollections/package.json"),
+                "Assets/Packages/com.mrdav30.swiftcollections/package.json",
+                true),
             new PackageDefinition(
                 "Assets/Packages/com.mrdav30.swiftcollections.lean",
-                "Assets/Packages/com.mrdav30.swiftcollections.lean/package.json"),
+                "Assets/Packages/com.mrdav30.swiftcollections.lean/package.json",
+                true),
             new PackageDefinition(
                 "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp",
-                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp/package.json"),
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp/package.json",
+                false),
             new PackageDefinition(
                 "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean",
-                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json")
+                "Assets/Packages/com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json",
+                false)
         };
 
         [MenuItem("Tools/SwiftCollections/Export Unity Packages")]
@@ -74,6 +81,11 @@ namespace SwiftCollections.Build.Editor
             foreach (var package in Packages)
             {
                 ValidatePackage(package);
+                if (package.HasSamples)
+                {
+                    PrepareDistributableSamples(package);
+                    AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                }
 
                 var manifest = LoadManifest(package.ManifestAssetPath);
                 var outputPath = Path.Combine(
@@ -81,12 +93,54 @@ namespace SwiftCollections.Build.Editor
                     $"{manifest.name}-{manifest.version}.unitypackage");
 
                 AssetDatabase.ExportPackage(
-                    new[] { package.RootAssetPath },
+                    GetExportAssetPaths(package.RootAssetPath),
                     outputPath,
                     ExportPackageOptions.Recurse);
 
                 Debug.Log($"Exported {manifest.name} to {outputPath}");
             }
+        }
+
+        private static void PrepareDistributableSamples(PackageDefinition package)
+        {
+            var authoringSamplesPath = ToAbsolutePath(CombineAssetPath(package.RootAssetPath, AuthoringSamplesRelativePath));
+            if (!Directory.Exists(authoringSamplesPath))
+                throw new DirectoryNotFoundException($"Authoring samples folder not found: {CombineAssetPath(package.RootAssetPath, AuthoringSamplesRelativePath)}");
+
+            var distributableSamplesPath = ToAbsolutePath(CombineAssetPath(package.RootAssetPath, DistributableSamplesRelativePath));
+            if (Directory.Exists(distributableSamplesPath))
+                Directory.Delete(distributableSamplesPath, true);
+
+            DeleteMetaFileIfPresent(distributableSamplesPath);
+            CopyDirectory(authoringSamplesPath, distributableSamplesPath);
+            DeleteMetaFileIfPresent(distributableSamplesPath);
+
+            Debug.Log($"Prepared distributable samples: {CombineAssetPath(package.RootAssetPath, DistributableSamplesRelativePath)}");
+        }
+
+        private static string[] GetExportAssetPaths(string rootAssetPath)
+        {
+            var rootPath = ToAbsolutePath(rootAssetPath);
+            var assetPaths = new List<string>();
+
+            foreach (var path in Directory.EnumerateFileSystemEntries(rootPath))
+            {
+                var name = Path.GetFileName(path);
+                if (string.Equals(name, AuthoringSamplesRelativePath, StringComparison.Ordinal) ||
+                    string.Equals(name, AuthoringSamplesRelativePath + ".meta", StringComparison.Ordinal) ||
+                    string.Equals(name, ".gitignore", StringComparison.Ordinal) ||
+                    name.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                assetPaths.Add(ToAssetPath(path));
+            }
+
+            if (assetPaths.Count == 0)
+                throw new InvalidOperationException($"No exportable package assets found under {rootAssetPath}.");
+
+            return assetPaths.ToArray();
         }
 
         private static void ValidatePackage(PackageDefinition package)
@@ -150,6 +204,50 @@ namespace SwiftCollections.Build.Editor
             return Path.GetFullPath(Path.Combine(GetProjectRoot(), assetPath));
         }
 
+        private static string ToAssetPath(string absolutePath)
+        {
+            var projectRoot = GetProjectRoot().TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            var fullPath = Path.GetFullPath(absolutePath);
+
+            if (!fullPath.StartsWith(projectRoot, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException($"Expected path under Unity project root, got {absolutePath}");
+
+            return fullPath.Substring(projectRoot.Length).Replace('\\', '/');
+        }
+
+        private static string CombineAssetPath(string left, string right)
+        {
+            return $"{left.TrimEnd('/')}/{right.TrimStart('/')}";
+        }
+
+        private static void CopyDirectory(string sourceDirectory, string destinationDirectory)
+        {
+            Directory.CreateDirectory(destinationDirectory);
+
+            foreach (var directoryPath in Directory.EnumerateDirectories(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                var relativePath = Path.GetRelativePath(sourceDirectory, directoryPath);
+                Directory.CreateDirectory(Path.Combine(destinationDirectory, relativePath));
+            }
+
+            foreach (var filePath in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                var relativePath = Path.GetRelativePath(sourceDirectory, filePath);
+                var destinationPath = Path.Combine(destinationDirectory, relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath) ?? destinationDirectory);
+                File.Copy(filePath, destinationPath, true);
+            }
+        }
+
+        private static void DeleteMetaFileIfPresent(string assetPath)
+        {
+            var metaPath = assetPath + ".meta";
+            if (File.Exists(metaPath))
+                File.Delete(metaPath);
+        }
+
         private static string GetProjectRoot()
         {
             return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -159,11 +257,13 @@ namespace SwiftCollections.Build.Editor
         {
             public string RootAssetPath { get; }
             public string ManifestAssetPath { get; }
+            public bool HasSamples { get; }
 
-            public PackageDefinition(string rootAssetPath, string manifestAssetPath)
+            public PackageDefinition(string rootAssetPath, string manifestAssetPath, bool hasSamples)
             {
                 RootAssetPath = rootAssetPath;
                 ManifestAssetPath = manifestAssetPath;
+                HasSamples = hasSamples;
             }
         }
 

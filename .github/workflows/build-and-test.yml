@@ -51,7 +51,7 @@ jobs:
             base_package_name: com.mrdav30.swiftcollections
             base_package_path: com.mrdav30.swiftcollections
             fixedmathsharp_package_name: com.mrdav30.fixedmathsharp
-            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp#v5.0.0
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp#v5.0.5
             fixedmathsharp_runtime_assembly: FixedMathSharp.Runtime
             runtime_assembly: SwiftCollections.FixedMathSharp.Runtime
             artifact_suffix: standard-fixedmathsharp
@@ -63,7 +63,7 @@ jobs:
             base_package_name: com.mrdav30.swiftcollections.lean
             base_package_path: com.mrdav30.swiftcollections.lean
             fixedmathsharp_package_name: com.mrdav30.fixedmathsharp.lean
-            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean#v5.0.0
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean#v5.0.5
             fixedmathsharp_runtime_assembly: FixedMathSharp.Lean.Runtime
             runtime_assembly: SwiftCollections.FixedMathSharp.Lean.Runtime
             artifact_suffix: lean-fixedmathsharp
@@ -80,128 +80,24 @@ jobs:
         run: |
           set -euo pipefail
 
-          project_path=".ci/unity-project"
-          rm -rf "$project_path"
-          mkdir -p "$project_path/Assets/Tests/EditMode"
-          mkdir -p "$project_path/Packages"
-          mkdir -p "$project_path/ProjectSettings"
-
-          if [[ "${{ matrix.dependency_flavor }}" == "standard" ]]; then
-            precompiled_references='                  "nunit.framework.dll",
-                  "SwiftCollections.dll",
-                  "Chronicler.dll",
-                  "MemoryPack.Core.dll",
-                  "Microsoft.Bcl.AsyncInterfaces.dll",
-                  "System.Collections.Immutable.dll",
-                  "System.IO.Pipelines.dll",
-                  "System.Runtime.CompilerServices.Unsafe.dll",
-                  "System.Text.Encodings.Web.dll",
-                  "System.Text.Json.dll"'
-          else
-            precompiled_references='                  "nunit.framework.dll",
-                  "SwiftCollections.dll",
-                  "Chronicler.dll",
-                  "Microsoft.Bcl.AsyncInterfaces.dll",
-                  "System.IO.Pipelines.dll",
-                  "System.Runtime.CompilerServices.Unsafe.dll",
-                  "System.Text.Encodings.Web.dll",
-                  "System.Text.Json.dll"'
-          fi
-
-          if [[ "${{ matrix.test_family }}" == "fixedmathsharp" ]]; then
-            cp Tests/EditMode.FixedMathSharp/*.cs "$project_path/Assets/Tests/EditMode/"
-            assembly_references='                  "${{ matrix.runtime_assembly }}",
-                  "${{ matrix.fixedmathsharp_runtime_assembly }}",
-                  "UnityEngine.TestRunner",
-                  "UnityEditor.TestRunner"'
-            precompiled_references="$precompiled_references"',
-                  "SwiftCollections.FixedMathSharp.dll",
-                  "FixedMathSharp.dll"'
-
-            cat > "$project_path/Assets/Tests/EditMode/SwiftCollections.Unity.Tests.EditMode.asmdef" <<JSON
-          {
-              "name": "SwiftCollections.Unity.Tests.EditMode",
-              "references": [
-          ${assembly_references}
-              ],
-              "includePlatforms": [
-                  "Editor"
-              ],
-              "excludePlatforms": [],
-              "allowUnsafeCode": false,
-              "overrideReferences": true,
-              "precompiledReferences": [
-          ${precompiled_references}
-              ],
-              "autoReferenced": false,
-              "defineConstraints": [
-                  "UNITY_INCLUDE_TESTS"
-              ],
-              "versionDefines": []
-          }
-          JSON
-
-            cat > "$project_path/Packages/manifest.json" <<JSON
-          {
-            "dependencies": {
-              "${{ matrix.base_package_name }}": "file:../../../${{ matrix.base_package_path }}",
-              "${{ matrix.package_name }}": "file:../../../${{ matrix.package_path }}",
-              "${{ matrix.fixedmathsharp_package_name }}": "${{ matrix.fixedmathsharp_package_url }}",
-              "com.unity.modules.physics": "1.0.0",
-              "com.unity.test-framework": "1.6.0"
-            }
-          }
-          JSON
-          else
-            cp Tests/EditMode/*.cs "$project_path/Assets/Tests/EditMode/"
-            assembly_references='                  "${{ matrix.runtime_assembly }}",
-                  "UnityEngine.TestRunner",
-                  "UnityEditor.TestRunner"'
-
-            cat > "$project_path/Assets/Tests/EditMode/SwiftCollections.Unity.Tests.EditMode.asmdef" <<JSON
-          {
-              "name": "SwiftCollections.Unity.Tests.EditMode",
-              "references": [
-          ${assembly_references}
-              ],
-              "includePlatforms": [
-                  "Editor"
-              ],
-              "excludePlatforms": [],
-              "allowUnsafeCode": false,
-              "overrideReferences": true,
-              "precompiledReferences": [
-          ${precompiled_references}
-              ],
-              "autoReferenced": false,
-              "defineConstraints": [
-                  "UNITY_INCLUDE_TESTS"
-              ],
-              "versionDefines": []
-          }
-          JSON
-
-            cat > "$project_path/Packages/manifest.json" <<JSON
-          {
-            "dependencies": {
-              "${{ matrix.package_name }}": "file:../../../${{ matrix.package_path }}",
-              "com.unity.modules.physics": "1.0.0",
-              "com.unity.test-framework": "1.6.0"
-            }
-          }
-          JSON
-          fi
-
-          cat > "$project_path/ProjectSettings/ProjectVersion.txt" <<'EOF'
-          m_EditorVersion: 6000.3.9f1
-          m_EditorVersionWithRevision: 6000.3.9f1 (7a9955a4f2fa)
-          EOF
+          bash .assets/ci/scripts/prepare-unity-editmode-test-project.sh \
+            --project-path ".ci/unity-project" \
+            --test-family "${{ matrix.test_family }}" \
+            --dependency-flavor "${{ matrix.dependency_flavor }}" \
+            --package-name "${{ matrix.package_name }}" \
+            --package-path "${{ matrix.package_path }}" \
+            --runtime-assembly "${{ matrix.runtime_assembly }}" \
+            --base-package-name "${{ matrix.base_package_name || '' }}" \
+            --base-package-path "${{ matrix.base_package_path || '' }}" \
+            --fixedmathsharp-package-name "${{ matrix.fixedmathsharp_package_name || '' }}" \
+            --fixedmathsharp-package-url "${{ matrix.fixedmathsharp_package_url || '' }}" \
+            --fixedmathsharp-runtime-assembly "${{ matrix.fixedmathsharp_runtime_assembly || '' }}"
 
       - name: Cache Unity Library
         uses: actions/cache@v5
         with:
           path: .ci/unity-project/Library
-          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'Tests/EditMode.FixedMathSharp/**/*.cs', 'Tests/EditMode.FixedMathSharp/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json') }}
+          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/ci/scripts/prepare-unity-editmode-test-project.sh', '.assets/ci/unity-editmode-tests/**', 'Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'Tests/EditMode.FixedMathSharp/**/*.cs', 'Tests/EditMode.FixedMathSharp/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json') }}
           restore-keys: |
             unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-
 
@@ -214,7 +110,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: .ci/unity-project
-          unityVersion: 6000.3.9f1
+          unityVersion: 6000.5.0f1
+          customImage: unityci/editor:ubuntu-6000.5.0f1-base-3
           testMode: EditMode
           customParameters: -assemblyNames SwiftCollections.Unity.Tests.EditMode -runSynchronously
           artifactsPath: artifacts/${{ matrix.artifact_suffix }}
@@ -227,3 +124,95 @@ jobs:
         with:
           name: unity-editmode-${{ matrix.artifact_suffix }}
           path: artifacts/${{ matrix.artifact_suffix }}
+
+  unity-sample-import-smoke:
+    name: Unity Sample Import Smoke (${{ matrix.package_display_name }})
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package_display_name: SwiftCollections
+            package_name: com.mrdav30.swiftcollections
+            package_path: com.mrdav30.swiftcollections
+            expected_sample_asmdef: SwiftCollections.Samples.asmdef
+            artifact_suffix: standard
+          - package_display_name: SwiftCollections Lean
+            package_name: com.mrdav30.swiftcollections.lean
+            package_path: com.mrdav30.swiftcollections.lean
+            expected_sample_asmdef: SwiftCollections.Lean.Samples.asmdef
+            artifact_suffix: lean
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Prepare Unity sample import smoke project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bash .assets/ci/scripts/prepare-unity-sample-import-smoke.sh \
+            --project-path ".ci/unity-sample-import-${{ matrix.artifact_suffix }}" \
+            --package-name "${{ matrix.package_name }}" \
+            --package-path "${{ matrix.package_path }}" \
+            --expected-sample-asmdef "${{ matrix.expected_sample_asmdef }}" \
+            --workspace-path "/github/workspace" \
+            --git-sha "$GITHUB_SHA"
+
+      - name: Cache Unity sample import Library
+        uses: actions/cache@v5
+        with:
+          path: .ci/unity-sample-import-${{ matrix.artifact_suffix }}/Library
+          key: unity-sample-import-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/ci/scripts/prepare-unity-sample-import-smoke.sh', '.assets/ci/unity-sample-import-smoke/**', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections/Samples~/**', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.lean/Samples~/**') }}
+          restore-keys: |
+            unity-sample-import-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-
+
+      - name: Trust local Git checkout inside Unity container
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          container_home="$RUNNER_TEMP/_github_home"
+          mkdir -p "$container_home"
+
+          git config --file "$container_home/.gitconfig" --add safe.directory /github/workspace
+          git config --file "$container_home/.gitconfig" --add safe.directory /github/workspace/.git
+
+      - name: Run Unity sample import smoke
+        id: sample-import
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .ci/unity-sample-import-${{ matrix.artifact_suffix }}
+          unityVersion: 6000.5.0f1
+          customImage: unityci/editor:ubuntu-6000.5.0f1-base-3
+          testMode: EditMode
+          customParameters: -assemblyNames SwiftCollections.SampleImportSmokeTests -runSynchronously
+          artifactsPath: artifacts/sample-import-${{ matrix.artifact_suffix }}
+          githubToken: ${{ github.token }}
+          checkName: Unity Sample Import ${{ matrix.package_display_name }}
+
+      - name: Scan Unity sample import log
+        if: always() && steps.sample-import.outcome != 'skipped'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bash .assets/ci/scripts/scan-unity-sample-import-log.sh \
+            "artifacts/sample-import-${{ matrix.artifact_suffix }}/editmode.log"
+
+      - name: Upload Unity sample import artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unity-sample-import-${{ matrix.artifact_suffix }}
+          path: artifacts/sample-import-${{ matrix.artifact_suffix }}

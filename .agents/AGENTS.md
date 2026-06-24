@@ -3,7 +3,7 @@
 ## Repo Scope
 
 - The actual Git repo root is `SwiftCollections-Unity`; this workspace usually opens at `Assets/Packages`.
-- Current package version is `5.0.0`, tracked in `.assets/unity-package-versions.json` and each package `package.json`.
+- Current package version is `5.1.1`, tracked in `.assets/unity-package-versions.json` and each package `package.json`.
 - This repo hosts Unity Package Manager wrappers for the upstream SwiftCollections library. Most core data-structure behavior lives in the precompiled `SwiftCollections.dll`, not in Unity-side source.
 - Prefer optimized, low time-complexity code. Avoid band-aid fixes that hide a design or data-structure problem.
 
@@ -13,19 +13,28 @@
 - `com.mrdav30.swiftcollections.lean` is the no-MemoryPack base package. Do not install it alongside the standard base package.
 - `com.mrdav30.swiftcollections.fixedmathsharp` is the FixedMathSharp companion for the standard base package.
 - `com.mrdav30.swiftcollections.fixedmathsharp.lean` is the FixedMathSharp companion for the lean base package.
-- FixedMathSharp companions require the matching SwiftCollections base package and the matching FixedMathSharp-Unity package. The current dependency version is `v5.0.0`.
+- FixedMathSharp companions require the matching SwiftCollections base package and the matching FixedMathSharp-Unity package. The current dependency version is `v5.0.5`.
 
 ## Source Layout
 
 - `Build/Base` is the shared source overlay for both base package variants.
 - `Build/FixedMathSharp` is the shared source overlay for both FixedMathSharp companion variants.
 - `Build/Editor/SwiftCollectionsPackageSync.cs` syncs managed overlay files into the package folders.
-- `Build/Editor/SwiftCollectionsUnityPackageExporter.cs` exports all four package folders after syncing overlays.
+- `Build/Editor/SwiftCollectionsUnityPackageExporter.cs` exports all four package folders after syncing overlays and regenerates base package `Samples~/` content from local `Samples/` mirrors.
 - `com.mrdav30.swiftcollections*/Plugins` contains precompiled upstream assemblies, PDBs, and XML docs.
 - `Runtime/` files in package folders are Unity-side wrapper code. Keep them thin; changes to core collections usually belong in `/mnt/f/gamedevrepos/SwiftCollections`.
 - `Editor/Utility/GitDependencyInstaller.cs` exists only in FixedMathSharp companion packages and manages the FixedMathSharp Unity Git dependency.
 - `Tests/EditMode` contains base-package Unity EditMode tests.
 - `Tests/EditMode.FixedMathSharp` contains FixedMathSharp companion EditMode tests.
+
+## Unity Sample Authoring And Export Layout
+
+- Base package samples use two folder shapes: `Samples/` for local authoring and `Samples~/` for distributable Git/package-source installs.
+- Package manifests should point sample entries at `Samples~/...`. Unity hides tilde folders in the Project pane, so edit sample scenes, prefabs, resources, and scripts through the local `Samples/` mirror.
+- Package-local `.gitignore` files ignore `Samples/`, `Samples.meta`, and `Samples~.meta`. Do not commit package-variant `Samples/` folders or top-level `Samples~.meta` files.
+- Keep nested `.meta` files inside `Samples~/SwiftCollectionsDemo` and local `Samples/SwiftCollectionsDemo`. They preserve scene, prefab, resource, asmdef, and script references when samples import into `Assets/Samples/...`.
+- Shared sample scripts live in `Build/Base/Samples/SwiftCollectionsDemo/Scripts`. The sync step hydrates missing package-local `Samples/` mirrors from tracked `Samples~/`, then copies shared scripts into the visible authoring mirror.
+- The exporter overwrites each base package `Samples~/` folder from its local `Samples/` mirror and excludes `Samples/` from `.unitypackage` exports. FixedMathSharp companion packages do not currently publish samples.
 
 ## Coding Expectations
 
@@ -55,7 +64,8 @@
 - Primary CI is `.github/workflows/build-and-test.yml`.
 - The workflow creates a temporary Unity project, installs one package variant per matrix row, and runs `SwiftCollections.Unity.Tests.EditMode` with `game-ci/unity-test-runner@v4`.
 - Base package rows copy `Tests/EditMode/*.cs`; FixedMathSharp rows copy `Tests/EditMode.FixedMathSharp/*.cs`.
-- The Unity test matrix covers standard, lean, FixedMathSharp, and FixedMathSharp lean packages on Unity `6000.3.9f1`.
+- The Unity test matrix covers standard, lean, FixedMathSharp, and FixedMathSharp lean packages on Unity `6000.5.0f1`.
+- A main-only sample import smoke job installs the standard and lean base packages via local Git URL, imports the Demo Scene sample, and scans Unity logs for known sample packaging failures.
 - Local `dotnet build` is not a substitute for Unity package validation because these packages depend on Unity asmdefs, plugin resolution, and Unity-generated project state.
 - Useful lightweight checks before CI: parse the workflow YAML, parse checked-in asmdef JSON, and run `git diff --check`.
 

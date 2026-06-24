@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "__BASE_PACKAGE_NAME__": "file:../../../__BASE_PACKAGE_PATH__",
+    "__PACKAGE_NAME__": "file:../../../__PACKAGE_PATH__",
+    "__FIXEDMATHSHARP_PACKAGE_NAME__": "__FIXEDMATHSHARP_PACKAGE_URL__",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.test-framework": "1.6.0"
+  }
+}
