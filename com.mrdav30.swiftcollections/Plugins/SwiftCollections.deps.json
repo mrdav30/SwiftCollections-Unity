@@ -9,15 +9,17 @@
     ".NETStandard,Version=v2.1/": {
       "SwiftCollections/5.1.1": {
         "dependencies": {
-          "Chronicler.Core.Lean": "0.2.1",
+          "Chronicler.Core": "0.2.1",
+          "MemoryPack": "1.21.4",
           "System.Text.Json": "10.0.9"
         },
         "runtime": {
           "SwiftCollections.dll": {}
         }
       },
-      "Chronicler.Core.Lean/0.2.1": {
+      "Chronicler.Core/0.2.1": {
         "dependencies": {
+          "MemoryPack": "1.21.4",
           "System.Text.Json": "10.0.9"
         },
         "runtime": {
@@ -27,11 +29,39 @@
           }
         }
       },
+      "MemoryPack/1.21.4": {
+        "dependencies": {
+          "MemoryPack.Core": "1.21.4"
+        }
+      },
+      "MemoryPack.Core/1.21.4": {
+        "dependencies": {
+          "System.Collections.Immutable": "6.0.0",
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2"
+        },
+        "runtime": {
+          "lib/netstandard2.1/MemoryPack.Core.dll": {
+            "assemblyVersion": "1.21.4.0",
+            "fileVersion": "1.21.4.0"
+          }
+        }
+      },
       "Microsoft.Bcl.AsyncInterfaces/10.0.9": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
             "assemblyVersion": "10.0.0.9",
             "fileVersion": "10.0.926.27113"
+          }
+        }
+      },
+      "System.Collections.Immutable/6.0.0": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Collections.Immutable.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
           }
         }
       },
@@ -84,12 +114,26 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Chronicler.Core.Lean/0.2.1": {
+    "Chronicler.Core/0.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-G31B/geXYmArupqpk2PoM0AQBMjJaKjfu2EbTQMgu6AJS9YVLbtdK1J2Zjsc8FBM8qVyidaka41WZSvQSQH44g==",
-      "path": "chronicler.core.lean/0.2.1",
-      "hashPath": "chronicler.core.lean.0.2.1.nupkg.sha512"
+      "sha512": "sha512-hAYXISp9q6MfUKD3TBJrjggSM7r2AT+LJJ3XLfEtTWzRUiSKKMWkyz3tFK/koZKgt8/eNSxGSeLSvYn6y6IB2Q==",
+      "path": "chronicler.core/0.2.1",
+      "hashPath": "chronicler.core.0.2.1.nupkg.sha512"
+    },
+    "MemoryPack/1.21.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wy3JTBNBsO8LfQcBvvYsWr3lm2Oakolrfu0UQ3oSJSEiD+7ye0GUhYTaXuYYBowqsXBXWD9gf2218ae0JRiYVQ==",
+      "path": "memorypack/1.21.4",
+      "hashPath": "memorypack.1.21.4.nupkg.sha512"
+    },
+    "MemoryPack.Core/1.21.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6RszGorZ0ejNmp37ZcboPBMvvPCuNW2jlrdQfcs/lMzE5b3pmPF6hsm/laDc34hRlbAST1ZxaX/DvYu2DF5sBQ==",
+      "path": "memorypack.core/1.21.4",
+      "hashPath": "memorypack.core.1.21.4.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/10.0.9": {
       "type": "package",
@@ -97,6 +141,13 @@
       "sha512": "sha512-Aq7M8lG6BrHeatqKqncVm9m55ec34k6nnfPRLe/PvGg+b/pAsRM2ejofeKmCLjTXMa+5NGXm382f8CG/D5WDow==",
       "path": "microsoft.bcl.asyncinterfaces/10.0.9",
       "hashPath": "microsoft.bcl.asyncinterfaces.10.0.9.nupkg.sha512"
+    },
+    "System.Collections.Immutable/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-l4zZJ1WU2hqpQQHXz1rvC3etVZN+2DLmQMO79FhOTZHMn8tDRr+WU287sbomD0BETlmKDn0ygUgVy9k5xkkJdA==",
+      "path": "system.collections.immutable/6.0.0",
+      "hashPath": "system.collections.immutable.6.0.0.nupkg.sha512"
     },
     "System.IO.Pipelines/10.0.9": {
       "type": "package",

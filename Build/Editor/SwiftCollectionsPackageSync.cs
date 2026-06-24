@@ -22,7 +22,7 @@ namespace SwiftCollections.Build.Editor
             ManagedEntry.Directory("Runtime/GameObjectPool"),
             ManagedEntry.Directory("Runtime/Serialization"),
             ManagedEntry.File("Runtime/BoundVolume.Extensions.cs"),
-            ManagedEntry.Directory("Samples/SwiftCollectionsDemo/Scripts")
+            ManagedEntry.Directory("Samples~/SwiftCollectionsDemo/Scripts")
         };
 
         private static readonly ManagedEntry[] FixedMathSharpManagedEntries =

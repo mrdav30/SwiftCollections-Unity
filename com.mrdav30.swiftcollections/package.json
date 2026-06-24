@@ -1,6 +1,6 @@
 {
     "name": "com.mrdav30.swiftcollections",
-    "version": "5.1.0",
+    "version": "5.1.1",
     "displayName": "SwiftCollections",
     "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations.",
     "unity": "2022.3",
@@ -26,7 +26,7 @@
         {
             "displayName": "Demo Scene",
             "description": "A sample scene demonstrating package usage",
-            "path": "Samples/SwiftCollectionsDemo"
+            "path": "Samples~/SwiftCollectionsDemo"
         }
     ]
 }
