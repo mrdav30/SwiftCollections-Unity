@@ -139,13 +139,6 @@
             <param name="bounds">The source bounding box.</param>
             <returns>A query volume using the source bounds minimum and maximum corners.</returns>
         </member>
-        <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundArea)">
-            <summary>
-            Creates a fixed query volume from a FixedMathSharp bounding area.
-            </summary>
-            <param name="bounds">The source bounding area.</param>
-            <returns>A query volume using the source bounds minimum and maximum corners.</returns>
-        </member>
         <member name="M:SwiftCollections.Query.FixedBoundVolumeFactory.Create(FixedMathSharp.Bounds.FixedBoundSphere)">
             <summary>
             Creates a fixed query volume from a FixedMathSharp bounding sphere.
