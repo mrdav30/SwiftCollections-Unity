@@ -21,29 +21,29 @@ if you want the default `MemoryPack` build.
 
 Direct SwiftCollections fields are runtime collection fields. They keep the
 upstream JSON and state serialization contracts for the lean build, but Unity
-does not persist their contents directly. Use these adapters for Unity
-authoring fields and consume the real collection through `Runtime`.
+does not persist their contents directly. Use these adapters for Unity authoring
+fields and consume the real collection through `Runtime`.
 
-| Serialized field type | Runtime type | Notes |
-| --- | --- | --- |
-| `SerializedSwiftList<T>` | `SwiftList<T>` | Ordered list data. |
-| `SerializedSwiftDictionary<TKey, TValue>` | `SwiftDictionary<TKey, TValue>` | Duplicate keys are invalid. |
-| `SerializedSwiftArray2D<T>` | `SwiftArray2D<T>` | Flat data length must match width and height. |
-| `SerializedSwiftArray3D<T>` | `SwiftArray3D<T>` | Flat data length must match width, height, and depth. |
-| `SerializedSwiftSparseSet` | `SwiftSparseSet` | IDs must be non-negative and unique. |
-| `SerializedSwiftSparseMap<T>` | `SwiftSparseMap<T>` | Keys must be non-negative and unique. |
-| `SerializedSwiftBiDictionary<TLeft, TRight>` | `SwiftBiDictionary<TLeft, TRight>` | Left and right keys must each be unique. |
+| Serialized field type                        | Runtime type                       | Notes                                                 |
+| -------------------------------------------- | ---------------------------------- | ----------------------------------------------------- |
+| `SerializedSwiftList<T>`                     | `SwiftList<T>`                     | Ordered list data.                                    |
+| `SerializedSwiftDictionary<TKey, TValue>`    | `SwiftDictionary<TKey, TValue>`    | Duplicate keys are invalid.                           |
+| `SerializedSwiftArray2D<T>`                  | `SwiftArray2D<T>`                  | Flat data length must match width and height.         |
+| `SerializedSwiftArray3D<T>`                  | `SwiftArray3D<T>`                  | Flat data length must match width, height, and depth. |
+| `SerializedSwiftSparseSet`                   | `SwiftSparseSet`                   | IDs must be non-negative and unique.                  |
+| `SerializedSwiftSparseMap<T>`                | `SwiftSparseMap<T>`                | Keys must be non-negative and unique.                 |
+| `SerializedSwiftBiDictionary<TLeft, TRight>` | `SwiftBiDictionary<TLeft, TRight>` | Left and right keys must each be unique.              |
 
 Generic item, key, and value types must themselves be Unity-serializable.
 
 ## Optional Modules
 
 - Add `com.mrdav30.swiftcollections.fixedmathsharp.lean` if this project also
-  uses `FixedMathSharp` and needs the matching no-`MemoryPack` fixed-point
-  query helpers.
+  uses `FixedMathSharp` and needs the matching no-`MemoryPack` fixed-point query
+  helpers.
 - Do not pair this lean base package with
-  `com.mrdav30.swiftcollections.fixedmathsharp`; that module is for the
-  standard base package.
+  `com.mrdav30.swiftcollections.fixedmathsharp`; that module is for the standard
+  base package.
 
 ## Related
 

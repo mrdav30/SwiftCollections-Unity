@@ -2,8 +2,10 @@
 
 The demo lives under `Samples/SwiftCollectionsDemo` and is built to showcase:
 
-- `SwiftGameObjectPool` as a true reusable pool with explicit checkout and return
-- `SwiftList`, `SwiftDictionary`, and `SwiftHashSet` in visible scene-facing roles
+- `SwiftGameObjectPool` as a true reusable pool with explicit checkout and
+  return
+- `SwiftList`, `SwiftDictionary`, and `SwiftHashSet` in visible scene-facing
+  roles
 - `SwiftBVH<int>` for broad-phase spatial queries against moving targets
 - runtime `Bounds` conversion helpers for `BoundVolume` and `FixedBoundVolume`
 
@@ -39,41 +41,50 @@ Samples/
 4. Watch the launcher fire pooled projectiles at moving targets.
 5. Press `Tab` to switch between `BVH Query` and `Linear Scan`.
 
-The sample is designed to be immediately explorable. You should not need to hand-build the scene or manually create the pool asset first.
+The sample is designed to be immediately explorable. You should not need to
+hand-build the scene or manually create the pool asset first.
 
 ## What The Demo Shows
 
 ### Pooling Lane
 
-- `ProjectileLauncher` repeatedly requests objects from `SwiftGameObjectPoolManager.Shared`.
-- `PooledProjectile` moves forward, expires on lifetime or arena exit, and explicitly returns itself through `ReleaseObject(...)`.
+- `ProjectileLauncher` repeatedly requests objects from
+  `SwiftGameObjectPoolManager.Shared`.
+- `PooledProjectile` moves forward, expires on lifetime or arena exit, and
+  explicitly returns itself through `ReleaseObject(...)`.
 - `TargetRegistry` tracks active projectile count and pool misses for the HUD.
-- The launcher exposes `ConfiguredPoolBudget` and `PrewarmEnabled` as display values so the HUD can mirror the pool asset setup.
+- The launcher exposes `ConfiguredPoolBudget` and `PrewarmEnabled` as display
+  values so the HUD can mirror the pool asset setup.
 
-If the pool is exhausted, the demo increments a miss counter instead of stealing live objects.
+If the pool is exhausted, the demo increments a miss counter instead of stealing
+live objects.
 
 ### Collections Lane
 
 The sample uses these SwiftCollections types directly:
 
-| Type | Where it is used |
-| --- | --- |
-| `SwiftList<Transform>` | generated target spawn anchors in `DemoBootstrap` |
-| `SwiftList<TargetAgent>` | registered targets for query comparisons in `SpatialQueryController` |
-| `SwiftList<int>` | reusable query result buffers and previous highlight scratch data |
-| `SwiftDictionary<int, TargetAgent>` | target lookup by stable runtime id in `TargetRegistry` |
-| `SwiftHashSet<int>` | currently highlighted target ids in `TargetRegistry` |
-| `SwiftBVH<int>` | broad-phase query structure in `SpatialQueryController` |
+| Type                                | Where it is used                                                     |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `SwiftList<Transform>`              | generated target spawn anchors in `DemoBootstrap`                    |
+| `SwiftList<TargetAgent>`            | registered targets for query comparisons in `SpatialQueryController` |
+| `SwiftList<int>`                    | reusable query result buffers and previous highlight scratch data    |
+| `SwiftDictionary<int, TargetAgent>` | target lookup by stable runtime id in `TargetRegistry`               |
+| `SwiftHashSet<int>`                 | currently highlighted target ids in `TargetRegistry`                 |
+| `SwiftBVH<int>`                     | broad-phase query structure in `SpatialQueryController`              |
 
 ### BVH Lane
 
 - `DemoBootstrap` spawns the target field at runtime.
-- `TargetAgent` updates its movement every frame and reports new bounds back to `SpatialQueryController`.
-- `SpatialQueryController` inserts target ids into `SwiftBVH<int>` and updates their bounds as they move.
-- Each frame, the query volume sweeps across the arena and collects matching target ids.
+- `TargetAgent` updates its movement every frame and reports new bounds back to
+  `SpatialQueryController`.
+- `SpatialQueryController` inserts target ids into `SwiftBVH<int>` and updates
+  their bounds as they move.
+- Each frame, the query volume sweeps across the arena and collects matching
+  target ids.
 - The registry applies highlight changes to the affected targets.
 
-The `Tab` toggle is there specifically so you can compare `SwiftBVH` against a straightforward linear scan without changing scenes.
+The `Tab` toggle is there specifically so you can compare `SwiftBVH` against a
+straightforward linear scan without changing scenes.
 
 ## Script Map
 
@@ -121,7 +132,8 @@ The current movement modes are:
 - `Orbit`
 - `VerticalBob`
 
-It also converts its renderer bounds into a `BoundVolume` by calling the runtime extension method on `Bounds`.
+It also converts its renderer bounds into a `BoundVolume` by calling the runtime
+extension method on `Bounds`.
 
 ### `TargetRegistry`
 
@@ -172,7 +184,8 @@ The bounds conversion helpers live in runtime:
 Usage in the sample:
 
 - `Bounds.ToBoundVolume()` is used by `TargetAgent` and `SpatialQueryController`
-- `Bounds.ToFixedBoundVolume()` is available for future fixed-point samples or gameplay code
+- `Bounds.ToFixedBoundVolume()` is available for future fixed-point samples or
+  gameplay code
 
 ## Editing The Sample
 
@@ -200,16 +213,20 @@ The easiest places to tune the demo are:
   - actual prewarm setting
   - pooled prefab assignment
 
-If you change the real pool asset settings, keep the launcher's display-only budget and prewarm fields in sync so the HUD stays truthful.
+If you change the real pool asset settings, keep the launcher's display-only
+budget and prewarm fields in sync so the HUD stays truthful.
 
 ## Presenter Notes
 
-If this sample is used in release notes, a video, or a README callout, these are the clearest talking points:
+If this sample is used in release notes, a video, or a README callout, these are
+the clearest talking points:
 
 - The GameObject pool is explicit and non-stealing.
 - Pool exhaustion is surfaced cleanly through a counter.
-- Runtime scene state uses SwiftCollections containers instead of default BCL containers.
-- `SwiftBVH<int>` drives the moving query volume and can be compared live against a linear scan.
+- Runtime scene state uses SwiftCollections containers instead of default BCL
+  containers.
+- `SwiftBVH<int>` drives the moving query volume and can be compared live
+  against a linear scan.
 - `Bounds.ToBoundVolume()` is now runtime API, not sample-only glue.
 
 ## Verification Checklist

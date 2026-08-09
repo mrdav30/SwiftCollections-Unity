@@ -1,5 +1,6 @@
 __pycache__/
 .upm/
-LegacyVisibleBackup~/
-UpmPackages~/
+UnityPackageExports~/
+.docs/api/obj/
+*/superpowers/*
 .codex/

@@ -1,8 +1,8 @@
 {
   "packageRoot": ".",
-  "packageVersion": "6.0.0",
+  "packageVersion": "7.0.0",
   "dependencyVersions": {
-    "FixedMathSharpUnity": "v6.0.0"
+    "FixedMathSharpUnity": "v7.0.0"
   },
   "packages": [
     {

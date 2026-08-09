@@ -2807,6 +2807,9 @@
             <summary>
             Returns the dense keys array (valid range: [0..Count)).
             </summary>
+            <remarks>
+            Prefer collection APIs. Direct key mutation must preserve the dense/sparse lookup invariants; invalid edits may fail fast.
+            </remarks>
         </member>
         <member name="P:SwiftCollections.SwiftSparseMap`1.Keys">
             <summary>
@@ -2814,7 +2817,7 @@
             </summary>
             <remarks>
             The returned span provides a view of the underlying key data and reflects the current state of the collection. 
-            Modifying the span will affect the collection's contents. 
+            Prefer collection APIs. Direct key mutation must preserve the dense/sparse lookup invariants; invalid edits may fail fast.
             The span is only valid as long as the underlying collection is not modified.
             </remarks>
         </member>
@@ -3091,11 +3094,17 @@
             <summary>
             Returns the dense ID array. Only the range [0..Count) is populated.
             </summary>
+            <remarks>
+            Prefer collection APIs. Direct key mutation must preserve the dense/sparse lookup invariants; invalid edits may fail fast.
+            </remarks>
         </member>
         <member name="P:SwiftCollections.SwiftSparseSet.Keys">
             <summary>
             Gets a span containing the current IDs in dense iteration order.
             </summary>
+            <remarks>
+            Prefer collection APIs. Direct key mutation must preserve the dense/sparse lookup invariants; invalid edits may fail fast.
+            </remarks>
         </member>
         <member name="P:SwiftCollections.SwiftSparseSet.State">
             <summary>
@@ -6107,6 +6116,9 @@
             <summary>
             Gets the underlying pool of nodes used in the BVH.
             </summary>
+            <remarks>
+            Prefer BVH APIs. Direct structural mutation must preserve tree invariants; invalid edits may fail fast.
+            </remarks>
         </member>
         <member name="P:SwiftCollections.Query.SwiftBVH`2.RootNode">
             <summary>
@@ -6698,6 +6710,11 @@
         <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.QueryNeighborhood(`1,System.Collections.Generic.ICollection{`0})">
             <summary>
             Queries the spatial hash using the supplied query volume plus the configured neighborhood padding.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.CollectCellCandidates(SwiftCollections.Query.SwiftSpatialHashCellIndex,System.Collections.Generic.ICollection{`0})">
+            <summary>
+            Collects every entry registered in one already-mapped spatial cell.
             </summary>
         </member>
         <member name="M:SwiftCollections.Query.SwiftSpatialHash`2.EnsureCapacity(System.Int32)">
