@@ -75,8 +75,9 @@ namespace SwiftCollections.Unity
         private SwiftDictionary<TKey, TValue> _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections dictionary rebuilt from Unity serialized data.
+        /// Gets the live runtime dictionary rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftDictionary<TKey, TValue> Runtime
         {
             get
@@ -110,6 +111,8 @@ namespace SwiftCollections.Unity
         /// Replaces the serialized contents with a copy of the supplied entries.
         /// </summary>
         /// <param name="items">Entries to persist and expose through the runtime dictionary.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="items" /> contains duplicate keys.</exception>
         public void SetItems(params SerializedSwiftDictionaryEntry<TKey, TValue>[] items)
         {
             if (items == null)
@@ -193,7 +196,9 @@ namespace SwiftCollections.Unity
             return Runtime.GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -202,7 +207,10 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<SerializedSwiftDictionaryEntry<TKey, TValue>>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Serialized entries contain duplicate keys.</exception>
         public void OnAfterDeserialize()
         {
             if (_items == null)

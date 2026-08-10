@@ -4,7 +4,7 @@
 
 - The actual Git repo root is `SwiftCollections-Unity`; this workspace usually
   opens at `Assets/Packages`.
-- Current package version is `5.1.1`, tracked in
+- Current package version is `7.0.0`, tracked in
   `.assets/unity-package-versions.json` and each package `package.json`.
 - This repo hosts Unity Package Manager wrappers for the upstream
   SwiftCollections library. Most core data-structure behavior lives in the
@@ -25,13 +25,15 @@
   companion for the lean base package.
 - FixedMathSharp companions require the matching SwiftCollections base package
   and the matching FixedMathSharp-Unity package. The current dependency version
-  is `v5.0.5`.
+  is `v7.0.0`.
 
 ## Source Layout
 
 - `Build/Base` is the shared source overlay for both base package variants.
 - `Build/FixedMathSharp` is the shared source overlay for both FixedMathSharp
   companion variants.
+- Each overlay owns its package-family `CHANGELOG.md`; the sync copies it into
+  the matching Standard and Lean variants.
 - `Build/Editor/SwiftCollectionsPackageSync.cs` syncs managed overlay files into
   the package folders.
 - `Build/Editor/SwiftCollectionsUnityPackageExporter.cs` exports all four
@@ -130,7 +132,18 @@
 ## Documentation Expectations
 
 - Keep the root README concise and user-facing: package choice, install URLs,
-  dependency pairing, and test status.
+  dependency pairing, serialization boundaries, and hosted documentation.
 - Put operational guidance for agents here rather than bloating the README.
+- Generate the Unity API reference only from canonical
+  `Build/Base/Runtime/**/*.cs` and `Build/FixedMathSharp/Runtime/**/*.cs`
+  through `.docs/api/docfx.json`; do not document synchronized package copies.
+- Link to the hosted SwiftCollections and FixedMathSharp API references instead
+  of republishing their engine-agnostic APIs.
+- Restore the pinned DocFX tool with `dotnet tool restore`. CI stages the Unity,
+  SwiftCollections, SwiftCollections.FixedMathSharp, and FixedMathSharp
+  reference assemblies under ignored `.docs/api/obj/references` before running
+  `dotnet tool run docfx .docs/api/docfx.json`.
+- Add concise XML documentation to every public runtime API in the canonical
+  Build overlays and sync it into package variants.
 - When package layout, dependencies, or CI behavior changes, update README and
   AGENTS in the same pass.

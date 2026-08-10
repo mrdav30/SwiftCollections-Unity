@@ -30,8 +30,9 @@ namespace SwiftCollections.Unity
         private SwiftList<T> _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections list rebuilt from Unity serialized data.
+        /// Gets the live runtime list rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftList<T> Runtime
         {
             get
@@ -41,16 +42,24 @@ namespace SwiftCollections.Unity
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the number of items in the runtime list.
+        /// </summary>
         public int Count => Runtime.Count;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based item index.</param>
+        /// <returns>The item at <paramref name="index" />.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is outside the list.</exception>
         public T this[int index] => Runtime[index];
 
         /// <summary>
         /// Replaces the serialized contents with a copy of the supplied items.
         /// </summary>
         /// <param name="items">Items to persist and expose through the runtime list.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
         public void SetItems(params T[] items)
         {
             if (items == null)
@@ -83,6 +92,7 @@ namespace SwiftCollections.Unity
         /// Removes the item at the specified index and updates the serialized backing array.
         /// </summary>
         /// <param name="index">Index of the item to remove.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is outside the list.</exception>
         public void RemoveAt(int index)
         {
             Runtime.RemoveAt(index);
@@ -107,7 +117,10 @@ namespace SwiftCollections.Unity
             return new SwiftList<T>(ToArray());
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns an enumerator for the runtime list.
+        /// </summary>
+        /// <returns>A SwiftCollections list enumerator.</returns>
         public SwiftList<T>.SwiftListEnumerator GetEnumerator()
         {
             return Runtime.GetEnumerator();
@@ -125,7 +138,9 @@ namespace SwiftCollections.Unity
             return GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -134,7 +149,9 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<T>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
         public void OnAfterDeserialize()
         {
             if (_items == null)

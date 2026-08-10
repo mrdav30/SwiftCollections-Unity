@@ -11,8 +11,16 @@ using UnityEngine;
 
 namespace SwiftCollections
 {
+    /// <summary>
+    /// Provides conversion from Unity bounds to fixed-point SwiftCollections query bounds.
+    /// </summary>
     public static class FixedBoundVolumeExtensions
     {
+        /// <summary>
+        /// Converts Unity axis-aligned bounds to a fixed-point bound volume.
+        /// </summary>
+        /// <param name="bounds">The Unity bounds to convert.</param>
+        /// <returns>A fixed-point bound volume with converted minimum and maximum coordinates.</returns>
         public static FixedBoundVolume ToFixedBoundVolume(this Bounds bounds)
         {
             FixedBoundVolume volume = new(bounds.min.ToVector3d(), bounds.max.ToVector3d());

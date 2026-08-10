@@ -1,0 +1,10 @@
+items:
+  - name: Home
+    href: index.md
+  - name: Unity API
+    href: obj/api/
+    homepage: obj/api/SwiftCollections.yml
+  - name: SwiftCollections Core API
+    href: https://mrdav30.github.io/SwiftCollections/
+  - name: FixedMathSharp Core API
+    href: https://mrdav30.github.io/FixedMathSharp/

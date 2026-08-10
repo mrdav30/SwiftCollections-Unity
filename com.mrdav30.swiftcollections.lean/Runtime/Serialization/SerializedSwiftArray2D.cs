@@ -31,8 +31,9 @@ namespace SwiftCollections.Unity
         private SwiftArray2D<T> _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections 2D array rebuilt from Unity serialized data.
+        /// Gets the live runtime 2D array rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftArray2D<T> Runtime
         {
             get
@@ -60,6 +61,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Gets or sets the item at the specified coordinates.
         /// </summary>
+        /// <param name="x">The zero-based horizontal coordinate.</param>
+        /// <param name="y">The zero-based vertical coordinate.</param>
+        /// <returns>The item at the specified coordinates.</returns>
         public T this[int x, int y]
         {
             get => Runtime[x, y];
@@ -76,6 +80,9 @@ namespace SwiftCollections.Unity
         /// <param name="width">The array width.</param>
         /// <param name="height">The array height.</param>
         /// <param name="items">Flat item data in SwiftArray2D index order.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">A dimension is negative or the resulting array is too large.</exception>
+        /// <exception cref="ArgumentException">The item count does not equal <paramref name="width" /> multiplied by <paramref name="height" />.</exception>
         public void SetItems(int width, int height, params T[] items)
         {
             if (items == null)
@@ -92,6 +99,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Resizes the runtime array and updates the serialized backing data.
         /// </summary>
+        /// <param name="width">The new width.</param>
+        /// <param name="height">The new height.</param>
+        /// <exception cref="ArgumentOutOfRangeException">A dimension is negative or the resulting array is too large.</exception>
         public void Resize(int width, int height)
         {
             ValidateDimensions(width, height);
@@ -112,6 +122,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy of the flattened serialized data.
         /// </summary>
+        /// <returns>A new flat array in SwiftArray2D index order.</returns>
         public T[] ToFlatArray()
         {
             return Runtime.State.Data;
@@ -120,13 +131,16 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy as a standalone <see cref="SwiftArray2D{T}"/>.
         /// </summary>
+        /// <returns>A new 2D array containing the current values.</returns>
         public SwiftArray2D<T> ToSwiftArray2D()
         {
             Array2DState<T> state = Runtime.State;
             return new SwiftArray2D<T>(new Array2DState<T>(state.Width, state.Height, state.Data));
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -135,7 +149,11 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<T>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">A serialized dimension is invalid.</exception>
+        /// <exception cref="ArgumentException">The serialized item count does not match the dimensions.</exception>
         public void OnAfterDeserialize()
         {
             if (_items == null)

@@ -2,6 +2,9 @@
 
 SwiftCollections package for Unity without `MemoryPack`.
 
+[API Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
+[Changelog](CHANGELOG.md)
+
 This is the safer default when Burst AOT compatibility matters or when you want
 to bring your own serialization stack. Install the standard base package instead
 if you want the default `MemoryPack` build.
@@ -10,12 +13,11 @@ if you want the default `MemoryPack` build.
 
 `https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean`
 
-## When To Use This Package
+## Included
 
-- You want SwiftCollections without `MemoryPack`.
-- You are targeting Burst AOT or want the safer default for Burst-oriented
-  builds.
-- You do not need `FixedMathSharp` fixed-point query helpers.
+- The SwiftCollections runtime without MemoryPack.
+- Unity-serializable collection adapters.
+- Unity bounds conversion and GameObject pooling helpers.
 
 ## Unity Serialization
 
@@ -24,17 +26,9 @@ upstream JSON and state serialization contracts for the lean build, but Unity
 does not persist their contents directly. Use these adapters for Unity authoring
 fields and consume the real collection through `Runtime`.
 
-| Serialized field type                        | Runtime type                       | Notes                                                 |
-| -------------------------------------------- | ---------------------------------- | ----------------------------------------------------- |
-| `SerializedSwiftList<T>`                     | `SwiftList<T>`                     | Ordered list data.                                    |
-| `SerializedSwiftDictionary<TKey, TValue>`    | `SwiftDictionary<TKey, TValue>`    | Duplicate keys are invalid.                           |
-| `SerializedSwiftArray2D<T>`                  | `SwiftArray2D<T>`                  | Flat data length must match width and height.         |
-| `SerializedSwiftArray3D<T>`                  | `SwiftArray3D<T>`                  | Flat data length must match width, height, and depth. |
-| `SerializedSwiftSparseSet`                   | `SwiftSparseSet`                   | IDs must be non-negative and unique.                  |
-| `SerializedSwiftSparseMap<T>`                | `SwiftSparseMap<T>`                | Keys must be non-negative and unique.                 |
-| `SerializedSwiftBiDictionary<TLeft, TRight>` | `SwiftBiDictionary<TLeft, TRight>` | Left and right keys must each be unique.              |
-
-Generic item, key, and value types must themselves be Unity-serializable.
+See the [API documentation](https://mrdav30.github.io/SwiftCollections-Unity/)
+for the available `SerializedSwift*` adapters. Generic item, key, and value
+types must themselves be Unity-serializable.
 
 ## Optional Modules
 

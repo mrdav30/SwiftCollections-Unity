@@ -29,11 +29,19 @@ namespace SwiftCollections.Pool
 
         [NonSerialized]
         private Transform _parentTransform;
+
+        /// <summary>
+        /// Gets the persistent root transform created by <see cref="Init" />.
+        /// </summary>
         public Transform ParentTransform => _parentTransform;
 
         [NonSerialized]
         private SwiftDictionary<string, SwiftGameObjectPool> _poolDict;
 
+        /// <summary>
+        /// Initializes an asset with the supplied pool definitions.
+        /// </summary>
+        /// <param name="pools">The pool definitions managed by the asset.</param>
         public SwiftGameObjectPoolAsset(SwiftGameObjectPool[] pools)
         {
             _pools = pools;
@@ -42,6 +50,7 @@ namespace SwiftCollections.Pool
         /// <summary>
         /// Initializes the object pool asset, creating the parent transform and prewarming pools as needed.
         /// </summary>
+        /// <exception cref="InvalidOperationException">The pool definitions are missing, invalid, or contain duplicate names.</exception>
         public void Init()
         {
             if (_poolDict != null && _parentTransform != null)
@@ -69,6 +78,8 @@ namespace SwiftCollections.Pool
         /// </summary>
         /// <param name="id">The pool name.</param>
         /// <returns>A pooled GameObject instance.</returns>
+        /// <exception cref="ArgumentException"><paramref name="id" /> is null, empty, or whitespace.</exception>
+        /// <exception cref="InvalidOperationException">The pool configuration is invalid, the pool is missing, or it is exhausted.</exception>
         public GameObject GetObject(string id)
         {
             if (TryGetObject(id, out var gameObject))
@@ -86,6 +97,7 @@ namespace SwiftCollections.Pool
         /// <param name="id">The pool name.</param>
         /// <param name="gameObject">The pooled GameObject instance when successful.</param>
         /// <returns><c>true</c> when an object was acquired; otherwise <c>false</c>.</returns>
+        /// <exception cref="InvalidOperationException">The pool configuration is invalid.</exception>
         public bool TryGetObject(string id, out GameObject gameObject)
         {
             Init();
@@ -105,6 +117,9 @@ namespace SwiftCollections.Pool
         /// </summary>
         /// <param name="id">The pool name.</param>
         /// <param name="gameObject">The pooled instance to release.</param>
+        /// <exception cref="ArgumentException"><paramref name="id" /> is null, empty, or whitespace.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="gameObject" /> is null.</exception>
+        /// <exception cref="InvalidOperationException">The pool is missing, invalid, or does not own the instance.</exception>
         public void ReleaseObject(string id, GameObject gameObject)
         {
             Init();

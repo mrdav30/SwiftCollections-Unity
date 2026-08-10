@@ -2,6 +2,9 @@
 
 FixedMathSharp interop module for the lean SwiftCollections package.
 
+[API Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
+[Changelog](CHANGELOG.md)
+
 Use this package alongside `com.mrdav30.swiftcollections.lean` when you want the
 no-`MemoryPack` base package plus fixed-point query helpers such as
 `FixedBoundVolume` and `Bounds.ToFixedBoundVolume()`.

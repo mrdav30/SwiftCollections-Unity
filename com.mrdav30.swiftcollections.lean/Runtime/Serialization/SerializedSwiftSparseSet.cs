@@ -23,8 +23,9 @@ namespace SwiftCollections.Unity
         private SwiftSparseSet _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections sparse set rebuilt from Unity serialized data.
+        /// Gets the live runtime sparse set rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftSparseSet Runtime
         {
             get
@@ -42,6 +43,10 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Replaces the serialized contents with a copy of the supplied IDs.
         /// </summary>
+        /// <param name="items">The unique, non-negative IDs to persist.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">An ID is negative.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="items" /> contains duplicate IDs.</exception>
         public void SetItems(params int[] items)
         {
             if (items == null)
@@ -54,6 +59,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Adds an ID to the runtime set and updates the serialized backing array.
         /// </summary>
+        /// <param name="item">The non-negative ID to add.</param>
+        /// <returns><c>true</c> when the ID was added; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="item" /> is negative.</exception>
         public bool Add(int item)
         {
             ValidateId(item);
@@ -68,6 +76,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Removes an ID from the runtime set and updates the serialized backing array.
         /// </summary>
+        /// <param name="item">The non-negative ID to remove.</param>
+        /// <returns><c>true</c> when the ID was removed; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="item" /> is negative.</exception>
         public bool Remove(int item)
         {
             ValidateId(item);
@@ -82,6 +93,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns whether the set contains the specified ID.
         /// </summary>
+        /// <param name="item">The non-negative ID to find.</param>
+        /// <returns><c>true</c> when the ID exists; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="item" /> is negative.</exception>
         public bool Contains(int item)
         {
             ValidateId(item);
@@ -100,6 +114,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy of the serialized IDs.
         /// </summary>
+        /// <returns>A new array containing the current IDs.</returns>
         public int[] ToArray()
         {
             SyncSerializedItemsFromRuntime();
@@ -109,6 +124,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy as a standalone <see cref="SwiftSparseSet"/>.
         /// </summary>
+        /// <returns>A new sparse set containing the current IDs.</returns>
         public SwiftSparseSet ToSwiftSparseSet()
         {
             SyncSerializedItemsFromRuntime();
@@ -118,12 +134,15 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns an enumerator for the runtime sparse set.
         /// </summary>
+        /// <returns>A SwiftCollections sparse set enumerator.</returns>
         public SwiftSparseSet.SwiftSparseSetEnumerator GetEnumerator()
         {
             return Runtime.GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -132,7 +151,11 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<int>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">A serialized ID is negative.</exception>
+        /// <exception cref="InvalidOperationException">Serialized IDs contain duplicates.</exception>
         public void OnAfterDeserialize()
         {
             if (_items == null)

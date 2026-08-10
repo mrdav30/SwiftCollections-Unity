@@ -51,7 +51,7 @@ jobs:
             base_package_name: com.mrdav30.swiftcollections
             base_package_path: com.mrdav30.swiftcollections
             fixedmathsharp_package_name: com.mrdav30.fixedmathsharp
-            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp#v5.0.5
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp#v7.0.0
             fixedmathsharp_runtime_assembly: FixedMathSharp.Runtime
             runtime_assembly: SwiftCollections.FixedMathSharp.Runtime
             artifact_suffix: standard-fixedmathsharp
@@ -63,7 +63,7 @@ jobs:
             base_package_name: com.mrdav30.swiftcollections.lean
             base_package_path: com.mrdav30.swiftcollections.lean
             fixedmathsharp_package_name: com.mrdav30.fixedmathsharp.lean
-            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean#v5.0.5
+            fixedmathsharp_package_url: https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean#v7.0.0
             fixedmathsharp_runtime_assembly: FixedMathSharp.Lean.Runtime
             runtime_assembly: SwiftCollections.FixedMathSharp.Lean.Runtime
             artifact_suffix: lean-fixedmathsharp
@@ -97,7 +97,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .ci/unity-project/Library
-          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/ci/scripts/prepare-unity-editmode-test-project.sh', '.assets/ci/unity-editmode-tests/**', 'Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'Tests/EditMode.FixedMathSharp/**/*.cs', 'Tests/EditMode.FixedMathSharp/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json') }}
+          key: unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/unity-package-versions.json', '.assets/ci/scripts/prepare-unity-editmode-test-project.sh', '.assets/ci/unity-editmode-tests/**', 'Tests/EditMode/**/*.cs', 'Tests/EditMode/**/*.asmdef', 'Tests/EditMode.FixedMathSharp/**/*.cs', 'Tests/EditMode.FixedMathSharp/**/*.asmdef', 'com.mrdav30.swiftcollections/**/*.cs', 'com.mrdav30.swiftcollections/**/*.asmdef', 'com.mrdav30.swiftcollections/Plugins/**', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections.lean/**/*.cs', 'com.mrdav30.swiftcollections.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.lean/Plugins/**', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp/Plugins/**', 'com.mrdav30.swiftcollections.fixedmathsharp/package.json', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.cs', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/**/*.asmdef', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/Plugins/**', 'com.mrdav30.swiftcollections.fixedmathsharp.lean/package.json') }}
           restore-keys: |
             unity-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-
 
@@ -124,6 +124,61 @@ jobs:
         with:
           name: unity-editmode-${{ matrix.artifact_suffix }}
           path: artifacts/${{ matrix.artifact_suffix }}
+
+      - name: Setup .NET for API documentation
+        if: matrix.artifact_suffix == 'standard-fixedmathsharp'
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Prepare API documentation references
+        if: matrix.artifact_suffix == 'standard-fixedmathsharp'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          image="unityci/editor:ubuntu-6000.5.0f1-base-3"
+          container="$(docker create "$image")"
+          trap 'docker rm -f "$container" >/dev/null 2>&1 || true' EXIT
+
+          mkdir -p .docs/api/obj/references
+          docker cp \
+            "$container:/opt/unity/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll" \
+            .docs/api/obj/references/UnityEngine.CoreModule.dll
+          cp com.mrdav30.swiftcollections/Plugins/SwiftCollections.dll \
+            .docs/api/obj/references/SwiftCollections.dll
+          cp com.mrdav30.swiftcollections.fixedmathsharp/Plugins/SwiftCollections.FixedMathSharp.dll \
+            .docs/api/obj/references/SwiftCollections.FixedMathSharp.dll
+
+          fixedmathsharp_package="$(find .ci/unity-project/Library/PackageCache \
+            -mindepth 1 -maxdepth 1 -type d \
+            -name 'com.mrdav30.fixedmathsharp@*' -print -quit)"
+          test -n "$fixedmathsharp_package"
+          cp "$fixedmathsharp_package/Plugins/FixedMathSharp.dll" \
+            .docs/api/obj/references/FixedMathSharp.dll
+          cp .ci/unity-project/Library/ScriptAssemblies/FixedMathSharp.Runtime.dll \
+            .docs/api/obj/references/FixedMathSharp.Runtime.dll
+
+      - name: Build API documentation
+        if: matrix.artifact_suffix == 'standard-fixedmathsharp'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          dotnet tool restore
+          dotnet tool run docfx .docs/api/docfx.json
+
+          test -f .docs/api/obj/_site/index.html
+          test -f .docs/api/obj/_site/api/SwiftCollections.BoundVolumeExtensions.html
+          test -f .docs/api/obj/_site/api/SwiftCollections.Unity.SerializedSwiftList-1.html
+          test -f .docs/api/obj/_site/api/SwiftCollections.Pool.SwiftGameObjectPool.html
+          test -f .docs/api/obj/_site/api/SwiftCollections.FixedBoundVolumeExtensions.html
+
+      - name: Upload API documentation site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.artifact_suffix == 'standard-fixedmathsharp'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: .docs/api/obj/_site
 
   unity-sample-import-smoke:
     name: Unity Sample Import Smoke (${{ matrix.package_display_name }})
@@ -169,7 +224,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .ci/unity-sample-import-${{ matrix.artifact_suffix }}/Library
-          key: unity-sample-import-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/ci/scripts/prepare-unity-sample-import-smoke.sh', '.assets/ci/unity-sample-import-smoke/**', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections/Samples~/**', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.lean/Samples~/**') }}
+          key: unity-sample-import-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-${{ hashFiles('.assets/unity-package-versions.json', '.assets/ci/scripts/prepare-unity-sample-import-smoke.sh', '.assets/ci/unity-sample-import-smoke/**', 'com.mrdav30.swiftcollections/Plugins/**', 'com.mrdav30.swiftcollections/Runtime/**', 'com.mrdav30.swiftcollections/package.json', 'com.mrdav30.swiftcollections/Samples~/**', 'com.mrdav30.swiftcollections.lean/Plugins/**', 'com.mrdav30.swiftcollections.lean/Runtime/**', 'com.mrdav30.swiftcollections.lean/package.json', 'com.mrdav30.swiftcollections.lean/Samples~/**') }}
           restore-keys: |
             unity-sample-import-library-${{ runner.os }}-${{ matrix.artifact_suffix }}-
 
@@ -216,3 +271,24 @@ jobs:
         with:
           name: unity-sample-import-${{ matrix.artifact_suffix }}
           path: artifacts/sample-import-${{ matrix.artifact_suffix }}
+
+  deploy-docs:
+    name: Deploy API documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: unity-editmode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Deploy API documentation
+        id: deployment
+        uses: actions/deploy-pages@v5

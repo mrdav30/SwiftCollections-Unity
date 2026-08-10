@@ -7,18 +7,50 @@ fixes can proceed directly through a pull request.
 Please note we have a code of conduct, please follow it in all your interactions
 with the project.
 
+## Source of Truth
+
+Edit shared Unity runtime code under `Build/Base` or `Build/FixedMathSharp`,
+then run the package sync. Do not hand-edit synchronized runtime copies inside
+the four `com.mrdav30.swiftcollections*` package folders.
+
+Package manifests, package READMEs, asmdefs, plugins, and other package-specific
+assets remain in their package folders.
+
 ## Pull Request Process
 
-1. Keep the change focused and preserve deterministic behavior, stable ordering,
-   and engine-agnostic runtime boundaries.
-2. Add or update tests for behavior changes and keep the README, wiki, XML
-   documentation, and benchmarks aligned with the affected public contract.
-3. Run the `Release` build and tests. Also run `ReleaseLean` when changing
-   packages, serialization, MemoryPack conditionals, or shared runtime APIs.
-4. Do not hand-edit package versions for normal releases; repository workflows
-   derive versions through GitVersion.
-5. Exclude generated build, test, coverage, package, and benchmark artifacts
-   from the pull request.
+1. Keep changes focused and preserve package-variant boundaries.
+2. Add or update Unity tests for behavior changes.
+3. Add concise XML documentation for public runtime APIs and update the relevant
+   package changelog when behavior changes.
+4. Sync canonical Build files into the package variants before review.
+5. Exclude generated Unity, DocFX, test, and package-export artifacts.
+
+## Validation
+
+From this repository root, run the package sync through the parent Unity
+project:
+
+```bash
+"$UNITY_EDITOR" \
+  -batchmode -quit \
+  -projectPath "$(cd ../.. && pwd)" \
+  -executeMethod SwiftCollections.Build.Editor.SwiftCollectionsPackageSync.SyncPackagesBatchMode \
+  -logFile -
+```
+
+Set `UNITY_EDITOR` to the Unity executable. Run the command a second time when
+the first pass copied files; a clean sync reports `Copied 0 files`.
+
+Useful lightweight checks:
+
+```bash
+dotnet tool restore
+git diff --check
+```
+
+The `build-and-test` workflow is the canonical validation for all four Unity
+package variants, sample import, and the hosted API site because it stages the
+required Unity and package reference assemblies.
 
 ## Code of Conduct
 

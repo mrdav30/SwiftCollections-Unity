@@ -27,6 +27,8 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Initializes a serialized sparse map entry.
         /// </summary>
+        /// <param name="key">The non-negative integer key.</param>
+        /// <param name="value">The entry value.</param>
         public SerializedSwiftSparseMapEntry(int key, T value)
         {
             _key = key;
@@ -66,8 +68,9 @@ namespace SwiftCollections.Unity
         private SwiftSparseMap<T> _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections sparse map rebuilt from Unity serialized data.
+        /// Gets the live runtime sparse map rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftSparseMap<T> Runtime
         {
             get
@@ -85,6 +88,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Gets or sets a value by integer key and updates the serialized backing entries.
         /// </summary>
+        /// <param name="key">The non-negative integer key.</param>
+        /// <returns>The value associated with the key.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="key" /> is negative.</exception>
         public T this[int key]
         {
             get
@@ -103,6 +109,10 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Replaces the serialized contents with a copy of the supplied entries.
         /// </summary>
+        /// <param name="items">The key/value entries to persist.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">An entry has a negative key.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="items" /> contains duplicate keys.</exception>
         public void SetItems(params SerializedSwiftSparseMapEntry<T>[] items)
         {
             if (items == null)
@@ -115,6 +125,10 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Adds a key/value pair to the runtime sparse map and updates the serialized backing entries.
         /// </summary>
+        /// <param name="key">The non-negative key to add.</param>
+        /// <param name="value">The value to add.</param>
+        /// <returns><c>true</c> when the key was added; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="key" /> is negative.</exception>
         public bool Add(int key, T value)
         {
             ValidateKey(key);
@@ -129,6 +143,10 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Attempts to get the value associated with the key.
         /// </summary>
+        /// <param name="key">The non-negative key to find.</param>
+        /// <param name="value">The associated value when found.</param>
+        /// <returns><c>true</c> when the key exists; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="key" /> is negative.</exception>
         public bool TryGetValue(int key, out T value)
         {
             ValidateKey(key);
@@ -138,6 +156,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns whether the sparse map contains the key.
         /// </summary>
+        /// <param name="key">The non-negative key to find.</param>
+        /// <returns><c>true</c> when the key exists; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="key" /> is negative.</exception>
         public bool ContainsKey(int key)
         {
             ValidateKey(key);
@@ -147,6 +168,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Removes a key from the runtime sparse map and updates the serialized backing entries.
         /// </summary>
+        /// <param name="key">The non-negative key to remove.</param>
+        /// <returns><c>true</c> when the key was removed; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="key" /> is negative.</exception>
         public bool Remove(int key)
         {
             ValidateKey(key);
@@ -170,6 +194,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy of the serialized entries.
         /// </summary>
+        /// <returns>A new array containing the current entries.</returns>
         public SerializedSwiftSparseMapEntry<T>[] ToArray()
         {
             SyncSerializedItemsFromRuntime();
@@ -179,6 +204,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy as a standalone <see cref="SwiftSparseMap{T}"/>.
         /// </summary>
+        /// <returns>A new sparse map containing the current entries.</returns>
         public SwiftSparseMap<T> ToSwiftSparseMap()
         {
             SyncSerializedItemsFromRuntime();
@@ -188,12 +214,15 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns an enumerator for the runtime sparse map.
         /// </summary>
+        /// <returns>A SwiftCollections sparse map enumerator.</returns>
         public SwiftSparseMap<T>.SwiftSparseMapEnumerator GetEnumerator()
         {
             return Runtime.GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -202,7 +231,11 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<SerializedSwiftSparseMapEntry<T>>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">A serialized entry has a negative key.</exception>
+        /// <exception cref="InvalidOperationException">Serialized entries contain duplicate keys.</exception>
         public void OnAfterDeserialize()
         {
             if (_items == null)

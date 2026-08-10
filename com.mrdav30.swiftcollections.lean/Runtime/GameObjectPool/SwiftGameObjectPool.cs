@@ -25,6 +25,10 @@ namespace SwiftCollections.Pool
         [Tooltip("Name of the pool used for identification.")]
         [SerializeField]
         private string _poolName;
+
+        /// <summary>
+        /// Gets the name used to identify the pool.
+        /// </summary>
         public string PoolName => _poolName;
 
         /// <summary>
@@ -33,6 +37,10 @@ namespace SwiftCollections.Pool
         [Tooltip("The prefab to be instantiated and pooled.")]
         [SerializeField]
         private GameObject _prefab;
+
+        /// <summary>
+        /// Gets the prefab instantiated by the pool.
+        /// </summary>
         public GameObject Prefab => _prefab;
 
         /// <summary>
@@ -41,6 +49,10 @@ namespace SwiftCollections.Pool
         [Tooltip("The maximum number of objects the pool can manage.")]
         [SerializeField]
         private int _budget;
+
+        /// <summary>
+        /// Gets the maximum number of live objects managed by the pool.
+        /// </summary>
         public int Budget => _budget;
 
         /// <summary>
@@ -49,12 +61,20 @@ namespace SwiftCollections.Pool
         [Tooltip("Whether the pool should be prewarmed (instantiating objects up to the budget at initialization).")]
         [SerializeField]
         private bool _prewarm;
+
+        /// <summary>
+        /// Gets whether the pool should fill its budget during asset initialization.
+        /// </summary>
         public bool Prewarm => _prewarm;
 
         #endregion
 
         [NonSerialized]
         private SwiftList<GameObject> _createdObjects;
+
+        /// <summary>
+        /// Gets the objects created and tracked by the pool.
+        /// </summary>
         public SwiftList<GameObject> CreatedObjects
         {
             get
@@ -73,11 +93,21 @@ namespace SwiftCollections.Pool
         [NonSerialized]
         private int _liveObjectCount;
 
+        /// <summary>
+        /// Initializes an empty pool for Unity serialization.
+        /// </summary>
         public SwiftGameObjectPool()
         {
             EnsureRuntimeState();
         }
 
+        /// <summary>
+        /// Initializes a pool definition.
+        /// </summary>
+        /// <param name="poolName">The name used to identify the pool.</param>
+        /// <param name="prefab">The prefab instantiated by the pool.</param>
+        /// <param name="budget">The maximum number of live objects.</param>
+        /// <param name="prewarm">Whether the owning asset should fill the pool during initialization.</param>
         public SwiftGameObjectPool(string poolName, GameObject prefab, int budget, bool prewarm = false): this()
         {
             _poolName = poolName;
@@ -87,10 +117,12 @@ namespace SwiftCollections.Pool
         }
 
         /// <summary>
-        /// Rents a GameObject from the pool. If the pool is not full, a new object is instantiated.
+        /// Rents an inactive GameObject, reusing an available instance before creating one within the budget.
         /// </summary>
         /// <param name="parent">The parent transform for the GameObject.</param>
         /// <returns>A pooled GameObject instance.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="parent" /> or <see cref="Prefab" /> is null.</exception>
+        /// <exception cref="InvalidOperationException">The budget is invalid or the pool is exhausted.</exception>
         public GameObject GetObject(Transform parent)
         {
             if (TryGetObject(parent, out var gameObject))
@@ -106,6 +138,8 @@ namespace SwiftCollections.Pool
         /// <param name="parent">The parent transform for the GameObject.</param>
         /// <param name="gameObject">The pooled GameObject instance when successful.</param>
         /// <returns><c>true</c> when an object was acquired; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="parent" /> or <see cref="Prefab" /> is null.</exception>
+        /// <exception cref="InvalidOperationException">The budget is not greater than zero.</exception>
         public bool TryGetObject(Transform parent, out GameObject gameObject)
         {
             EnsureRuntimeState();
@@ -140,6 +174,8 @@ namespace SwiftCollections.Pool
         /// </summary>
         /// <param name="gameObject">The pooled instance to release.</param>
         /// <param name="parent">The pool parent transform.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameObject" /> or <paramref name="parent" /> is null.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="gameObject" /> is not checked out from this pool.</exception>
         public void ReleaseObject(GameObject gameObject, Transform parent)
         {
             EnsureRuntimeState();
@@ -171,6 +207,8 @@ namespace SwiftCollections.Pool
         /// Prewarms the pool by instantiating objects up to the budget.
         /// </summary>
         /// <param name="parent">The parent transform for the prewarmed objects.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="parent" /> or <see cref="Prefab" /> is null.</exception>
+        /// <exception cref="InvalidOperationException">The budget is not greater than zero.</exception>
         public void PrewarmObject(Transform parent)
         {
             EnsureRuntimeState();

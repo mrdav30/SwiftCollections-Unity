@@ -20,6 +20,7 @@ namespace SwiftCollections.Build.Editor
         private static readonly ManagedEntry[] BaseManagedEntries =
         {
             ManagedEntry.File("COPYRIGHT"),
+            ManagedEntry.File("CHANGELOG.md"),
             ManagedEntry.File("LICENSE"),
             ManagedEntry.File("NOTICE"),
             ManagedEntry.Directory("Runtime/GameObjectPool"),
@@ -30,6 +31,7 @@ namespace SwiftCollections.Build.Editor
 
         private static readonly ManagedEntry[] FixedMathSharpManagedEntries =
         {
+            ManagedEntry.File("CHANGELOG.md"),
             ManagedEntry.File("Runtime/FixedBoundVolume.Extensions.cs")
         };
 

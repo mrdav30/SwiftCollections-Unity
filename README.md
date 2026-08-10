@@ -3,6 +3,8 @@
 [![Build](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml)
 [![Discord](https://img.shields.io/badge/discord-join%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/mhwK2QFNBA)
 
+[API Documentation](https://mrdav30.github.io/SwiftCollections-Unity/)
+
 Unity package host for
 [SwiftCollections](https://github.com/mrdav30/SwiftCollections).
 
@@ -87,28 +89,3 @@ matching dependency URL manually or run the package repair menu item under
   `https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp`
 - Lean dependency:
   `https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp.lean`
-
-## Tests
-
-The `build-and-test` workflow runs Unity EditMode tests on Unity `6000.3.9f1`
-for all four package variants:
-
-- SwiftCollections
-- SwiftCollections Lean
-- SwiftCollections FixedMathSharp
-- SwiftCollections FixedMathSharp Lean
-
-The base package tests live in `Tests/EditMode` and cover Unity `Bounds`
-conversion, a representative BVH query, core DLL loading, and
-`SwiftGameObjectPool` reuse and exhaustion behavior. FixedMathSharp companion
-tests live in `Tests/EditMode.FixedMathSharp` and cover
-`Bounds.ToFixedBoundVolume()`.
-
-## Notes
-
-- Most core collection behavior lives in the upstream
-  [SwiftCollections](https://github.com/mrdav30/SwiftCollections) library and is
-  shipped here as precompiled plugin DLLs.
-- Shared Unity-side runtime files are maintained under `Build/Base` and
-  `Build/FixedMathSharp`, then synchronized into the package folders.
-- Each package folder keeps a short, package-specific install README.

@@ -28,6 +28,8 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Initializes a serialized bi-dictionary entry.
         /// </summary>
+        /// <param name="left">The left key.</param>
+        /// <param name="right">The right key.</param>
         public SerializedSwiftBiDictionaryEntry(TLeft left, TRight right)
         {
             _left = left;
@@ -71,8 +73,9 @@ namespace SwiftCollections.Unity
         private SwiftBiDictionary<TLeft, TRight> _runtime;
 
         /// <summary>
-        /// Gets the runtime SwiftCollections bi-dictionary rebuilt from Unity serialized data.
+        /// Gets the live runtime bi-dictionary rebuilt from Unity serialized data.
         /// </summary>
+        /// <remarks>Direct runtime mutations are copied into serialized backing data before Unity serialization.</remarks>
         public SwiftBiDictionary<TLeft, TRight> Runtime
         {
             get
@@ -90,6 +93,8 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Gets or sets a right value by left key and updates the serialized backing entries.
         /// </summary>
+        /// <param name="left">The left key.</param>
+        /// <returns>The associated right value.</returns>
         public TRight this[TLeft left]
         {
             get => Runtime[left];
@@ -103,6 +108,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Replaces the serialized contents with a copy of the supplied entries.
         /// </summary>
+        /// <param name="items">The two-way mappings to persist.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="items" /> is null.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="items" /> contains duplicate left or right keys.</exception>
         public void SetItems(params SerializedSwiftBiDictionaryEntry<TLeft, TRight>[] items)
         {
             if (items == null)
@@ -115,6 +123,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Adds a two-way mapping and updates the serialized backing entries.
         /// </summary>
+        /// <param name="left">The left key to add.</param>
+        /// <param name="right">The right key to add.</param>
+        /// <returns><c>true</c> when both keys were added; otherwise <c>false</c>.</returns>
         public bool Add(TLeft left, TRight right)
         {
             bool added = Runtime.Add(left, right);
@@ -127,6 +138,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Attempts to get the right value associated with the left key.
         /// </summary>
+        /// <param name="left">The left key to find.</param>
+        /// <param name="right">The associated right value when found.</param>
+        /// <returns><c>true</c> when the left key exists; otherwise <c>false</c>.</returns>
         public bool TryGetValue(TLeft left, out TRight right)
         {
             return Runtime.TryGetValue(left, out right);
@@ -135,6 +149,9 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Attempts to get the left key associated with the right value.
         /// </summary>
+        /// <param name="right">The right key to find.</param>
+        /// <param name="left">The associated left key when found.</param>
+        /// <returns><c>true</c> when the right key exists; otherwise <c>false</c>.</returns>
         public bool TryGetKey(TRight right, out TLeft left)
         {
             return Runtime.TryGetKey(right, out left);
@@ -143,6 +160,8 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns whether the bi-dictionary contains the left key.
         /// </summary>
+        /// <param name="left">The left key to find.</param>
+        /// <returns><c>true</c> when the left key exists; otherwise <c>false</c>.</returns>
         public bool ContainsKey(TLeft left)
         {
             return Runtime.ContainsKey(left);
@@ -151,6 +170,8 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns whether the bi-dictionary contains the right key.
         /// </summary>
+        /// <param name="right">The right key to find.</param>
+        /// <returns><c>true</c> when the right key exists; otherwise <c>false</c>.</returns>
         public bool ContainsValue(TRight right)
         {
             return Runtime.ContainsValue(right);
@@ -168,6 +189,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy of the serialized entries.
         /// </summary>
+        /// <returns>A new array containing the current mappings.</returns>
         public SerializedSwiftBiDictionaryEntry<TLeft, TRight>[] ToArray()
         {
             SyncSerializedItemsFromRuntime();
@@ -177,6 +199,7 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns a copy as a standalone <see cref="SwiftBiDictionary{TLeft, TRight}"/>.
         /// </summary>
+        /// <returns>A new bi-dictionary containing the current mappings.</returns>
         public SwiftBiDictionary<TLeft, TRight> ToSwiftBiDictionary()
         {
             SyncSerializedItemsFromRuntime();
@@ -186,12 +209,15 @@ namespace SwiftCollections.Unity
         /// <summary>
         /// Returns an enumerator for the runtime bi-dictionary.
         /// </summary>
+        /// <returns>A SwiftCollections dictionary enumerator.</returns>
         public SwiftDictionary<TLeft, TRight>.SwiftDictionaryEnumerator GetEnumerator()
         {
             return Runtime.GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copies live runtime contents into Unity's serialized backing data.
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (_runtime != null)
@@ -200,7 +226,10 @@ namespace SwiftCollections.Unity
                 _items = Array.Empty<SerializedSwiftBiDictionaryEntry<TLeft, TRight>>();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuilds runtime contents after Unity deserialization.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Serialized entries contain duplicate left or right keys.</exception>
         public void OnAfterDeserialize()
         {
             if (_items == null)
