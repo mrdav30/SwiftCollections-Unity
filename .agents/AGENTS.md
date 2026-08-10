@@ -137,6 +137,9 @@
 - Generate the Unity API reference only from canonical
   `Build/Base/Runtime/**/*.cs` and `Build/FixedMathSharp/Runtime/**/*.cs`
   through `.docs/api/docfx.json`; do not document synchronized package copies.
+- Keep the hosted guides under `.docs/api/guides`, the shared SwiftCollections
+  icon under `.assets`, and the custom DocFX template aligned with the root and
+  package READMEs. CI should assert these branded assets and cross-repo links.
 - Link to the hosted SwiftCollections and FixedMathSharp API references instead
   of republishing their engine-agnostic APIs.
 - Restore the pinned DocFX tool with `dotnet tool restore`. CI stages the Unity,

@@ -1,47 +1,53 @@
-# SwiftCollections for Unity (FixedMathSharp Module)
+# SwiftCollections for Unity — FixedMathSharp companion
 
-FixedMathSharp interop module for the standard SwiftCollections package.
-
-[API Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
-[Changelog](CHANGELOG.md)
-
-Use this package alongside `com.mrdav30.swiftcollections` when you want
-fixed-point query helpers such as `FixedBoundVolume` and
+Optional fixed-point query integration for the Standard SwiftCollections base.
+It adds `FixedBoundVolume`, fixed query structures, and
 `Bounds.ToFixedBoundVolume()`.
 
-## Install
+Requires Unity 2022.3 or newer.
 
-`https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp`
+[Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
+[Pooling and queries](https://mrdav30.github.io/SwiftCollections-Unity/guides/pooling-and-queries.html) ·
+[Changelog](CHANGELOG.md)
 
-## Dependency Handling
+## Required pairing
 
-This package includes an editor-side dependency installer that attempts to add
-the matching `FixedMathSharp-Unity` package automatically.
+Install the Standard base first:
 
-This package also requires the standard SwiftCollections base package:
+```text
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v7.0.0
+```
 
-`https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections`
+Then install this companion:
 
-If Unity does not resolve that dependency cleanly, install it manually or run:
+```text
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v7.0.0
+```
 
-`Tools > mrdav30 > Repair com.mrdav30.swiftcollections.fixedmathsharp Dependencies`
+The companion's editor installer attempts to add the matching
+`com.mrdav30.fixedmathsharp` package at `v7.0.0`. It does not install the
+SwiftCollections base.
 
-Manual dependency URL:
+If the FixedMathSharp dependency needs repair, run:
 
-`https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/com.mrdav30.fixedmathsharp`
+```text
+Tools → mrdav30 → Repair com.mrdav30.swiftcollections.fixedmathsharp Dependencies
+```
 
-## When To Use This Package
+In a custom asmdef, reference `SwiftCollections.Runtime`,
+`SwiftCollections.FixedMathSharp.Runtime`, and `FixedMathSharp.Runtime` for code
+that consumes all three surfaces.
 
-- Your project already uses `com.mrdav30.swiftcollections`.
-- You need `FixedMathSharp` interop for SwiftCollections query structures.
-- You want the module that matches the standard `MemoryPack` base package.
+## Convert a bound
 
-## Choose The Lean Module If
+```csharp
+using SwiftCollections;
+using SwiftCollections.Query;
+using UnityEngine;
 
-- Use `com.mrdav30.swiftcollections.fixedmathsharp.lean` only when your base
-  package is `com.mrdav30.swiftcollections.lean`.
+Bounds unityBounds = new(Vector3.zero, new Vector3(2f, 2f, 2f));
+FixedBoundVolume queryBounds = unityBounds.ToFixedBoundVolume();
+```
 
-## Related
-
-- Repo overview and package selection:
-  [SwiftCollections-Unity](https://github.com/mrdav30/SwiftCollections-Unity)
+Do not pair this package with the Lean base or Lean FixedMathSharp package.
+Companion packages do not include a separate Unity sample.

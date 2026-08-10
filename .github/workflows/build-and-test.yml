@@ -166,13 +166,25 @@ jobs:
           set -euo pipefail
 
           dotnet tool restore
-          dotnet tool run docfx .docs/api/docfx.json
+          dotnet tool run docfx .docs/api/docfx.json --warningsAsErrors
 
           test -f .docs/api/obj/_site/index.html
+          test -f .docs/api/obj/_site/guides/getting-started.html
+          test -f .docs/api/obj/_site/guides/serialization.html
+          test -f .docs/api/obj/_site/guides/pooling-and-queries.html
           test -f .docs/api/obj/_site/api/SwiftCollections.BoundVolumeExtensions.html
           test -f .docs/api/obj/_site/api/SwiftCollections.Unity.SerializedSwiftList-1.html
           test -f .docs/api/obj/_site/api/SwiftCollections.Pool.SwiftGameObjectPool.html
           test -f .docs/api/obj/_site/api/SwiftCollections.FixedBoundVolumeExtensions.html
+          test -f .docs/api/obj/_site/assets/icon.png
+          test -f .docs/api/obj/_site/public/main.css
+
+          grep -Fq 'sc-hero' .docs/api/obj/_site/index.html
+          grep -Fq -- '--sc-violet-rgb' .docs/api/obj/_site/public/main.css
+          grep -Fq 'github.com/mrdav30/SwiftCollections-Unity' .docs/api/obj/_site/public/main.js
+          grep -Fq 'mrdav30.github.io/SwiftCollections/' .docs/api/obj/_site/api/SwiftCollections.html
+          grep -Fq 'mrdav30.github.io/FixedMathSharp/' .docs/api/obj/_site/api/SwiftCollections.html
+          grep -Fq 'com.mrdav30.swiftcollections.fixedmathsharp.lean' .docs/api/obj/_site/guides/getting-started.html
 
       - name: Upload API documentation site
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.artifact_suffix == 'standard-fixedmathsharp'

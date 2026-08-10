@@ -2,7 +2,7 @@
   "name": "com.mrdav30.swiftcollections.lean",
   "version": "7.0.0",
   "displayName": "SwiftCollections.Lean",
-  "description": "A collection of optimized data structures for Unity, designed for high-performance and memory-efficient operations. Does not include MemoryPack.",
+  "description": "SwiftCollections for Unity without the MemoryPack runtime, including authoring adapters, bounds conversion, GameObject pooling, and samples.",
   "unity": "2022.3",
   "author": {
     "name": "David Oravsky",
@@ -23,10 +23,12 @@
     "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
   },
   "documentationUrl": "https://mrdav30.github.io/SwiftCollections-Unity/",
+  "changelogUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v7.0.0/com.mrdav30.swiftcollections.lean/CHANGELOG.md",
+  "licensesUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v7.0.0/com.mrdav30.swiftcollections.lean/LICENSE",
   "samples": [
     {
       "displayName": "Demo Scene",
-      "description": "A sample scene demonstrating package usage",
+      "description": "Exercise core collections, GameObject pooling, and BVH versus linear bounds queries.",
       "path": "Samples~/SwiftCollectionsDemo"
     }
   ]

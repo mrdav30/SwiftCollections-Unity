@@ -19,17 +19,30 @@
   "build": {
     "content": [
       { "files": ["index.md", "toc.yml"] },
+      { "files": ["guides/**.md"] },
       { "files": ["**/*.yml"], "src": "obj/api", "dest": "api" }
     ],
+    "resource": [
+      {
+        "files": ["icon.png"],
+        "src": "../../.assets",
+        "dest": "assets"
+      }
+    ],
+    "overwrite": [{ "files": ["overrides/*.md"] }],
     "output": "obj/_site",
-    "template": ["default", "modern"],
+    "template": ["default", "modern", "templates/swiftcollections"],
     "xref": [
       "https://mrdav30.github.io/SwiftCollections/xrefmap.yml",
       "https://mrdav30.github.io/FixedMathSharp/xrefmap.yml"
     ],
     "globalMetadata": {
-      "_appName": "SwiftCollections Unity API",
-      "_enableSearch": true
+      "_appName": "SwiftCollections for Unity",
+      "_appTitle": "SwiftCollections Unity API",
+      "_enableSearch": true,
+      "_enableNewTab": true,
+      "_appLogoPath": "assets/icon.png",
+      "_appFaviconPath": "assets/icon.png"
     }
   }
 }

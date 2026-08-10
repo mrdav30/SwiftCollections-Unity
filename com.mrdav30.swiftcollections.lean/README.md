@@ -1,45 +1,64 @@
-# SwiftCollections for Unity (Lean Variant)
+# SwiftCollections for Unity — Lean
 
-SwiftCollections package for Unity without `MemoryPack`.
+The Lean base package: the same SwiftCollections and Unity adapter APIs as the
+Standard base, without the MemoryPack runtime dependency. It includes Unity
+authoring adapters, bounds conversion, GameObject pooling, and the Demo Scene.
 
-[API Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
+Requires Unity 2022.3 or newer.
+
+[Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
+[Getting started](https://mrdav30.github.io/SwiftCollections-Unity/guides/getting-started.html) ·
 [Changelog](CHANGELOG.md)
-
-This is the safer default when Burst AOT compatibility matters or when you want
-to bring your own serialization stack. Install the standard base package instead
-if you want the default `MemoryPack` build.
 
 ## Install
 
-`https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean`
+In **Window → Package Manager**, choose **+ → Install package from git URL…**:
 
-## Included
+```text
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v7.0.0
+```
 
-- The SwiftCollections runtime without MemoryPack.
-- Unity-serializable collection adapters.
-- Unity bounds conversion and GameObject pooling helpers.
+Do not install the Standard base in the same project. In a custom asmdef,
+reference `SwiftCollections.Lean.Runtime`.
 
-## Unity Serialization
+## Author Unity data
 
-Direct SwiftCollections fields are runtime collection fields. They keep the
-upstream JSON and state serialization contracts for the lean build, but Unity
-does not persist their contents directly. Use these adapters for Unity authoring
-fields and consume the real collection through `Runtime`.
+Use a `SerializedSwift*` wrapper for Inspector or asset data and access its
+runtime collection through `Runtime`:
 
-See the [API documentation](https://mrdav30.github.io/SwiftCollections-Unity/)
-for the available `SerializedSwift*` adapters. Generic item, key, and value
-types must themselves be Unity-serializable.
+```csharp
+using SwiftCollections;
+using SwiftCollections.Unity;
+using UnityEngine;
 
-## Optional Modules
+public sealed class SpawnTable : MonoBehaviour
+{
+    [SerializeField]
+    private SerializedSwiftList<int> _spawnIds = new SerializedSwiftList<int>();
 
-- Add `com.mrdav30.swiftcollections.fixedmathsharp.lean` if this project also
-  uses `FixedMathSharp` and needs the matching no-`MemoryPack` fixed-point query
-  helpers.
-- Do not pair this lean base package with
-  `com.mrdav30.swiftcollections.fixedmathsharp`; that module is for the standard
-  base package.
+    public SwiftList<int> SpawnIds => _spawnIds.Runtime;
+}
+```
 
-## Related
+Direct SwiftCollections runtime fields retain their upstream state and JSON
+contracts, but Unity does not persist their contents as authoring fields.
+Generic values inside adapters must also be Unity-serializable.
 
-- Repo overview and package selection:
-  [SwiftCollections-Unity](https://github.com/mrdav30/SwiftCollections-Unity)
+Lean's smaller dependency surface can suit projects with their own
+serialization stack. It is not a blanket guarantee that every collection or
+Unity adapter is Burst-compatible.
+
+Read the [serialization guide](https://mrdav30.github.io/SwiftCollections-Unity/guides/serialization.html)
+for the adapter matrix and validation rules.
+
+## Optional FixedMathSharp companion
+
+Add `com.mrdav30.swiftcollections.fixedmathsharp.lean` when the project also
+uses the Lean FixedMathSharp-Unity package and needs `FixedBoundVolume` or
+`Bounds.ToFixedBoundVolume()`. Do not pair this base with the Standard
+companion.
+
+## Sample
+
+Import **Demo Scene** from this package's **Samples** tab. It demonstrates core
+collections, GameObject pooling, and BVH versus linear bounds queries.

@@ -1,7 +1,7 @@
 # Changelog
 
-All notable changes to the SwiftCollections Unity base packages are documented
-here.
+Notable changes to the SwiftCollections Unity base packages from version 7
+onward are documented here.
 
 ## [7.0.0] - 2026-08-09
 

@@ -9,12 +9,15 @@ with the project.
 
 ## Source of Truth
 
-Edit shared Unity runtime code under `Build/Base` or `Build/FixedMathSharp`,
-then run the package sync. Do not hand-edit synchronized runtime copies inside
-the four `com.mrdav30.swiftcollections*` package folders.
+Edit sync-managed assets under `Build/Base` or `Build/FixedMathSharp`, then run
+the package sync. Do not hand-edit synchronized copies inside the four
+`com.mrdav30.swiftcollections*` package folders.
 
-Package manifests, package READMEs, asmdefs, plugins, and other package-specific
-assets remain in their package folders.
+`Build/Base` owns shared legal files, its changelog, Unity runtime adapters, and
+sample scripts for both base variants. `Build/FixedMathSharp` owns the companion
+changelog and fixed bounds adapter. Package manifests, package READMEs, asmdefs,
+plugins, sample scenes/assets, and other package-specific files remain in their
+package folders.
 
 ## Pull Request Process
 
@@ -28,7 +31,13 @@ assets remain in their package folders.
 ## Validation
 
 From this repository root, run the package sync through the parent Unity
-project:
+project with the provided script:
+
+```powershell
+./.assets/scripts/sync-swiftcollections-unity-packages.ps1
+```
+
+Or invoke the editor method directly:
 
 ```bash
 "$UNITY_EDITOR" \
@@ -38,8 +47,9 @@ project:
   -logFile -
 ```
 
-Set `UNITY_EDITOR` to the Unity executable. Run the command a second time when
-the first pass copied files; a clean sync reports `Copied 0 files`.
+Set `UNITY_EDITOR` to the Unity executable. Run the sync a second time when the
+first pass changed files. A clean pass reports zero copied files, deleted files,
+and removed directories across two overlays and four packages.
 
 Useful lightweight checks:
 
@@ -48,9 +58,10 @@ dotnet tool restore
 git diff --check
 ```
 
-The `build-and-test` workflow is the canonical validation for all four Unity
-package variants, sample import, and the hosted API site because it stages the
-required Unity and package reference assemblies.
+The `build-and-test` workflow is the canonical validation for all four package
+variants and the hosted API site because it stages the required Unity and
+package reference assemblies. Sample import smoke tests run on pushes to
+`main` for the Standard and Lean base packages.
 
 ## Code of Conduct
 
