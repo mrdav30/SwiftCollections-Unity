@@ -5,7 +5,9 @@ Exports the SwiftCollections Unity package variants in batch mode.
 .DESCRIPTION
 Launches Unity without opening the editor UI and executes
 SwiftCollectionsUnityPackageExporter.ExportUnityPackagesBatchMode. The exporter
-runs package sync before writing .unitypackage archives.
+runs package sync before writing .unitypackage archives. Before Unity starts,
+the script synchronizes package versions and existing host-project dependency
+pins from unity-package-versions.json.
 
 .PARAMETER UnityPath
 Path to the Unity executable. When omitted, UNITY_EDITOR is used first, then
@@ -23,7 +25,8 @@ exporter from the Unity project root. Defaults to UnityPackageExports~.
 Unity log destination. Defaults to '-' so Unity writes to stdout.
 
 .PARAMETER WhatIf
-Prints the Unity command without launching Unity.
+Previews version/dependency changes and the Unity command without writing files
+or launching Unity.
 #>
 [CmdletBinding()]
 param(
@@ -39,6 +42,11 @@ $ErrorActionPreference = "Stop"
 
 . (Join-Path $PSScriptRoot "swiftcollections-unity-batch.ps1")
 
+$resolvedProjectPath = Resolve-SwiftCollectionsUnityProjectPath -ProjectPath $ProjectPath
+& (Join-Path $PSScriptRoot "update-unity-package-versions.ps1") `
+    -ProjectPath $resolvedProjectPath `
+    -Apply:(-not $WhatIf)
+
 $additionalArguments = @(
     "-SwiftCollectionsUnityPackageOutputPath",
     $OutputPath
@@ -47,7 +55,7 @@ $additionalArguments = @(
 Invoke-SwiftCollectionsUnityBatchMethod `
     -ExecuteMethod "SwiftCollections.Build.Editor.SwiftCollectionsUnityPackageExporter.ExportUnityPackagesBatchMode" `
     -UnityPath $UnityPath `
-    -ProjectPath $ProjectPath `
+    -ProjectPath $resolvedProjectPath `
     -LogFile $LogFile `
     -AdditionalArguments $additionalArguments `
     -PathArgumentNames @("-SwiftCollectionsUnityPackageOutputPath") `

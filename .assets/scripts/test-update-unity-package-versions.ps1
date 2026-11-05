@@ -223,6 +223,58 @@ function Test-ValidateOnlyFailsWhenFilesDrift {
     throw "ValidateOnly should fail when files do not match the config."
 }
 
+function Test-ProjectDependenciesRespectModesAndInstalledVariants {
+    foreach ($flavor in @("standard", "lean", "both")) {
+        $repoRoot = New-TestRepo
+        $projectRoot = Join-Path $repoRoot "host"
+        $manifestPath = Join-Path $projectRoot "Packages/manifest.json"
+        $dependencies = [ordered]@{ "com.unity.test-framework" = "1.8.0" }
+        if ($flavor -ne "lean") {
+            $dependencies["com.mrdav30.fixedmathsharp"] = "old-standard-url#v3.0.2"
+        }
+        if ($flavor -ne "standard") {
+            $dependencies["com.mrdav30.fixedmathsharp.lean"] = "old-lean-url#v3.0.2"
+        }
+        New-TestFile -Path $manifestPath -Content (@{
+            dependencies = $dependencies
+            scopedRegistries = @(@{ name = "Keep me"; url = "https://example.com"; scopes = @("com.example") })
+        } | ConvertTo-Json -Depth 10)
+        $before = Get-Content -Raw -LiteralPath $manifestPath
+        $configPath = Join-Path $repoRoot ".assets/unity-package-versions.json"
+
+        $output = & $ScriptUnderTest -ConfigPath $configPath -ProjectPath "host" | Out-String
+        Assert-Contains -Text $output -Expected "DRY-RUN" -Message "Project sync should preview changes."
+        Assert-Equal -Expected $before -Actual (Get-Content -Raw -LiteralPath $manifestPath) -Message "Dry-run must preserve the host manifest."
+
+        Invoke-Updater -RepoRoot $repoRoot -Apply | Out-Null
+        $failed = $false
+        try {
+            & $ScriptUnderTest -ConfigPath $configPath -ProjectPath $projectRoot -ValidateOnly 2>&1 | Out-Null
+        }
+        catch {
+            Assert-Contains -Text $_.Exception.Message -Expected "Validation failed" -Message "ValidateOnly should reject host drift."
+            $failed = $true
+        }
+        Assert-Equal -Expected $true -Actual $failed -Message "The stale host must fail validation."
+        Assert-Equal -Expected $before -Actual (Get-Content -Raw -LiteralPath $manifestPath) -Message "Validation must preserve the host manifest."
+
+        & $ScriptUnderTest -ConfigPath $configPath -ProjectPath $projectRoot -Apply | Out-Null
+        $after = Get-Content -Raw -LiteralPath $manifestPath
+        $manifest = $after | ConvertFrom-Json
+        Assert-Equal -Expected $dependencies.Count -Actual @($manifest.dependencies.PSObject.Properties).Count -Message "Sync must not add the other variant."
+        foreach ($name in $dependencies.Keys) {
+            $expected = if ($name -eq "com.unity.test-framework") { "1.8.0" } else {
+                "https://github.com/mrdav30/FixedMathSharp-Unity.git?path=/$name#v4.0.0"
+            }
+            Assert-Equal -Expected $expected -Actual $manifest.dependencies.$name -Message "Sync should update only configured dependencies."
+        }
+        Assert-Equal -Expected "Keep me" -Actual $manifest.scopedRegistries[0].name -Message "Sync must preserve other manifest sections."
+        & $ScriptUnderTest -ConfigPath $configPath -ProjectPath $projectRoot -ValidateOnly | Out-Null
+        & $ScriptUnderTest -ConfigPath $configPath -ProjectPath $projectRoot -Apply | Out-Null
+        Assert-Equal -Expected $after -Actual (Get-Content -Raw -LiteralPath $manifestPath) -Message "A second sync must not rewrite the manifest."
+    }
+}
+
 function Test-ValidateOnlyPassesAfterApply {
     $repoRoot = New-TestRepo
     Invoke-Updater -RepoRoot $repoRoot -Apply | Out-Null
@@ -240,6 +292,7 @@ try {
         "Test-ApplyUpdatesPackageAndInstallerVersions",
         "Test-ValidateOnlyFailsWhenFilesDrift",
         "Test-ValidateOnlyPassesAfterApply"
+        "Test-ProjectDependenciesRespectModesAndInstalledVariants"
     )
 
     foreach ($test in $tests) {

@@ -7,6 +7,8 @@ from version 7 onward are documented here.
 
 ### Changed
 
+- Scope dependency-installer session flags to each package so both variants can
+  check their dependencies in the authoring host.
 - Require Unity 6.3 LTS (6000.3) or newer.
 - Bundle released SwiftCollections.FixedMathSharp v8.0.0 .NET Standard 2.1
   assemblies, paired with the matching SwiftCollections v8.0.0 base.

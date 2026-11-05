@@ -173,7 +173,7 @@ namespace SwiftCollections.Build.Editor
             var args = Environment.GetCommandLineArgs();
             for (var i = 0; i < args.Length - 1; i++)
             {
-                if (string.Equals(args[i], OutputPathArgument, StringComparison.Ordinal))
+                if (string.Equals(args[i], OutputPathArgument, StringComparison.OrdinalIgnoreCase))
                     return ResolveOutputDirectory(args[i + 1]);
             }
 

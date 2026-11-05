@@ -51,6 +51,19 @@ Set `UNITY_EDITOR` to the Unity executable. Run the sync a second time when the
 first pass changed files. A clean pass reports zero copied files, deleted files,
 and removed directories across two overlays and four packages.
 
+Export all four archives with `./.assets/scripts/export-swiftcollections-unity-packages.ps1`.
+Before Unity launches, export synchronizes package versions and dependency pins
+already present in the selected project's `Packages/manifest.json` from
+`.assets/unity-package-versions.json`. It does not add missing dependencies or
+the other package variant. Use `-WhatIf` to preview without writing or launching
+Unity; `-ProjectPath` selects another host project.
+
+To update only the versions and host pins without launching Unity, run:
+
+```powershell
+./.assets/scripts/update-unity-package-versions.ps1 -ProjectPath ../.. -Apply
+```
+
 Useful lightweight checks:
 
 ```bash

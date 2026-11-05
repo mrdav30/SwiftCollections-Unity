@@ -9,12 +9,18 @@ By default the script runs in dry-run mode and reports pending changes. Pass
 -Apply to update files or -ValidateOnly to fail when configured versions are out
 of sync.
 
+Pass -ProjectPath to also synchronize configured dependencies already present in
+that Unity project's Packages/manifest.json. Missing dependencies are not added.
+
 .PARAMETER ConfigPath
 Path to the JSON version configuration file. Defaults to
 .assets/unity-package-versions.json.
 
 .PARAMETER Apply
 Writes any required package manifest and installer dependency version changes.
+
+.PARAMETER ProjectPath
+Optional Unity project root. Relative paths resolve from the package repository.
 
 .PARAMETER ValidateOnly
 Reports version drift as errors and exits with a failure instead of writing
@@ -23,6 +29,8 @@ changes.
 [CmdletBinding()]
 param(
     [string]$ConfigPath = (Join-Path (Split-Path -Parent $PSScriptRoot) "unity-package-versions.json"),
+    [ValidateNotNullOrEmpty()]
+    [string]$ProjectPath,
     [switch]$Apply,
     [switch]$ValidateOnly
 )
@@ -168,6 +176,7 @@ function Update-InstallerDependencies {
         [string]$InstallerPath,
         [object[]]$Dependencies,
         [hashtable]$DependencyVersions,
+        [hashtable]$ConfiguredDependencies,
         [string]$DisplayPath,
         [System.Collections.Generic.List[string]]$ChangeMessages,
         [System.Collections.Generic.List[string]]$ValidationIssues
@@ -194,6 +203,8 @@ function Update-InstallerDependencies {
         if ([string]::IsNullOrWhiteSpace($desiredVersion)) {
             throw "dependencyVersions.$versionKey must be non-empty."
         }
+
+        $ConfiguredDependencies[$name] = "$gitUrl#$desiredVersion"
 
         $pattern = '(?ms)(?<prefix>new\s*\(\s*"' +
             [regex]::Escape($name) +
@@ -285,6 +296,7 @@ if ($null -eq $packagesProperty -or $null -eq $packagesProperty.Value -or @($pac
 
 $changeMessages = [System.Collections.Generic.List[string]]::new()
 $validationIssues = [System.Collections.Generic.List[string]]::new()
+$configuredDependencies = @{}
 
 Write-Output "$Mode Unity package version sync using $(Get-DisplayPath -Path $configFile -BasePath $repoRoot)"
 
@@ -320,9 +332,52 @@ foreach ($package in @($packagesProperty.Value)) {
         -InstallerPath $installerPath `
         -Dependencies @($dependenciesProperty.Value) `
         -DependencyVersions $dependencyVersions `
+        -ConfiguredDependencies $configuredDependencies `
         -DisplayPath $installerDisplayPath `
         -ChangeMessages $changeMessages `
         -ValidationIssues $validationIssues
+}
+
+if ($PSBoundParameters.ContainsKey("ProjectPath")) {
+    $projectRoot = Resolve-ConfiguredPath -BasePath $repoRoot -Path $ProjectPath
+    $projectManifestPath = Join-Path $projectRoot "Packages/manifest.json"
+    $projectManifest = Read-JsonFile -Path $projectManifestPath
+    $dependenciesProperty = $projectManifest.PSObject.Properties["dependencies"]
+    if ($null -eq $dependenciesProperty -or $dependenciesProperty.Value -isnot [pscustomobject]) {
+        throw "Unity project manifest must contain a dependencies object: $projectManifestPath"
+    }
+
+    $projectChanged = $false
+    foreach ($name in ($configuredDependencies.Keys | Sort-Object)) {
+        $dependency = $dependenciesProperty.Value.PSObject.Properties[$name]
+        if ($null -eq $dependency) {
+            continue
+        }
+        if ($dependency.Value -isnot [string]) {
+            throw "Unity project dependency '$name' must be a string: $projectManifestPath"
+        }
+
+        $desiredValue = $configuredDependencies[$name]
+        if ($dependency.Value -ceq $desiredValue) {
+            continue
+        }
+
+        $message = "$projectManifestPath $name dependency $($dependency.Value) -> $desiredValue"
+        $changeMessages.Add($message)
+        if ($ValidateOnly) {
+            $validationIssues.Add($message)
+        }
+        else {
+            Write-Output "$Mode $message"
+        }
+        $dependency.Value = $desiredValue
+        $projectChanged = $true
+    }
+
+    if ($Apply -and $projectChanged) {
+        $updatedManifest = $projectManifest | ConvertTo-Json -Depth 100 -WarningAction Stop
+        Set-Content -LiteralPath $projectManifestPath -Value $updatedManifest -Encoding UTF8
+    }
 }
 
 if ($ValidateOnly -and $validationIssues.Count -gt 0) {

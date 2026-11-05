@@ -107,6 +107,11 @@
 
 - FixedMathSharp companion packages install either `com.mrdav30.fixedmathsharp`
   or `com.mrdav30.fixedmathsharp.lean` via Git URL.
+- The PowerShell export entry point runs the version updater with the selected
+  host project before launching Unity. It updates only configured dependencies
+  already installed in that project's manifest; `-WhatIf` previews without writes.
+- Keep companion installer session keys scoped to their package IDs so both
+  checks can run in the authoring host.
 - If dependency behavior changes, update the package installer,
   `.assets/unity-package-versions.json`, package READMEs, the root README, and
   the CI workflow matrix together.

@@ -35,7 +35,7 @@ namespace SwiftCollections.Editor
 
         #region Configuration
 
-        private const string Key = "MRDAV30_DEPENDENCY_CHECK";
+        private const string Key = CollectionsPackage + ".DependencyCheck";
 
         private const string ManifestPath = "Packages/manifest.json";
 

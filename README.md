@@ -146,6 +146,10 @@ settings.
 - [SwiftCollections core guide and API](https://mrdav30.github.io/SwiftCollections/)
 - [Contributing and package sync](CONTRIBUTING.md)
 
+For local package exports, the PowerShell export script updates existing host
+dependency pins from the version configuration before launching Unity. See
+[Contributing](CONTRIBUTING.md) for export and preview commands.
+
 Questions and discussion are welcome in the
 [Discord community](https://discord.gg/mhwK2QFNBA). The packages are available
 under the [MIT License](LICENSE).
