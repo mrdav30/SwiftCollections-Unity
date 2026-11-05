@@ -15,6 +15,7 @@
         "nunit.framework.dll",
         "SwiftCollections.dll",
         "Chronicler.dll",
+        "Chronicler.Diagnostics.dll",
         "MemoryPack.Core.dll",
         "Microsoft.Bcl.AsyncInterfaces.dll",
         "System.Collections.Immutable.dll",

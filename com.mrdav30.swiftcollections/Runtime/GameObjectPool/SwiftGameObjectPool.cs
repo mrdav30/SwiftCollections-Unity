@@ -5,7 +5,7 @@
 // See LICENSE file in the project root for full license information.
 //=======================================================================
 
-using SwiftCollections.Diagnostics;
+using Chronicler.Diagnostics;
 using System;
 using UnityEngine;
 
@@ -143,8 +143,8 @@ namespace SwiftCollections.Pool
         public bool TryGetObject(Transform parent, out GameObject gameObject)
         {
             EnsureRuntimeState();
-            SwiftThrowHelper.ThrowIfNull(parent, nameof(parent));
-            SwiftThrowHelper.ThrowIfNull(_prefab, nameof(_prefab));
+            ChronicleGuard.ThrowIfNull(parent, nameof(parent));
+            ChronicleGuard.ThrowIfNull(_prefab, nameof(_prefab));
             ValidateBudget();
 
             gameObject = TryGetAvailableObject();
@@ -179,7 +179,7 @@ namespace SwiftCollections.Pool
         public void ReleaseObject(GameObject gameObject, Transform parent)
         {
             EnsureRuntimeState();
-            SwiftThrowHelper.ThrowIfNull(parent, nameof(parent));
+            ChronicleGuard.ThrowIfNull(parent, nameof(parent));
             if (ReferenceEquals(gameObject, null))
                 throw new ArgumentNullException(nameof(gameObject));
 
@@ -212,8 +212,8 @@ namespace SwiftCollections.Pool
         public void PrewarmObject(Transform parent)
         {
             EnsureRuntimeState();
-            SwiftThrowHelper.ThrowIfNull(parent, nameof(parent));
-            SwiftThrowHelper.ThrowIfNull(_prefab, nameof(_prefab));
+            ChronicleGuard.ThrowIfNull(parent, nameof(parent));
+            ChronicleGuard.ThrowIfNull(_prefab, nameof(_prefab));
             ValidateBudget();
 
             int objectsToCreate = _budget - _liveObjectCount;

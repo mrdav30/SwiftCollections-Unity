@@ -5,7 +5,7 @@
 // See LICENSE file in the project root for full license information.
 //=======================================================================
 
-using SwiftCollections.Diagnostics;
+using Chronicler.Diagnostics;
 using System;
 using UnityEngine;
 
@@ -32,7 +32,7 @@ namespace SwiftCollections.Pool
         private SwiftGameObjectPoolManager()
         {
             _poolAsset = Resources.Load<SwiftGameObjectPoolAsset>("SwiftGameObjectPoolAsset");
-            SwiftThrowHelper.ThrowIfNull(_poolAsset, nameof(_poolAsset));
+            ChronicleGuard.ThrowIfNull(_poolAsset, nameof(_poolAsset));
             _poolAsset.Init();
         }
 

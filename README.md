@@ -5,7 +5,7 @@
 # SwiftCollections for Unity
 
 [![Build](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/mrdav30/SwiftCollections-Unity/actions/workflows/build-and-test.yml)
-[![Unity 2022.3+](https://img.shields.io/badge/Unity-2022.3%2B-222c37?logo=unity)](https://unity.com/releases/editor/whats-new/2022.3.0)
+[![Unity 6.3 LTS+](https://img.shields.io/badge/Unity-6.3_LTS%2B-222c37?logo=unity)](https://unity.com/releases/unity-6)
 [![API](https://img.shields.io/badge/docs-Unity_API-6f4eb0)](https://mrdav30.github.io/SwiftCollections-Unity/)
 [![Discord](https://img.shields.io/badge/discord-join%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/mhwK2QFNBA)
 
@@ -16,8 +16,11 @@ Keep runtime data in SwiftCollections. Use this package host where Unity owns
 the boundary: Inspector-friendly collection fields, `Bounds` conversion,
 GameObject pooling, samples, and optional FixedMathSharp query integration.
 
-Requires Unity **2022.3 or newer**. Repository CI currently validates Unity
-**6000.5.0f1**.
+Requires Unity **6.3 LTS (6000.3) or newer**. Repository CI currently validates
+Unity **6000.3.9f1**.
+
+Upgrading from v7? See the [migration guide](MIGRATION.md) for core type renames,
+dependency changes, and the new Unity baseline.
 
 ## Choose your packages
 
@@ -45,19 +48,19 @@ choose **+ → Install package from git URL…** and paste the URL you need:
 
 ```text
 # Standard base
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v8.0.0
 
 # Lean base
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v8.0.0
 
 # Standard FixedMathSharp companion
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v8.0.0
 
 # Lean FixedMathSharp companion
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean#v8.0.0
 ```
 
-Pinning `#v7.0.0` makes installs reproducible. Update the revision deliberately
+Pinning `#v8.0.0` makes installs reproducible. Update the revision deliberately
 when adopting a newer release.
 
 If your scripts use a custom asmdef, add the matching reference:

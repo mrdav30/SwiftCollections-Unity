@@ -7,33 +7,42 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "SwiftCollections/7.0.0": {
+      "SwiftCollections/8.0.0": {
         "dependencies": {
-          "Chronicler.Core.Lean": "0.4.0",
-          "Chronicler.MemoryPackShim": "0.4.0",
+          "Chronicler.Core.Lean": "1.0.0",
+          "Chronicler.Diagnostics": "1.0.0",
+          "Chronicler.MemoryPackShim": "1.0.0",
           "System.Text.Json": "10.0.9"
         },
         "runtime": {
           "SwiftCollections.dll": {}
         }
       },
-      "Chronicler.Core.Lean/0.4.0": {
+      "Chronicler.Core.Lean/1.0.0": {
         "dependencies": {
-          "Chronicler.MemoryPackShim": "0.4.0",
+          "Chronicler.MemoryPackShim": "1.0.0",
           "System.Text.Json": "10.0.9"
         },
         "runtime": {
           "lib/netstandard2.1/Chronicler.dll": {
-            "assemblyVersion": "0.4.0.0",
-            "fileVersion": "0.4.0.0"
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
-      "Chronicler.MemoryPackShim/0.4.0": {
+      "Chronicler.Diagnostics/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/Chronicler.Diagnostics.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Chronicler.MemoryPackShim/1.0.0": {
         "runtime": {
           "lib/netstandard2.1/Chronicler.MemoryPackShim.dll": {
-            "assemblyVersion": "0.4.0.0",
-            "fileVersion": "0.4.0.0"
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -89,24 +98,31 @@
     }
   },
   "libraries": {
-    "SwiftCollections/7.0.0": {
+    "SwiftCollections/8.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "Chronicler.Core.Lean/0.4.0": {
+    "Chronicler.Core.Lean/1.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-WssTZpRR4HNgv3IR/qOGepfYXzYcwv/s5lsQDEIYY06X4ys458YgPfO9IdqFH0eTmLiDYBjtdPN1DHBKnsaRJw==",
-      "path": "chronicler.core.lean/0.4.0",
-      "hashPath": "chronicler.core.lean.0.4.0.nupkg.sha512"
+      "sha512": "sha512-4JD3nZn52P0pamNAdN1q69FeLuOVALxzPYslaqN4qXSk29I+cpqFS7mR+9b/9kYKQnGSrIjghitapnwRKEyN0A==",
+      "path": "chronicler.core.lean/1.0.0",
+      "hashPath": "chronicler.core.lean.1.0.0.nupkg.sha512"
     },
-    "Chronicler.MemoryPackShim/0.4.0": {
+    "Chronicler.Diagnostics/1.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-wOzbpZwWQYtDXXd3C+tZtUW2Ei+GkW++Yezp5SZn2zRq6hluywXo87yOnAEQbvbmZELEjBHQY3cXhV63uJCgSw==",
-      "path": "chronicler.memorypackshim/0.4.0",
-      "hashPath": "chronicler.memorypackshim.0.4.0.nupkg.sha512"
+      "sha512": "sha512-v0Vw0Lo5LDy2Pkslb6shqAeMCsq7xOfiyldrDsCJcp29WVHJUPP51dmNQj2ty5hC+Cpz7kv3pXm4iR39sZFoVw==",
+      "path": "chronicler.diagnostics/1.0.0",
+      "hashPath": "chronicler.diagnostics.1.0.0.nupkg.sha512"
+    },
+    "Chronicler.MemoryPackShim/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DS9MKglTioSab0nVhPxbIoO7rG2tqRL9X5Li3VTZrfsGmus8WjJNRvut1H8N1a3je89S1AzGRm3QLe6kYDvpHw==",
+      "path": "chronicler.memorypackshim/1.0.0",
+      "hashPath": "chronicler.memorypackshim.1.0.0.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/10.0.9": {
       "type": "package",

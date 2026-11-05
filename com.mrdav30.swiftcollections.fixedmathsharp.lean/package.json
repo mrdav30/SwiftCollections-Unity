@@ -1,9 +1,9 @@
 {
   "name": "com.mrdav30.swiftcollections.fixedmathsharp.lean",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "displayName": "SwiftCollections.FixedMathSharp.Lean",
   "description": "Lean companion for FixedMathSharp-backed SwiftCollections queries and Unity Bounds conversion. Requires the matching Lean base packages.",
-  "unity": "2022.3",
+  "unity": "6000.3",
   "author": {
     "name": "David Oravsky",
     "email": "david.oravsky@gmail.com",
@@ -23,6 +23,6 @@
     "url": "https://github.com/mrdav30/SwiftCollections-Unity.git"
   },
   "documentationUrl": "https://mrdav30.github.io/SwiftCollections-Unity/",
-  "changelogUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v7.0.0/com.mrdav30.swiftcollections.fixedmathsharp.lean/CHANGELOG.md",
-  "licensesUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v7.0.0/com.mrdav30.swiftcollections.fixedmathsharp.lean/LICENSE"
+  "changelogUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v8.0.0/com.mrdav30.swiftcollections.fixedmathsharp.lean/CHANGELOG.md",
+  "licensesUrl": "https://github.com/mrdav30/SwiftCollections-Unity/blob/v8.0.0/com.mrdav30.swiftcollections.fixedmathsharp.lean/LICENSE"
 }

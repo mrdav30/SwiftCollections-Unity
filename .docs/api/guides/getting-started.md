@@ -11,8 +11,8 @@ collection and query state in the core types. Use the adapters when Unity owns
 the boundary: serialized authoring data, `Bounds`, GameObjects, and package
 workflows.
 
-The packages require Unity **2022.3 or newer**. Repository CI currently
-validates Unity **6000.5.0f1**.
+The packages require Unity **6.3 LTS (6000.3) or newer**. Repository CI currently
+validates Unity **6000.3.9f1**.
 
 ## 1. Choose exactly one base
 
@@ -38,16 +38,16 @@ paste one URL:
 ### Standard
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v8.0.0
 ```
 
 ### Lean
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v8.0.0
 ```
 
-The `#v7.0.0` revision makes the install reproducible. Update it deliberately
+The `#v8.0.0` revision makes the install reproducible. Update it deliberately
 when adopting a newer release.
 
 If your scripts live in a custom asmdef, add the matching reference:
@@ -72,17 +72,17 @@ fixed-point query volumes:
 ### Standard companion
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v8.0.0
 ```
 
 ### Lean companion
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp.lean#v8.0.0
 ```
 
 Each companion's editor installer attempts to add its matching
-FixedMathSharp-Unity package at `v7.0.0`. It does not install the matching
+FixedMathSharp-Unity package at `v8.0.0`. It does not install the matching
 SwiftCollections base; install that first.
 
 If the FixedMathSharp dependency is missing, use **Tools → mrdav30 → Repair
@@ -155,3 +155,8 @@ contain separate samples.
 - Read the [SwiftCollections core guide and API](https://mrdav30.github.io/SwiftCollections/)
   for container tradeoffs, state serialization, query behavior, and
   diagnostics.
+
+## Upgrading to v8
+
+See the [Unity migration guide](https://github.com/mrdav30/SwiftCollections-Unity/blob/v8.0.0/MIGRATION.md)
+for core type renames, Chronicler imports, and dependency pairing.

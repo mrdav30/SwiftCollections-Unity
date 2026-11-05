@@ -15,6 +15,7 @@
         "nunit.framework.dll",
         "SwiftCollections.dll",
         "Chronicler.dll",
+        "Chronicler.Diagnostics.dll",
         "Microsoft.Bcl.AsyncInterfaces.dll",
         "System.IO.Pipelines.dll",
         "System.Runtime.CompilerServices.Unsafe.dll",

@@ -2,9 +2,13 @@
 
 ## Repo Scope
 
-- The actual Git repo root is `SwiftCollections-Unity`; this workspace usually
-  opens at `Assets/Packages`.
-- Current package version is `7.0.0`, tracked in
+- The actual Git repo root is `SwiftCollections-Unity/Assets/Packages`. The
+  outer Unity project is a local host for authoring and validation.
+- All four manifests require Unity 6.3 LTS (`6000.3`) or newer.
+- Both base variants bundle the released .NET Standard 2.1 SwiftCollections
+  v8.0.0 assets with Chronicler v1.0.0, including `Chronicler.Diagnostics`.
+  Use `Chronicler.Diagnostics.ChronicleGuard` for shared argument guards.
+- Current package version is `8.0.0`, tracked in
   `.assets/unity-package-versions.json` and each package `package.json`.
 - This repo hosts Unity Package Manager wrappers for the upstream
   SwiftCollections library. Most core data-structure behavior lives in the
@@ -25,7 +29,7 @@
   companion for the lean base package.
 - FixedMathSharp companions require the matching SwiftCollections base package
   and the matching FixedMathSharp-Unity package. The current dependency version
-  is `v7.0.0`.
+  is `v8.0.0`.
 
 ## Source Layout
 
@@ -43,7 +47,7 @@
   assemblies, PDBs, and XML docs.
 - `Runtime/` files in package folders are Unity-side wrapper code. Keep them
   thin; changes to core collections usually belong in
-  `/mnt/f/gamedevrepos/SwiftCollections`.
+  the sibling `SwiftCollections` repository.
 - `Editor/Utility/GitDependencyInstaller.cs` exists only in FixedMathSharp
   companion packages and manages the FixedMathSharp Unity Git dependency.
 - `Tests/EditMode` contains base-package Unity EditMode tests.
@@ -119,7 +123,9 @@
 - Base package rows copy `Tests/EditMode/*.cs`; FixedMathSharp rows copy
   `Tests/EditMode.FixedMathSharp/*.cs`.
 - The Unity test matrix covers standard, lean, FixedMathSharp, and
-  FixedMathSharp lean packages on Unity `6000.5.0f1`.
+  FixedMathSharp lean packages on Unity `6000.3.9f1` and Ubuntu 24.04.
+- CI activation uses `UNITY_EMAIL` and `UNITY_PASSWORD`. Sample import trusts
+  the exact container checkout paths through the runner's global Git config.
 - A main-only sample import smoke job installs the standard and lean base
   packages via local Git URL, imports the Demo Scene sample, and scans Unity
   logs for known sample packaging failures.
@@ -143,7 +149,7 @@
 - Link to the hosted SwiftCollections and FixedMathSharp API references instead
   of republishing their engine-agnostic APIs.
 - Restore the pinned DocFX tool with `dotnet tool restore`. CI stages the Unity,
-  SwiftCollections, SwiftCollections.FixedMathSharp, and FixedMathSharp
+  SwiftCollections, SwiftCollections.FixedMathSharp, Chronicler.Diagnostics, and FixedMathSharp
   reference assemblies under ignored `.docs/api/obj/references` before running
   `dotnet tool run docfx .docs/api/docfx.json`.
 - Add concise XML documentation to every public runtime API in the canonical

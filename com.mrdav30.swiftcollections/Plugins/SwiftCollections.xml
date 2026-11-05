@@ -4,6 +4,24 @@
         <name>SwiftCollections</name>
     </assembly>
     <members>
+        <member name="T:SwiftCollections.MemberNotNullAttribute">
+            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values.</summary>
+        </member>
+        <member name="M:SwiftCollections.MemberNotNullAttribute.#ctor(System.String)">
+            <summary>Initializes the attribute with a field or property member.</summary>
+            <param name="member">
+            The field or property member that is promised to be not-null.
+            </param>
+        </member>
+        <member name="M:SwiftCollections.MemberNotNullAttribute.#ctor(System.String[])">
+            <summary>Initializes the attribute with the list of field and property members.</summary>
+            <param name="members">
+            The list of field and property members that are promised to be not-null.
+            </param>
+        </member>
+        <member name="P:SwiftCollections.MemberNotNullAttribute.Members">
+            <summary>Gets field or property member names.</summary>
+        </member>
         <member name="T:SwiftCollections.ISwiftCloneable`1">
             <summary>
             Defines a method that copies all elements from the current instance to a specified collection, replacing its
@@ -22,63 +40,6 @@
             Clones the entire <see cref="T:SwiftCollections.ISwiftCloneable`1"/> into a new target <see cref="T:System.Collections.Generic.ICollection`1"/>, 
             ensuring that the target list is an exact copy. Clears the target list first 
             to match the structure and state of the source list exactly.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftHandle">
-             <summary>
-             Represents a value type handle that uniquely identifies an object or resource by index and generation.
-             </summary>
-             <remarks>
-             A <see cref="T:SwiftCollections.SwiftHandle"/> consists of an integer index and an unsigned generation value. 
-             This combination helps detect stale or invalid references when resources are recycled.
-            </remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftHandle.Index">
-            <summary>
-            Gets the zero-based index associated with this instance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftHandle.Generation">
-            <summary>
-            Gets the generation number associated with this instance.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.#ctor(System.Int32,System.UInt32)">
-            <summary>
-            Initializes a new instance of the SwiftHandle class with the specified index and generation values.
-            </summary>
-            <param name="index">
-            The zero-based index that identifies the handle. 
-            Must be greater than or equal to 0.
-            </param>
-            <param name="generation">
-            The generation value associated with the handle. 
-            Used to distinguish between different versions of the same index.
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.Equals(SwiftCollections.SwiftHandle)">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.Equals(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.GetHashCode">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.ToString">
-            <summary>
-            Returns a string that represents the current handle, including its index and generation values.
-            </summary>
-            <returns>A string in the format "Handle({Index}:{Generation})" that identifies the handle by its index and generation.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.op_Equality(SwiftCollections.SwiftHandle,SwiftCollections.SwiftHandle)">
-            <summary>
-            Determines whether two SwiftHandle instances are equal.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftHandle.op_Inequality(SwiftCollections.SwiftHandle,SwiftCollections.SwiftHandle)">
-            <summary>
-            Determines whether two SwiftHandle instances are not equal.
             </summary>
         </member>
         <member name="T:SwiftCollections.SwiftIntStack">
@@ -162,6 +123,64 @@
             Expands the internal array if necessary.
             </summary>
             <param name="capacity">The minimum capacity to ensure.</param>
+        </member>
+        <member name="T:SwiftCollections.SwiftTicket">
+             <summary>
+             Identifies an allocation in its originating ticket map by index and generation.
+             </summary>
+             <remarks>
+             A <see cref="T:SwiftCollections.SwiftTicket"/> consists of an integer index and an unsigned generation value. 
+             This combination helps detect stale references when slots are reused. Tickets carry no collection identity;
+             use them only with their originating map. Generation counters are finite.
+            </remarks>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicket.Index">
+            <summary>
+            Gets the zero-based index associated with this instance.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicket.Generation">
+            <summary>
+            Gets the generation number associated with this instance.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.#ctor(System.Int32,System.UInt32)">
+            <summary>
+            Initializes a new instance of the SwiftTicket class with the specified index and generation values.
+            </summary>
+            <param name="index">
+            The zero-based index that identifies the ticket. 
+            Must be greater than or equal to 0.
+            </param>
+            <param name="generation">
+            The generation value associated with the ticket. 
+            Used to distinguish between different versions of the same index.
+            </param>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.Equals(SwiftCollections.SwiftTicket)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.ToString">
+            <summary>
+            Returns a string that represents the current ticket, including its index and generation values.
+            </summary>
+            <returns>A string in the format "Ticket({Index}:{Generation})" that identifies the ticket by its index and generation.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.op_Equality(SwiftCollections.SwiftTicket,SwiftCollections.SwiftTicket)">
+            <summary>
+            Determines whether two SwiftTicket instances are equal.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicket.op_Inequality(SwiftCollections.SwiftTicket,SwiftCollections.SwiftTicket)">
+            <summary>
+            Determines whether two SwiftTicket instances are not equal.
+            </summary>
         </member>
         <member name="T:SwiftCollections.SwiftBiDictionary`2">
             <summary>
@@ -344,269 +363,6 @@
             <param name="value">The value to locate in the dictionary.</param>
             <returns><c>true</c> if the dictionary contains an element with the specified value; otherwise, <c>false</c>.</returns>
         </member>
-        <member name="T:SwiftCollections.SwiftBucket`1">
-             <summary>
-             Represents a high-performance bucket collection that assigns and manages stable integer indices
-             for stored items. Provides O(1) insertion, removal, and lookup by internally generated index.
-             </summary>
-             <remarks>
-             Unlike <see cref="T:SwiftCollections.SwiftSparseMap`1"/>, which requires callers to provide the key used to store values,
-             <see cref="T:SwiftCollections.SwiftBucket`1"/> internally generates and manages indices for each inserted item.
-            
-             These indices remain stable for the lifetime of the item unless it is removed.
-            
-             The container is optimized for scenarios requiring:
-             <list type="bullet">
-                 <item>
-                     <description>Stable handles or identifiers.</description>
-                 </item>
-                 <item>
-                     <description>Fast addition and removal.</description>
-                 </item>
-                 <item>
-                     <description>Dense storage and iteration performance.</description>
-                 </item>
-             </list>
-            
-             **Efficient Lookups Using Indices**:
-             When you add items to the bucket using the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method, it returns an arrayIndex that you can store externally.
-             You can then use this arrayIndex to access the item directly via the indexer, and check if it's still present using the <see cref="M:SwiftCollections.SwiftBucket`1.IsAllocated(System.Int32)"/> method.
-             This approach allows for O(1) time complexity for lookups and existence checks, avoiding the need for O(n) searches using methods like <see cref="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)"/> or <see cref="M:SwiftCollections.SwiftBucket`1.Contains(`0)"/>.
-            
-             **Note**: iteration over the collection does not follow any guaranteed order and depends on internal allocation.
-             </remarks>
-             <typeparam name="T">Specifies the type of elements in the bucket.</typeparam>
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>SwiftCollections.SwiftBucketState&lt;T&gt;</b> State<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftBucket`1.DefaultCapacity">
-            <summary>
-            Represents the default initial capacity used when no specific capacity is provided.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified capacity.
-            </summary>
-            <param name="capacity">The initial capacity of the bucket.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.#ctor(SwiftCollections.SwiftBucketState{`0})">
-             <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftBucket`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
-             </summary>
-             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Count">
-            <summary>
-            Gets the number of elements contained in the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.PeakCount">
-            <summary>
-            Gets the highest value recorded for the count during the lifetime of the object.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Capacity">
-            <summary>
-            Gets the total capacity of the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.Item(System.Int32)">
-            <summary>
-            Gets or sets the element at the specified arrayIndex.
-            Throws <see cref="T:System.InvalidOperationException"/> if the arrayIndex is invalid or unallocated.
-            </summary>
-            <param name="index">The zero-based arrayIndex of the element to get or set.</param>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.IsReadOnly">
-            <inheritdoc/>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.IsSynchronized">
-            <inheritdoc/>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.SyncRoot">
-            <inheritdoc/>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.State">
-            <summary>
-            Gets or sets the current state of the bucket, including all items, allocation status, and free indices.
-            </summary>
-            <remarks>
-            Use this property to capture or restore the complete state of the bucket, such as for serialization or checkpointing scenarios. 
-            Setting this property replaces the entire internal state, including items and allocation metadata.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Add(`0)">
-            <summary>
-            Adds an item to the bucket and returns its arrayIndex.
-            </summary>
-            <param name="item">The item to add.</param>
-            <returns>The arrayIndex where the item was added.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.InsertAt(System.Int32,`0)">
-            <summary>
-            Inserts an item at the specified arrayIndex.
-            If an item already exists at that arrayIndex, it will be replaced.
-            </summary>
-            <param name="index">The arrayIndex at which to insert the item.</param>
-            <param name="item">The item to insert.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TryRemove(`0)">
-            <summary>
-            Removes the first occurrence of a specific object from the bucket.
-            </summary>
-            <param name="item">The object to remove.</param>
-            <returns><c>true</c> if item was successfully removed; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TryRemoveAt(System.Int32)">
-            <summary>
-            Removes the item at the specified arrayIndex if it has been allocated.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.RemoveAt(System.Int32)">
-            <summary>
-            Removes the item at the specified arrayIndex.
-            </summary>
-            <param name="index">The arrayIndex of the item to remove.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Clear">
-            <summary>
-            Removes all items from the bucket.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the internal storage has at least the specified capacity, expanding it if necessary.
-            </summary>
-            <remarks>
-            If the current capacity is less than the specified value, the internal storage is increased to 
-            the next power of two greater than or equal to the requested capacity. 
-            No action is taken if the current capacity is sufficient.
-            </remarks>
-            <param name="capacity">The minimum number of elements that the internal storage should be able to hold. Must be a non-negative value.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TrimExcessCapacity">
-            <summary>
-            Reduces unused tail capacity while preserving stable handles for all currently allocated entries.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.TryGetValue(System.Int32,`0@)">
-            <summary>
-            Attempts to get the value at the specified arrayIndex.
-            </summary>
-            <param name="key">The arrayIndex of the item to get.</param>
-            <param name="value">When this method returns, contains the value associated with the specified arrayIndex, if the arrayIndex is found; otherwise, the default value for the type of the value parameter.</param>
-            <returns><c>true</c> if the bucket contains an element at the specified arrayIndex; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Contains(`0)">
-            <summary>
-            Determines whether the bucket contains a specific value.
-            </summary>
-            <param name="item">The object to locate in the bucket.</param>
-            <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
-            <remarks>
-            This method performs a linear search and has a time complexity of O(n).
-            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Exists(System.Predicate{`0})">
-            <summary>
-            Determines whether the <see cref="T:SwiftCollections.SwiftBucket`1"/> contains an element that matches the conditions defined by the specified predicate.
-            </summary>
-            <param name="match">The predicate that defines the conditions of the element to search for.</param>
-            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftBucket`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.Find(System.Predicate{`0})">
-            <summary>
-            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in bucket iteration order.
-            </summary>
-            <param name="match">The predicate that defines the conditions of the element to search for.</param>
-            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.IsAllocated(System.Int32)">
-            <summary>
-            Determines whether the element at the specified index is currently allocated.
-            </summary>
-            <param name="index">The zero-based index of the element to check. Must be greater than or equal to 0 and less than the length of the underlying array.</param>
-            <returns>true if the element at the specified index is allocated; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.IndexOf(`0)">
-            <summary>
-            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the bucket.
-            </summary>
-            <param name="item">The object to locate in the bucket.</param>
-            <returns>
-            The zero-based arrayIndex of the first occurrence of <paramref name="item"/> within the bucket, if found; otherwise, <c>-1</c>.
-            </returns>
-            <remarks>
-            This method performs a linear search and has a time complexity of O(n).
-            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftBucket`1.Add(`0)"/> method for faster lookups using the indexer.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.CopyTo(`0[],System.Int32)">
-            <summary>
-            Copies the elements of the bucket to an <see cref="T:System.Array"/>, starting at a particular Array arrayIndex.
-            </summary>
-            <param name="array">The one-dimensional Array that is the destination of the elements copied from bucket.</param>
-            <param name="arrayIndex">The zero-based arrayIndex in array at which copying begins.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.CloneTo(System.Collections.Generic.ICollection{`0})">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftBucket`1"/>.
-            </summary>
-            <returns>An enumerator for the bucket.</returns>
-        </member>
-        <member name="T:SwiftCollections.SwiftBucket`1.SwiftBucketEnumerator">
-            <summary>
-            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftBucket`1"/> collection.
-            </summary>
-            <remarks>
-            The enumerator provides read-only, forward-only iteration over the elements in the <see cref="T:SwiftCollections.SwiftBucket`1"/>. 
-            The enumerator is invalidated if the collection is modified after the enumerator is created.
-            </remarks>
-        </member>
-        <member name="P:SwiftCollections.SwiftBucket`1.SwiftBucketEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.SwiftBucketEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.SwiftBucketEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucket`1.SwiftBucketEnumerator.Dispose">
-            <inheritdoc/>
-        </member>
-        <member name="T:SwiftCollections.MemberNotNullAttribute">
-            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values.</summary>
-        </member>
-        <member name="M:SwiftCollections.MemberNotNullAttribute.#ctor(System.String)">
-            <summary>Initializes the attribute with a field or property member.</summary>
-            <param name="member">
-            The field or property member that is promised to be not-null.
-            </param>
-        </member>
-        <member name="M:SwiftCollections.MemberNotNullAttribute.#ctor(System.String[])">
-            <summary>Initializes the attribute with the list of field and property members.</summary>
-            <param name="members">
-            The list of field and property members that are promised to be not-null.
-            </param>
-        </member>
-        <member name="P:SwiftCollections.MemberNotNullAttribute.Members">
-            <summary>Gets field or property member names.</summary>
-        </member>
         <member name="T:SwiftCollections.SwiftDictionary`2">
             <summary>
             A high-performance, memory-efficient dictionary providing lightning-fast O(1) operations for addition, retrieval, and removal, optimized to outperform standard dictionaries.
@@ -697,34 +453,6 @@
         <member name="F:SwiftCollections.SwiftDictionary`2._syncRoot">
             <summary>
             An object that can be used to synchronize access to the SwiftDictionary.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.Entry">
-            <summary>
-            Represents a single key-value pair in the dictionary, including its hash code for quick access.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.Key">
-            <summary>
-            Gets or sets the key associated with this instance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.Value">
-            <summary>
-            Gets or sets the value associated with this instance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.HashCode">
-            <summary>
-            Gets or sets the lower 31 bits of the hash code associated with this entry.
-            </summary>
-            <remarks>
-            A value of -1 indicates that the entry is a deleted probe tombstone.
-            Only the lower 31 bits are used; the highest bit is reserved.</remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.IsUsed">
-            <summary>
-            Indicates whether the item is currently in use.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.#ctor">
@@ -843,6 +571,13 @@
         <member name="M:SwiftCollections.SwiftDictionary`2.Clear">
             <inheritdoc/>
         </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.CheckLoadThreshold">
             <summary>
             Ensures that the dictionary is resized when the current load factor exceeds the predefined threshold.
@@ -931,31 +666,41 @@
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.FindEntry(`0)">
             <summary>
-            Finds the arrayIndex of the entry with the specified key.
+            Finds the array index of the entry with the specified key.
             </summary>
             <param name="key">The key to locate in the dictionary.</param>
-            <returns>The arrayIndex of the entry if found; otherwise, -1.</returns>
-            <exception cref="T:System.ArgumentNullException">The key is null.</exception>
+            <returns>The array index of the entry if found; otherwise, -1, including for a null key.</returns>
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.GetEnumerator">
             <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
         </member>
-        <member name="T:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator">
+        <member name="T:SwiftCollections.SwiftDictionary`2.Entry">
             <summary>
-            Provides an efficient enumerator for iterating over the key-value pairs in the SwiftDictionary, enabling smooth traversal during enumeration.
+            Represents a single key-value pair in the dictionary, including its hash code for quick access.
             </summary>
         </member>
-        <member name="P:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Current">
-            <inheritdoc/>
+        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.Key">
+            <summary>
+            Gets or sets the key associated with this instance.
+            </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.MoveNext">
-            <inheritdoc/>
+        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.Value">
+            <summary>
+            Gets or sets the value associated with this instance.
+            </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Reset">
-            <inheritdoc/>
+        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.HashCode">
+            <summary>
+            Gets or sets the lower 31 bits of the hash code associated with this entry.
+            </summary>
+            <remarks>
+            A value of -1 indicates that the entry is a deleted probe tombstone.
+            Only the lower 31 bits are used; the highest bit is reserved.</remarks>
         </member>
-        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Dispose">
-            <inheritdoc/>
+        <member name="F:SwiftCollections.SwiftDictionary`2.Entry.IsUsed">
+            <summary>
+            Indicates whether the item is currently in use.
+            </summary>
         </member>
         <member name="T:SwiftCollections.SwiftDictionary`2.KeyCollection">
             <summary>
@@ -986,8 +731,8 @@
             Enumerates the keys of a <see cref="T:SwiftCollections.SwiftDictionary`2"/> collection.
             </summary>
             <remarks>
-            The enumerator provides read-only, forward-only iteration over the keys in the dictionary. 
-            The enumerator is invalidated if the dictionary is modified after the enumerator is created. 
+            The enumerator provides read-only, forward-only iteration over the keys in the dictionary.
+            The enumerator is invalidated if the dictionary is modified after the enumerator is created.
             In such cases, calling MoveNext or Reset will throw an InvalidOperationException.
             </remarks>
         </member>
@@ -1001,6 +746,23 @@
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.KeyCollection.KeyCollectionEnumerator.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator">
+            <summary>
+            Provides an efficient enumerator for iterating over the key-value pairs in the SwiftDictionary, enabling smooth traversal during enumeration.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftDictionary`2.SwiftDictionaryEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftDictionary`2.ValueCollection">
@@ -1032,7 +794,7 @@
             Enumerates the values in a SwiftDictionary collection.
             </summary>
             <remarks>
-            The enumerator is invalidated if the collection is modified after the enumerator is created. 
+            The enumerator is invalidated if the collection is modified after the enumerator is created.
             Enumerators are typically used in a foreach statement to iterate through the collection values.
             </remarks>
         </member>
@@ -1046,220 +808,6 @@
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftDictionary`2.ValueCollection.ValueCollectionEnumerator.Dispose">
-            <inheritdoc/>
-        </member>
-        <member name="T:SwiftCollections.SwiftGenerationalBucket`1">
-             <summary>
-             Represents a high-performance generational bucket that assigns stable handles to stored items.
-             </summary>
-             <remarks>
-             <para>
-             <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> is similar to <see cref="T:SwiftCollections.SwiftBucket`1"/> but adds
-             <b>generation tracking</b> to prevent stale references from accessing reused slots.
-             </para>
-            
-             <para>
-             When an item is added, a <see cref="T:SwiftCollections.SwiftHandle"/> containing both an index and generation
-             is returned. If the item is removed and the slot reused later, the generation value
-             changes, causing older handles to automatically become invalid.
-             </para>
-            
-             <para>
-             This pattern is widely used to safely reference objects without risking accidental access 
-             to recycled memory slots.
-             </para>
-            
-             <para>
-             Key characteristics:
-             <list type="bullet">
-             <item><description>O(1) insertion and removal.</description></item>
-             <item><description>Stable handles for the lifetime of stored items.</description></item>
-             <item><description>Automatic invalidation of stale handles via generation counters.</description></item>
-             <item><description>Cache-friendly contiguous storage.</description></item>
-             </list>
-             </para>
-            
-             <para>
-             Use <see cref="T:SwiftCollections.SwiftBucket`1"/> when raw indices are acceptable.
-             Use <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> when handle safety is required.
-             </para>
-             </remarks>
-             <typeparam name="T">Specifies the type of elements stored in the bucket.</typeparam>
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>SwiftCollections.SwiftGenerationalBucketState&lt;T&gt;</b> State<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucket`1.DefaultCapacity">
-            <summary>
-            Represents the default initial capacity for the collection.
-            </summary>
-            <remarks>
-            Use this constant when initializing the collection to its default size. 
-            The value is typically used to optimize memory allocation for small collections.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.#ctor">
-            <summary>
-            Initializes a new instance of the SwiftGenerationalBucket class with the default capacity.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.#ctor(System.Int32)">
-            <summary>
-            Initializes a new instance of the SwiftGenerationalBucket class with the specified initial capacity.
-            </summary>
-            <remarks>
-            The actual capacity will be set to the next power of two greater than or equal to the specified capacity, 
-            or to the default capacity if the specified value is too small. 
-            This ensures efficient internal storage and lookup performance.
-            </remarks>
-            <param name="capacity">
-            The initial number of elements that the bucket can contain. 
-            If less than or equal to the default capacity, the default capacity is used. 
-            Must be a non-negative integer.
-            </param>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.#ctor(SwiftCollections.SwiftGenerationalBucketState{`0})">
-             <summary>
-             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> class with the specified <see cref="T:SwiftCollections.SwiftBucketState`1"/>.
-             </summary>
-             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
-        </member>
-        <member name="P:SwiftCollections.SwiftGenerationalBucket`1.Count">
-            <summary>
-            Gets the number of elements contained in the collection.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftGenerationalBucket`1.Capacity">
-            <summary>
-            Gets the total number of elements that the internal data structure can hold without resizing.
-            </summary>
-            <remarks>
-            This value represents the allocated size of the underlying storage, which may be greater than the actual number of elements contained. 
-            Capacity is always greater than or equal to the current count of elements.
-            </remarks>
-        </member>
-        <member name="P:SwiftCollections.SwiftGenerationalBucket`1.State">
-            <summary>
-            Gets or sets the current state of the generational bucket.
-            </summary>
-            <remarks>
-            This property provides a snapshot of the bucket's internal state, which can be used for serialization, diagnostics, 
-            or restoring the bucket to a previous state. 
-            Setting this property replaces the entire state of the bucket, including its contents and allocation metadata.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Add(`0)">
-            <summary>
-            Adds the specified value to the collection and returns a handle that can be used to reference it.
-            </summary>
-            <remarks>
-            The returned handle can be used to access or remove the value later. 
-            Handles are only valid as long as the value remains in the collection.
-            </remarks>
-            <param name="value">The value to add to the collection.</param>
-            <returns>A <see cref="T:SwiftCollections.SwiftHandle"/> that uniquely identifies the added value within the collection.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.TryGet(SwiftCollections.SwiftHandle,`0@)">
-            <summary>
-            Attempts to retrieve the value associated with the specified handle.
-            </summary>
-            <remarks>
-            Use this method to safely attempt retrieval without throwing an exception if the handle is invalid or the entry is not in use.
-            </remarks>
-            <param name="handle">The handle used to identify the entry to retrieve.</param>
-            <param name="value">
-            When this method returns, contains the value associated with the specified handle if the handle is valid 
-            and the entry is in use; otherwise, the default value for the type of the value parameter. 
-            This parameter is passed uninitialized.
-            </param>
-            <returns>true if the value was found and retrieved successfully; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.GetRef(SwiftCollections.SwiftHandle)">
-            <summary>
-            Returns a reference to the value associated with the specified handle.
-            </summary>
-            <param name="handle">
-            A handle that identifies the entry whose value is to be accessed. 
-            The handle must be valid and refer to an existing entry.
-            </param>
-            <returns>A reference to the value of type T associated with the specified handle.</returns>
-            <exception cref="T:System.InvalidOperationException">Thrown if the handle does not refer to a valid or currently used entry.</exception>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Remove(SwiftCollections.SwiftHandle)">
-            <summary>
-            Removes the entry associated with the specified handle from the collection.
-            </summary>
-            <remarks>
-            If the handle does not refer to a valid or currently used entry, the method returns false and no action is taken. 
-            Removing an entry invalidates the handle for future operations.
-            </remarks>
-            <param name="handle">The handle identifying the entry to remove. The handle must refer to a valid, currently used entry.</param>
-            <returns>true if the entry was successfully removed; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.IsValid(SwiftCollections.SwiftHandle)">
-            <summary>
-            Determines whether the specified handle refers to a valid and currently used entry.
-            </summary>
-            <remarks>
-            A handle may become invalid if the referenced entry has been removed or replaced. 
-            Use this method to check handle validity before accessing the associated entry.
-            </remarks>
-            <param name="handle">The handle to validate. The handle must have been obtained from this collection; otherwise, the result is undefined.</param>
-            <returns>true if the handle is valid and refers to an active entry; otherwise, false.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.EnsureCapacity(System.Int32)">
-            <summary>
-            Ensures that the underlying storage has at least the specified capacity, expanding it if necessary.
-            </summary>
-            <remarks>
-            If the current capacity is less than the specified value, the storage is resized to accommodate at least that many elements. 
-            The actual capacity may be rounded up to the next power of two for performance reasons.
-            </remarks>
-            <param name="capacity">The minimum number of elements that the storage should be able to hold. Must be a non-negative integer.</param>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.CloneTo(System.Collections.Generic.ICollection{`0})">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Exists(System.Predicate{`0})">
-            <summary>
-            Determines whether the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> contains an element that matches the conditions defined by the specified predicate.
-            </summary>
-            <param name="match">The predicate that defines the conditions of the element to search for.</param>
-            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.Find(System.Predicate{`0})">
-            <summary>
-            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in bucket iteration order.
-            </summary>
-            <param name="match">The predicate that defines the conditions of the element to search for.</param>
-            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.GetEnumerator">
-            <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
-        </member>
-        <member name="T:SwiftCollections.SwiftGenerationalBucket`1.SwiftGenerationalBucketEnumerator">
-            <summary>
-            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> collection in a forward-only, read-only manner.
-            </summary>
-            <remarks>
-            The enumerator is invalidated if the underlying collection is modified during enumeration. 
-            In such cases, subsequent calls to MoveNext will throw an InvalidOperationException. 
-            This enumerator is typically obtained by calling GetEnumerator on a <see cref="T:SwiftCollections.SwiftGenerationalBucket`1"/> instance.
-            </remarks>
-        </member>
-        <member name="P:SwiftCollections.SwiftGenerationalBucket`1.SwiftGenerationalBucketEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.SwiftGenerationalBucketEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.SwiftGenerationalBucketEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucket`1.SwiftGenerationalBucketEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftHashSet`1">
@@ -1339,11 +887,6 @@
             <summary>
             A version counter used to track modifications to the set.
             Incremented on mutations to detect changes during enumeration and ensure enumerator validity.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.SwiftHashSet`1.Entry">
-            <summary>
-            Represents a single value in the set, including its hash code for quick access.
             </summary>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.#ctor">
@@ -1429,6 +972,13 @@
             <summary>
             Removes all elements from the set.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.CheckLoadThreshold">
             <summary>
@@ -1531,23 +1081,6 @@
             Returns an enumerator that iterates through the set.
             </summary>
         </member>
-        <member name="T:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator">
-            <summary>
-            Provides an enumerator for iterating through the elements of the hash set, ensuring consistency during enumeration.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Dispose">
-            <inheritdoc/>
-        </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.ExceptWith(System.Collections.Generic.IEnumerable{`0})">
             <inheritdoc/>
         </member>
@@ -1576,6 +1109,28 @@
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftHashSet`1.UnionWith(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftHashSet`1.Entry">
+            <summary>
+            Represents a single value in the set, including its hash code for quick access.
+            </summary>
+        </member>
+        <member name="T:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator">
+            <summary>
+            Provides an enumerator for iterating through the elements of the hash set, ensuring consistency during enumeration.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftHashSet`1.SwiftHashSetEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftList`1">
@@ -1770,6 +1325,13 @@
             Removes all elements from the <see cref="T:SwiftCollections.SwiftList`1"/>, resetting its count to zero.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftList`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftList`1.FastClear">
             <summary>
             Clears the <see cref="T:SwiftCollections.SwiftList`1"/> without releasing the reference to the stored elements.
@@ -1888,8 +1450,8 @@
             Enumerates the elements of a <see cref="T:SwiftCollections.SwiftList`1"/> collection.
             </summary>
             <remarks>
-            The enumerator provides read-only, forward-only iteration over the collection. 
-            The enumerator is invalidated if the collection is modified after the enumerator is created. 
+            The enumerator provides read-only, forward-only iteration over the collection.
+            The enumerator is invalidated if the collection is modified after the enumerator is created.
             In such cases, calling MoveNext or Reset will throw an InvalidOperationException.
             </remarks>
         </member>
@@ -2029,6 +1591,13 @@
         <member name="M:SwiftCollections.SwiftPackedSet`1.Clear">
             <inheritdoc/>
         </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftPackedSet`1.EnsureCapacity(System.Int32)">
             <summary>
             Ensures that the internal storage has at least the specified capacity, expanding it if necessary.
@@ -2042,27 +1611,6 @@
         </member>
         <member name="M:SwiftCollections.SwiftPackedSet`1.GetEnumerator">
             <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
-        </member>
-        <member name="T:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator">
-            <summary>
-            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftPackedSet`1"/> collection.
-            </summary>
-            <remarks>
-            The enumerator is invalidated if the collection is modified after the enumerator is created.
-            In such cases, calling MoveNext or Reset will throw an InvalidOperationException. 
-            </remarks>
-        </member>
-        <member name="P:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Dispose">
-            <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftPackedSet`1.CloneTo(System.Collections.Generic.ICollection{`0})">
             <inheritdoc/>
@@ -2098,6 +1646,27 @@
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftPackedSet`1.UnionWith(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator">
+            <summary>
+            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftPackedSet`1"/> collection.
+            </summary>
+            <remarks>
+            The enumerator is invalidated if the collection is modified after the enumerator is created.
+            In such cases, calling MoveNext or Reset will throw an InvalidOperationException.
+            </remarks>
+        </member>
+        <member name="P:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftPackedSet`1.SwiftPackedSetEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftQueue`1">
@@ -2301,6 +1870,13 @@
             Removes all elements from the SwiftQueue, resetting its count to zero.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftQueue`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftQueue`1.FastClear">
             <summary>
             Clears the SwiftQueue without releasing the reference to the stored elements.
@@ -2376,6 +1952,258 @@
             <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftQueue`1.SwiftQueueEnumerator.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftSlotMap`1">
+             <summary>
+             Represents a high-performance map collection that assigns and manages stable integer indices
+             for stored items. Provides O(1) insertion, removal, and lookup by internally generated index.
+             </summary>
+             <remarks>
+             Unlike <see cref="T:SwiftCollections.SwiftSparseMap`1"/>, which requires callers to provide the key used to store values,
+             <see cref="T:SwiftCollections.SwiftSlotMap`1"/> internally generates and manages indices for each inserted item.
+            
+             These indices remain stable for the lifetime of the item unless it is removed.
+            
+             The container is optimized for scenarios requiring:
+             <list type="bullet">
+                 <item>
+                     <description>Stable integer slots.</description>
+                 </item>
+                 <item>
+                     <description>Fast addition and removal.</description>
+                 </item>
+                 <item>
+                     <description>Array-backed storage; iteration scans allocated slots and skips holes.</description>
+                 </item>
+             </list>
+            
+             **Efficient Lookups Using Indices**:
+             When you add items to the map using the <see cref="M:SwiftCollections.SwiftSlotMap`1.Add(`0)"/> method, it returns an arrayIndex that you can store externally.
+             You can then use this arrayIndex to access the item directly via the indexer, and check if it's still present using the <see cref="M:SwiftCollections.SwiftSlotMap`1.IsAllocated(System.Int32)"/> method.
+             This approach allows for O(1) time complexity for lookups and existence checks, avoiding the need for O(n) searches using methods like <see cref="M:SwiftCollections.SwiftSlotMap`1.IndexOf(`0)"/> or <see cref="M:SwiftCollections.SwiftSlotMap`1.Contains(`0)"/>.
+            
+             **Note**: iteration over the collection does not follow any guaranteed order and depends on internal allocation.
+             </remarks>
+             <typeparam name="T">Specifies the type of elements in the map.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftSlotMapState&lt;T&gt;</b> State<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="F:SwiftCollections.SwiftSlotMap`1.DefaultCapacity">
+            <summary>
+            Represents the default initial capacity used when no specific capacity is provided.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSlotMap`1"/> class.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSlotMap`1"/> class with the specified capacity.
+            </summary>
+            <param name="capacity">The initial capacity of the map.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.#ctor(SwiftCollections.SwiftSlotMapState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftSlotMap`1"/> class with the specified <see cref="T:SwiftCollections.SwiftArrayState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.Count">
+            <summary>
+            Gets the number of elements contained in the <see cref="T:SwiftCollections.SwiftSlotMap`1"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.PeakCount">
+            <summary>
+            Gets the highest value recorded for the count during the lifetime of the object.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.Capacity">
+            <summary>
+            Gets the total capacity of the <see cref="T:SwiftCollections.SwiftSlotMap`1"/>.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the element at the specified arrayIndex.
+            Throws <see cref="T:System.InvalidOperationException"/> if the arrayIndex is invalid or unallocated.
+            </summary>
+            <param name="index">The zero-based arrayIndex of the element to get or set.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.IsSynchronized">
+            <inheritdoc/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.SyncRoot">
+            <inheritdoc/>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.State">
+            <summary>
+            Gets or sets the current state of the map, including all items, allocation status, and free indices.
+            </summary>
+            <remarks>
+            Use this property to capture or restore the complete state of the map, such as for serialization or checkpointing scenarios. 
+            Setting this property replaces the entire internal state, including items and allocation metadata.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Add(`0)">
+            <summary>
+            Adds an item to the map and returns its arrayIndex.
+            </summary>
+            <param name="item">The item to add.</param>
+            <returns>The arrayIndex where the item was added.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.InsertAt(System.Int32,`0)">
+            <summary>
+            Inserts an item at the specified arrayIndex.
+            If an item already exists at that arrayIndex, it will be replaced.
+            </summary>
+            <param name="index">The arrayIndex at which to insert the item.</param>
+            <param name="item">The item to insert.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.TryRemove(`0)">
+            <summary>
+            Removes the first occurrence of a specific object from the map.
+            </summary>
+            <param name="item">The object to remove.</param>
+            <returns><c>true</c> if item was successfully removed; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.TryRemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified arrayIndex if it has been allocated.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified arrayIndex.
+            </summary>
+            <param name="index">The arrayIndex of the item to remove.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Clear">
+            <summary>
+            Removes all items from the map.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.EnsureCapacity(System.Int32)">
+            <summary>
+            Ensures that the internal storage has at least the specified capacity, expanding it if necessary.
+            </summary>
+            <remarks>
+            If the current capacity is less than the specified value, the internal storage is increased to 
+            the next power of two greater than or equal to the requested capacity. 
+            No action is taken if the current capacity is sufficient.
+            </remarks>
+            <param name="capacity">The minimum number of elements that the internal storage should be able to hold. Must be a non-negative value.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.TrimExcessCapacity">
+            <summary>
+            Reduces unused tail capacity while preserving stable indices for all currently allocated entries.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.TryGetValue(System.Int32,`0@)">
+            <summary>
+            Attempts to get the value at the specified arrayIndex.
+            </summary>
+            <param name="key">The arrayIndex of the item to get.</param>
+            <param name="value">When this method returns, contains the value associated with the specified arrayIndex, if the arrayIndex is found; otherwise, the default value for the type of the value parameter.</param>
+            <returns><c>true</c> if the map contains an element at the specified arrayIndex; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Contains(`0)">
+            <summary>
+            Determines whether the map contains a specific value.
+            </summary>
+            <param name="item">The object to locate in the map.</param>
+            <returns><c>true</c> if item is found; otherwise, <c>false</c>.</returns>
+            <remarks>
+            This method performs a linear search and has a time complexity of O(n).
+            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftSlotMap`1.Add(`0)"/> method for faster lookups using the indexer.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Exists(System.Predicate{`0})">
+            <summary>
+            Determines whether the <see cref="T:SwiftCollections.SwiftSlotMap`1"/> contains an element that matches the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftSlotMap`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.Find(System.Predicate{`0})">
+            <summary>
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in map iteration order.
+            </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.IsAllocated(System.Int32)">
+            <summary>
+            Determines whether the element at the specified index is currently allocated.
+            </summary>
+            <param name="index">The zero-based index of the element to check. Must be greater than or equal to 0 and less than the length of the underlying array.</param>
+            <returns>true if the element at the specified index is allocated; otherwise, false.</returns>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified object and returns the zero-based arrayIndex of the first occurrence within the map.
+            </summary>
+            <param name="item">The object to locate in the map.</param>
+            <returns>
+            The zero-based arrayIndex of the first occurrence of <paramref name="item"/> within the map, if found; otherwise, <c>-1</c>.
+            </returns>
+            <remarks>
+            This method performs a linear search and has a time complexity of O(n).
+            It is recommended to store the indices returned by the <see cref="M:SwiftCollections.SwiftSlotMap`1.Add(`0)"/> method for faster lookups using the indexer.
+            </remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies the elements of the map to an <see cref="T:System.Array"/>, starting at a particular Array arrayIndex.
+            </summary>
+            <param name="array">The one-dimensional Array that is the destination of the elements copied from map.</param>
+            <param name="arrayIndex">The zero-based arrayIndex in array at which copying begins.</param>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.CloneTo(System.Collections.Generic.ICollection{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the <see cref="T:SwiftCollections.SwiftSlotMap`1"/>.
+            </summary>
+            <returns>An enumerator for the map.</returns>
+        </member>
+        <member name="T:SwiftCollections.SwiftSlotMap`1.SwiftSlotMapEnumerator">
+            <summary>
+            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftSlotMap`1"/> collection.
+            </summary>
+            <remarks>
+            The enumerator provides read-only, forward-only iteration over the elements in the <see cref="T:SwiftCollections.SwiftSlotMap`1"/>.
+            The enumerator is invalidated if the collection is modified after the enumerator is created.
+            </remarks>
+        </member>
+        <member name="P:SwiftCollections.SwiftSlotMap`1.SwiftSlotMapEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.SwiftSlotMapEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.SwiftSlotMapEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSlotMap`1.SwiftSlotMapEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftSortedList`1">
@@ -2560,6 +2388,13 @@
         <member name="M:SwiftCollections.SwiftSortedList`1.Clear">
             <inheritdoc/>
         </member>
+        <member name="M:SwiftCollections.SwiftSortedList`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftSortedList`1.FastClear">
             <summary>
             Quickly clears the list by resetting the count and offset without modifying the internal array.
@@ -2675,8 +2510,8 @@
             Supports simple iteration over the elements of a <see cref="T:SwiftCollections.SwiftSortedList`1"/> in sorted order.
             </summary>
             <remarks>
-            The enumerator is invalidated if the underlying collection is modified after the enumerator created. 
-            In this case, calling MoveNext or Reset will throw an InvalidOperationException. 
+            The enumerator is invalidated if the underlying collection is modified after the enumerator created.
+            In this case, calling MoveNext or Reset will throw an InvalidOperationException.
             The enumerator does not support writing to the collection.
             </remarks>
         </member>
@@ -2699,7 +2534,7 @@
              for cache-friendly iteration.
              </summary>
              <remarks>
-             Unlike <see cref="T:SwiftCollections.SwiftBucket`1"/>, which internally assigns and manages item indices,
+             Unlike <see cref="T:SwiftCollections.SwiftSlotMap`1"/>, which internally assigns and manages item indices,
              <see cref="T:SwiftCollections.SwiftSparseMap`1"/> is externally keyed. The caller supplies the integer key
              (for example, an entity ID or handle) used to index the value.
             
@@ -2899,6 +2734,13 @@
             This method does not reduce the capacity of the underlying storage.
             </remarks>
         </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.EnsureDenseCapacity(System.Int32)">
             <summary>
             Ensures that the internal dense storage has at least the specified capacity, expanding it if necessary.
@@ -2933,28 +2775,6 @@
         </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.GetEnumerator">
             <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
-        </member>
-        <member name="T:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator">
-            <summary>
-            Supports iteration over the key/value pairs in a <see cref="T:SwiftCollections.SwiftSparseMap`1"/> collection.
-            </summary>
-            <remarks>
-            The enumerator provides a forward-only, read-only traversal of the collection. 
-            It is invalidated if the underlying collection is modified during enumeration, and any such modification will cause
-            subsequent operations to throw an InvalidOperationException.
-            </remarks>
-        </member>
-        <member name="P:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Dispose">
-            <inheritdoc/>
         </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.GetDense(System.Int32[]@,`0[]@,System.Int32@)">
             <summary>
@@ -2996,6 +2816,28 @@
             <param name="destination">The caller-owned list that receives the sorted keys.</param>
         </member>
         <member name="M:SwiftCollections.SwiftSparseMap`1.CloneTo(System.Collections.Generic.ICollection{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator">
+            <summary>
+            Supports iteration over the key/value pairs in a <see cref="T:SwiftCollections.SwiftSparseMap`1"/> collection.
+            </summary>
+            <remarks>
+            The enumerator provides a forward-only, read-only traversal of the collection.
+            It is invalidated if the underlying collection is modified during enumeration, and any such modification will cause
+            subsequent operations to throw an InvalidOperationException.
+            </remarks>
+        </member>
+        <member name="P:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseMap`1.SwiftSparseMapEnumerator.Dispose">
             <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.SwiftSparseSet">
@@ -3142,6 +2984,13 @@
             <summary>
             Removes all IDs from the set without reducing capacity.
             </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftSparseSet.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>This collection stores only integer IDs, so the option adds no reference cleanup or capacity scan.</remarks>
         </member>
         <member name="M:SwiftCollections.SwiftSparseSet.ExceptWith(System.Collections.Generic.IEnumerable{System.Int32})">
             <inheritdoc/>
@@ -3366,6 +3215,13 @@
             Removes all elements from the SwiftStack, resetting its count to zero.
             </summary>
         </member>
+        <member name="M:SwiftCollections.SwiftStack`1.Clear(System.Boolean)">
+            <summary>
+            Removes all elements, optionally releasing references throughout retained backing storage.
+            </summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the live range; otherwise uses ordinary clearing.</param>
+            <remarks>Capacity is preserved. Full reference cleanup can take time proportional to retained capacity.</remarks>
+        </member>
         <member name="M:SwiftCollections.SwiftStack`1.FastClear">
             <summary>
             Clears the SwiftStack without releasing the reference to the stored elements.
@@ -3489,468 +3345,227 @@
         <member name="M:SwiftCollections.SwiftStack`1.SwiftStackEnumerator.Dispose">
             <inheritdoc/>
         </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticSink">
-            <summary>
-            Receives diagnostic events emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannel">
-            <summary>
-            Represents a named diagnostic channel with a configurable sink and minimum level.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/> class.
-            </summary>
-            <param name="name">The channel name. Blank names fall back to <c>Default</c>.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Name">
-            <summary>
-            Gets the channel name.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.MinimumLevel">
-            <summary>
-            Gets or sets the minimum level required for diagnostics to be emitted.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticChannel.Sink">
-            <summary>
-            Gets or sets the sink that receives emitted diagnostics.
-            Assigning <c>null</c> restores the default no-op sink.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
-            <summary>
-            Determines whether the specified level is enabled for this channel.
-            </summary>
-            <param name="level">The level to evaluate.</param>
-            <returns><c>true</c> when the level is enabled; otherwise, <c>false</c>.</returns>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Emits a diagnostic event when the specified level is enabled.
-            </summary>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The diagnostic message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannel.Write(SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler,System.String)">
-            <summary>
-            Emits a diagnostic event from an interpolated message when the specified level is enabled.
-            Disabled levels do not evaluate formatted interpolation expressions.
-            </summary>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions">
-            <summary>
-            Provides interpolated diagnostic logging helpers for <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Info(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.InfoDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes an info diagnostic message without evaluating formatted expressions when info diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Warn(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.WarningDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes a warning diagnostic message without evaluating formatted expressions when warning diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Error(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.ErrorDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes an error diagnostic message without evaluating formatted expressions when error diagnostics are disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticChannelLoggingExtensions.Log(SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,SwiftCollections.Diagnostics.DiagnosticMessageHandler{SwiftCollections.Diagnostics.DynamicDiagnosticLevel},System.String,System.String,System.String)">
-            <summary>
-            Writes a dynamic-level diagnostic message without evaluating formatted expressions when the level is disabled.
-            </summary>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="level">The severity level of the diagnostic event.</param>
-            <param name="message">The interpolated diagnostic message.</param>
-            <param name="source">An optional source identifier. When omitted, caller information is used.</param>
-            <param name="method">The calling method name, automatically captured.</param>
-            <param name="filePath">The calling file name, automatically captured to get the class name.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticEvent">
-            <summary>
-            Represents a single diagnostic event emitted by a <see cref="T:SwiftCollections.Diagnostics.DiagnosticChannel"/>.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticEvent.#ctor(System.String,SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticEvent"/> struct.
-            </summary>
-            <param name="channel">The channel that emitted the event.</param>
-            <param name="level">The severity level of the event.</param>
-            <param name="message">The event message.</param>
-            <param name="source">An optional source identifier.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Channel">
-            <summary>
-            Gets the channel that emitted the event.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Level">
-            <summary>
-            Gets the severity level of the event.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Message">
-            <summary>
-            Gets the diagnostic message.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticEvent.Source">
-            <summary>
-            Gets the optional source identifier.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler">
-            <summary>
-            Builds diagnostic messages for enabled diagnostic levels while allowing disabled levels
-            to skip formatted interpolation expression evaluation.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler"/> struct.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that will receive the message.</param>
-            <param name="level">The severity level being evaluated.</param>
-            <param name="isEnabled">
-            Set to <c>true</c> when formatted expressions should be evaluated; otherwise, <c>false</c>.
-            </param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.IsEnabled">
-            <summary>
-            Gets a value indicating whether this handler is actively building a diagnostic message.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendLiteral(System.String)">
-            <summary>
-            Appends a literal string segment.
-            </summary>
-            <param name="value">The literal string segment.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0)">
-            <summary>
-            Appends a formatted value.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
-            <summary>
-            Appends a formatted value using the specified format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
-            <summary>
-            Appends a formatted value with the specified alignment.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
-            <summary>
-            Appends a formatted value with the specified alignment and format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String)">
-            <summary>
-            Appends a string value.
-            </summary>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
-            <summary>
-            Appends a string value with the specified alignment.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
-            <summary>
-            Appends a string value with the specified alignment and format string.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
-            <summary>
-            Appends a character span.
-            </summary>
-            <param name="value">The span to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
-            <summary>
-            Appends a character span with the specified alignment.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
-            <summary>
-            Appends a character span with the specified alignment and format string.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticLevel">
-            <summary>
-            Defines the severity level for a diagnostic event.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.None">
-            <summary>
-            Diagnostics are disabled.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Info">
-            <summary>
-            Informational diagnostic output.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Warning">
-            <summary>
-            Warning diagnostic output.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.Diagnostics.DiagnosticLevel.Error">
-            <summary>
-            Error diagnostic output.
-            </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticLogger">
-            <summary>
-            Provides reusable logger state and diagnostic channels for libraries built on SwiftCollections diagnostics.
-            </summary>
+        <member name="T:SwiftCollections.SwiftTicketMap`1">
+             <summary>
+             Represents a high-performance ticket map that assigns stable tickets to stored items.
+             </summary>
+             <remarks>
+             <para>
+             <see cref="T:SwiftCollections.SwiftTicketMap`1"/> is similar to <see cref="T:SwiftCollections.SwiftSlotMap`1"/> but adds
+             <b>generation tracking</b> to prevent stale references from accessing reused slots.
+             </para>
+            
+             <para>
+             When an item is added, a <see cref="T:SwiftCollections.SwiftTicket"/> containing both an index and generation
+             is returned. If the item is removed and the slot reused later, the generation value
+             changes, causing older tickets to automatically become invalid.
+             </para>
+            
+             <para>
+             This pattern is widely used to safely reference objects without risking accidental access 
+             to recycled memory slots.
+             </para>
+            
+             <para>
+             Key characteristics:
+             <list type="bullet">
+             <item><description>O(1) insertion and removal.</description></item>
+             <item><description>Stable tickets for the lifetime of stored items.</description></item>
+             <item><description>Automatic invalidation of stale tickets via generation counters.</description></item>
+             <item><description>Cache-friendly contiguous storage.</description></item>
+             </list>
+             </para>
+            
+             <para>
+             Use <see cref="T:SwiftCollections.SwiftSlotMap`1"/> when raw indices are acceptable.
+             Use <see cref="T:SwiftCollections.SwiftTicketMap`1"/> when ticket safety is required.
+             </para>
+             </remarks>
+             <typeparam name="T">Specifies the type of elements stored in the map.</typeparam>
             <remarks>
-            Static logger facades can delegate to a derived instance of this type while keeping their existing public API.
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>SwiftCollections.SwiftTicketMapState&lt;T&gt;</b> State<br/>
+            </code>
             </remarks>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.#ctor(System.String)">
+        <member name="F:SwiftCollections.SwiftTicketMap`1.DefaultCapacity">
             <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.DiagnosticLogger"/> class.
+            Represents the default initial capacity for the collection.
             </summary>
-            <param name="channelName">The diagnostic channel name.</param>
+            <remarks>
+            Use this constant when initializing the collection to its default size. 
+            The value is typically used to optimize memory allocation for small collections.
+            </remarks>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Name">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.#ctor">
             <summary>
-            Gets the logger name.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.Channel">
-            <summary>
-            Gets the diagnostic channel used for normal diagnostics.
+            Initializes a new instance of the SwiftTicketMap class with the default capacity.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.DebugChannel">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.#ctor(System.Int32)">
             <summary>
-            Gets the diagnostic channel used for verbose debug diagnostics.
+            Initializes a new instance of the SwiftTicketMap class with the specified initial capacity.
+            </summary>
+            <remarks>
+            The actual capacity will be set to the next power of two greater than or equal to the specified capacity, 
+            or to the default capacity if the specified value is too small. 
+            This ensures efficient internal storage and lookup performance.
+            </remarks>
+            <param name="capacity">
+            The initial number of elements that the map can contain. 
+            If less than or equal to the default capacity, the default capacity is used. 
+            Must be a non-negative integer.
+            </param>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.#ctor(SwiftCollections.SwiftTicketMapState{`0})">
+             <summary>
+             Initializes a new instance of the <see cref="T:SwiftCollections.SwiftTicketMap`1"/> class with the specified <see cref="T:SwiftCollections.SwiftTicketMapState`1"/>.
+             </summary>
+             <param name="state">The state containing the internal array, count, offset, and version for initialization.</param>
+        </member>
+        <member name="P:SwiftCollections.SwiftTicketMap`1.Count">
+            <summary>
+            Gets the number of elements contained in the collection.
             </summary>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.EnableDebugLogging">
+        <member name="P:SwiftCollections.SwiftTicketMap`1.Capacity">
             <summary>
-            Gets or sets a value indicating whether verbose debug diagnostics should be emitted.
+            Gets the total number of elements that the internal data structure can hold without resizing.
             </summary>
+            <remarks>
+            This value represents the allocated size of the underlying storage, which may be greater than the actual number of elements contained. 
+            Capacity is always greater than or equal to the current count of elements.
+            </remarks>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.MinimumLevel">
+        <member name="P:SwiftCollections.SwiftTicketMap`1.State">
             <summary>
-            Gets or sets the minimum severity required for normal diagnostics to be emitted.
+            Gets or sets the current state of the ticket map.
             </summary>
+            <remarks>
+            This property provides a snapshot of the map's internal state, which can be used for serialization, diagnostics, 
+            or restoring the map to a previous state. 
+            Setting this property replaces the entire state of the map, including its contents and allocation metadata.
+            </remarks>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Add(`0)">
             <summary>
-            Gets or sets the delegate used to write formatted log messages.
-            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            Adds the specified value to the collection and returns a ticket that can be used to reference it.
             </summary>
+            <remarks>
+            The returned ticket can be used to access or remove the value later. 
+            Tickets are only valid as long as the value remains in the collection.
+            </remarks>
+            <param name="value">The value to add to the collection.</param>
+            <returns>A <see cref="T:SwiftCollections.SwiftTicket"/> that uniquely identifies the added value within the collection.</returns>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.TryGet(SwiftCollections.SwiftTicket,`0@)">
             <summary>
-            Gets or sets the formatter used to transform log arguments into a final log entry.
-            Assigning <see langword="null"/> restores <see cref="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)"/>.
+            Attempts to retrieve the value associated with the specified ticket.
             </summary>
+            <remarks>
+            Use this method to safely attempt retrieval without throwing an exception if the ticket is invalid or the entry is not in use.
+            </remarks>
+            <param name="ticket">The ticket used to identify the entry to retrieve.</param>
+            <param name="value">
+            When this method returns, contains the value associated with the specified ticket if the ticket is valid 
+            and the entry is in use; otherwise, the default value for the type of the value parameter. 
+            This parameter is passed uninitialized.
+            </param>
+            <returns>true if the value was found and retrieved successfully; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.IsEnabled(SwiftCollections.Diagnostics.DiagnosticLevel)">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.GetRef(SwiftCollections.SwiftTicket)">
             <summary>
-            Determines whether normal diagnostics at the specified level are currently enabled.
+            Returns a reference to the value associated with the specified ticket.
             </summary>
-            <param name="level">The diagnostic level to evaluate.</param>
-            <returns><see langword="true"/> when messages at <paramref name="level"/> will be emitted; otherwise, <see langword="false"/>.</returns>
+            <param name="ticket">
+            A ticket that identifies the entry whose value is to be accessed. 
+            The ticket must be valid and refer to an existing entry.
+            </param>
+            <returns>A reference to the value of type T associated with the specified ticket.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown if the ticket does not refer to a valid or currently used entry.</exception>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogHandler(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Remove(SwiftCollections.SwiftTicket)">
             <summary>
-            Writes a log message using the current <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.CustomFormatter"/>.
+            Removes the entry associated with the specified ticket from the collection.
             </summary>
-            <param name="level">The severity level of the log message.</param>
-            <param name="message">The log message.</param>
-            <param name="source">The source of the log message.</param>
+            <remarks>
+            If the ticket does not refer to a valid or currently used entry, the method returns false and no action is taken. 
+            Removing an entry invalidates the ticket for future operations.
+            </remarks>
+            <param name="ticket">The ticket identifying the entry to remove. The ticket must refer to a valid, currently used entry.</param>
+            <returns>true if the entry was successfully removed; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.DefaultLogFormatter(SwiftCollections.Diagnostics.DiagnosticLevel,System.String,System.String)">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.IsValid(SwiftCollections.SwiftTicket)">
             <summary>
-            Formats a log entry using a deterministic, source-first layout.
+            Determines whether the specified ticket refers to a valid and currently used entry.
             </summary>
-            <param name="level">The severity level of the log message.</param>
-            <param name="message">The log message.</param>
-            <param name="source">The source of the log message.</param>
-            <returns>A formatted log entry.</returns>
+            <remarks>
+            A ticket may become invalid if the referenced entry has been removed or replaced. 
+            Use this method to check ticket validity before accessing the associated entry.
+            </remarks>
+            <param name="ticket">The ticket to validate. The ticket must have been obtained from this collection; otherwise, the result is undefined.</param>
+            <returns>true if the ticket is valid and refers to an active entry; otherwise, false.</returns>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.HandleDiagnosticEvent(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Clear">
+            <summary>Removes all elements and invalidates their tickets without reducing capacity.</summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Clear(System.Boolean)">
+            <summary>Removes all elements, optionally releasing references throughout retained backing storage.</summary>
+            <param name="clearRetainedReferences">If true, also releases references outside the previously used range.</param>
+            <remarks>Stored generations survive clearing so old tickets remain invalid on reuse. Capacity is preserved.</remarks>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.EnsureCapacity(System.Int32)">
             <summary>
-            Receives diagnostics emitted by either channel.
+            Ensures that the underlying storage has at least the specified capacity, expanding it if necessary.
             </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
+            <remarks>
+            If the current capacity is less than the specified value, the storage is resized to accommodate at least that many elements. 
+            The actual capacity may be rounded up to the next power of two for performance reasons.
+            </remarks>
+            <param name="capacity">The minimum number of elements that the storage should be able to hold. Must be a non-negative integer.</param>
         </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticLogger.ResolveSource(SwiftCollections.Diagnostics.DiagnosticEvent@)">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.CloneTo(System.Collections.Generic.ICollection{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Exists(System.Predicate{`0})">
             <summary>
-            Resolves the source value passed to <see cref="P:SwiftCollections.Diagnostics.DiagnosticLogger.LogHandler"/>.
+            Determines whether the <see cref="T:SwiftCollections.SwiftTicketMap`1"/> contains an element that matches the conditions defined by the specified predicate.
             </summary>
-            <param name="diagnostic">The emitted diagnostic event.</param>
-            <returns>The resolved source.</returns>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns><c>true</c> if the <see cref="T:SwiftCollections.SwiftTicketMap`1"/> contains one or more elements that match the specified predicate; otherwise, <c>false</c>.</returns>
         </member>
-        <member name="T:SwiftCollections.Diagnostics.IDiagnosticLevelProvider">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.Find(System.Predicate{`0})">
             <summary>
-            Describes a fixed diagnostic level for an interpolated diagnostic message handler.
+            Searches for an element that matches the conditions defined by the specified predicate, and returns the first matching element in map iteration order.
             </summary>
+            <param name="match">The predicate that defines the conditions of the element to search for.</param>
+            <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <typeparamref name="T"/>.</returns>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.IDiagnosticLevelProvider.Level">
+        <member name="M:SwiftCollections.SwiftTicketMap`1.GetEnumerator">
+            <inheritdoc cref="M:System.Collections.IEnumerable.GetEnumerator"/>
+        </member>
+        <member name="T:SwiftCollections.SwiftTicketMap`1.SwiftTicketMapEnumerator">
             <summary>
-            Gets the diagnostic level for this provider.
+            Enumerates the elements of a <see cref="T:SwiftCollections.SwiftTicketMap`1"/> collection in a forward-only, read-only manner.
             </summary>
+            <remarks>
+            The enumerator is invalidated if the underlying collection is modified during enumeration.
+            In such cases, subsequent calls to MoveNext will throw an InvalidOperationException.
+            This enumerator is typically obtained by calling GetEnumerator on a <see cref="T:SwiftCollections.SwiftTicketMap`1"/> instance.
+            </remarks>
         </member>
-        <member name="T:SwiftCollections.Diagnostics.InfoDiagnosticLevel">
-            <summary>
-            Provides the info diagnostic level for fixed-level interpolated logging.
-            </summary>
+        <member name="P:SwiftCollections.SwiftTicketMap`1.SwiftTicketMapEnumerator.Current">
+            <inheritdoc/>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.InfoDiagnosticLevel.Level">
-            <inheritdoc />
+        <member name="M:SwiftCollections.SwiftTicketMap`1.SwiftTicketMapEnumerator.MoveNext">
+            <inheritdoc/>
         </member>
-        <member name="T:SwiftCollections.Diagnostics.WarningDiagnosticLevel">
-            <summary>
-            Provides the warning diagnostic level for fixed-level interpolated logging.
-            </summary>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.SwiftTicketMapEnumerator.Reset">
+            <inheritdoc/>
         </member>
-        <member name="P:SwiftCollections.Diagnostics.WarningDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.ErrorDiagnosticLevel">
-            <summary>
-            Provides the error diagnostic level for fixed-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.ErrorDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DynamicDiagnosticLevel">
-            <summary>
-            Provides a placeholder level for dynamic-level interpolated logging.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DynamicDiagnosticLevel.Level">
-            <inheritdoc />
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1">
-            <summary>
-            Builds interpolated diagnostic messages only when the requested diagnostic level is enabled.
-            </summary>
-            <typeparam name="TLevel">The fixed diagnostic level provider used by fixed-level helpers.</typeparam>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,System.Boolean@)">
-            <summary>
-            Initializes a new handler for a fixed-level diagnostic message.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.#ctor(System.Int32,System.Int32,SwiftCollections.Diagnostics.DiagnosticChannel,SwiftCollections.Diagnostics.DiagnosticLevel,System.Boolean@)">
-            <summary>
-            Initializes a new handler for a dynamic-level diagnostic message.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="channel">The diagnostic channel that receives the message.</param>
-            <param name="level">The diagnostic level being evaluated.</param>
-            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.IsEnabled">
-            <summary>
-            Gets whether the handler is actively building a diagnostic message.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendLiteral(System.String)">
-            <summary>
-            Appends a literal string segment.
-            </summary>
-            <param name="value">The literal string segment.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0)">
-            <summary>
-            Appends a formatted value.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.String)">
-            <summary>
-            Appends a formatted value using the specified format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32)">
-            <summary>
-            Appends a formatted value with the specified alignment.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.DiagnosticMessageHandler`1.AppendFormatted``1(``0,System.Int32,System.String)">
-            <summary>
-            Appends a formatted value with the specified alignment and format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
+        <member name="M:SwiftCollections.SwiftTicketMap`1.SwiftTicketMapEnumerator.Dispose">
+            <inheritdoc/>
         </member>
         <member name="T:SwiftCollections.Diagnostics.SwiftCollectionDiagnostics">
             <summary>
@@ -3961,315 +3576,6 @@
             <summary>
             Gets the shared SwiftCollections diagnostics channel.
             </summary>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.SwiftThrowHelper">
-            <summary>
-            Provides allocation-conscious guard helpers for throwing common exceptions.
-            </summary>
-            <remarks>
-            Validation methods keep the success path small and route exception creation through no-inline throw helpers.
-            Interpolated custom messages are condition-gated so formatted expressions are not evaluated unless the guard throws.
-            </remarks>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNull(System.Object,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentNullException"/> if the provided argument is null.
-            </summary>
-            <param name="argument">The argument to check for null.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNullGeneric``1(``0,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentNullException"/> if the provided generic argument is null.
-            </summary>
-            <typeparam name="T">The type of the argument to check.</typeparam>
-            <param name="argument">The argument to check for null.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the argument is null.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNullAndNullsAreIllegal``1(System.Object,``0,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentNullException"/> if the specified value is null and nulls are not legal for <typeparamref name="TValue"/>.
-            </summary>
-            <typeparam name="TValue">The value type used to determine whether null is legal.</typeparam>
-            <param name="value">The value to check.</param>
-            <param name="defaultValue">A default value of type <typeparamref name="TValue"/> used to determine if nulls are illegal.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the value is null and nulls are illegal.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNegative(System.Int32,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified value is negative.
-            </summary>
-            <param name="value">The value to check.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfNegativeOrZero(System.Int32,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified value is negative or zero.
-            </summary>
-            <param name="value">The value to check.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the value is negative or zero.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},System.String,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="actualValue">The value that caused the exception.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="actualValue">The value that caused the exception.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgumentOutOfRange(System.Boolean,System.Nullable{System.Int32},System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="actualValue">The value that caused the exception.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArrayIndexInvalid(System.Int32,System.Int32,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> if a copy destination index is outside [0, length].
-            </summary>
-            <param name="index">The destination index to check.</param>
-            <param name="length">The destination length.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the index is outside [0, length].</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentException"/> if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfArgument(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ArgumentException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="paramName">The name of the parameter that caused the exception.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ArgumentException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an <see cref="T:System.InvalidOperationException"/> if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object in an invalid state.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.InvalidOperationException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfTrue(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.InvalidOperationException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object in an invalid state.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.InvalidOperationException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,System.String)">
-            <summary>
-            Throws an <see cref="T:System.ObjectDisposedException"/> if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object that has been disposed.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ObjectDisposedException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfDisposed(System.Boolean,System.String,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws an <see cref="T:System.ObjectDisposedException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="objectName">The name of the object that has been disposed.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.ObjectDisposedException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyInvalid(System.Int32,System.Object)">
-            <summary>
-            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> if the specified index is negative.
-            </summary>
-            <param name="index">The index to check.</param>
-            <param name="key">The key associated with the index.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the index is negative.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,System.String)">
-            <summary>
-            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="key">The key associated with the lookup.</param>
-            <param name="message">An optional message to include in the exception.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfKeyNotFound(System.Boolean,System.Object,SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler)">
-            <summary>
-            Throws a <see cref="T:System.Collections.Generic.KeyNotFoundException"/> with a lazily formatted message if the specified condition is true.
-            </summary>
-            <param name="condition">The condition to evaluate.</param>
-            <param name="key">The key associated with the lookup.</param>
-            <param name="message">The interpolated exception message.</param>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the condition is true.</exception>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowHelper.ThrowIfListIndexInvalid(System.Int32,System.Int32)">
-            <summary>
-            Throws an <see cref="T:System.IndexOutOfRangeException"/> if the specified index is outside the valid range defined by count.
-            </summary>
-            <param name="index">The index to check.</param>
-            <param name="count">The total number of elements in the collection.</param>
-            <exception cref="T:System.IndexOutOfRangeException">Thrown when the index is outside the valid range.</exception>
-        </member>
-        <member name="T:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler">
-            <summary>
-            Builds exception messages only when the guarded throw condition is true.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.#ctor(System.Int32,System.Int32,System.Boolean,System.Boolean@)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler"/> struct.
-            </summary>
-            <param name="literalLength">The combined length of literal portions in the interpolated string.</param>
-            <param name="formattedCount">The number of formatted expressions in the interpolated string.</param>
-            <param name="condition">The throw condition that controls whether formatting occurs.</param>
-            <param name="isEnabled">Set to <see langword="true"/> when formatted expressions should be evaluated.</param>
-        </member>
-        <member name="P:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.IsEnabled">
-            <summary>
-            Gets whether this handler is actively building an exception message.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendLiteral(System.String)">
-            <summary>
-            Appends a literal string segment.
-            </summary>
-            <param name="value">The literal string segment.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0)">
-            <summary>
-            Appends a formatted value.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.String)">
-            <summary>
-            Appends a formatted value using the specified format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32)">
-            <summary>
-            Appends a formatted value with the specified alignment.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted``1(``0,System.Int32,System.String)">
-            <summary>
-            Appends a formatted value with the specified alignment and format string.
-            </summary>
-            <typeparam name="T">The type of value to append.</typeparam>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String)">
-            <summary>
-            Appends a string value.
-            </summary>
-            <param name="value">The value to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String,System.Int32)">
-            <summary>
-            Appends a string value with the specified alignment.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.String,System.Int32,System.String)">
-            <summary>
-            Appends a string value with the specified alignment and format string.
-            </summary>
-            <param name="value">The value to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char})">
-            <summary>
-            Appends a character span.
-            </summary>
-            <param name="value">The span to append.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32)">
-            <summary>
-            Appends a character span with the specified alignment.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-        </member>
-        <member name="M:SwiftCollections.Diagnostics.SwiftThrowInterpolatedStringHandler.AppendFormatted(System.ReadOnlySpan{System.Char},System.Int32,System.String)">
-            <summary>
-            Appends a character span with the specified alignment and format string.
-            </summary>
-            <param name="value">The span to append.</param>
-            <param name="alignment">The minimum width for the formatted value.</param>
-            <param name="format">The format string to apply.</param>
         </member>
         <member name="T:SwiftCollections.Dimensions.SwiftBoolArray2D">
             <summary>
@@ -5091,21 +4397,6 @@
             Raised when the array's state changes.
             </summary>
         </member>
-        <member name="T:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1">
-            <summary>
-            Provides details about a changed element, including its index and new value.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.Index">
-            <summary>
-            The index of the changed element.
-            </summary>
-        </member>
-        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.NewValue">
-            <summary>
-            The new value of the changed element.
-            </summary>
-        </member>
         <member name="M:SwiftCollections.Observable.SwiftObservableArray`1.#ctor(System.Int32)">
             <summary>
             Initializes a new instance of the SwiftObservableArray class with the specified capacity.
@@ -5160,6 +4451,21 @@
             An array of type TValue that contains the values of the collection in order. 
             The array will be empty if the collection contains no elements.
             </returns>
+        </member>
+        <member name="T:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1">
+            <summary>
+            Provides details about a changed element, including its index and new value.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.Index">
+            <summary>
+            The index of the changed element.
+            </summary>
+        </member>
+        <member name="P:SwiftCollections.Observable.SwiftObservableArray`1.ElementChangedEventArgs`1.NewValue">
+            <summary>
+            The new value of the changed element.
+            </summary>
         </member>
         <member name="T:SwiftCollections.Observable.SwiftObservableDictionary`2">
             <summary>
@@ -6033,7 +5339,7 @@
         </member>
         <member name="M:SwiftCollections.Pool.SwiftObjectPool`1.Clear">
             <summary>
-            Clears all objects from the pool, destroying any active objects if a destroy action is configured.
+            Clears the inactive objects currently held by the pool, invoking the destroy action if configured.
             </summary>
         </member>
         <member name="M:SwiftCollections.Pool.SwiftObjectPool`1.Dispose">
@@ -6945,61 +6251,6 @@
             </summary>
             <param name="items">The array of items to initialize the state with. Cannot be null.</param>
         </member>
-        <member name="T:SwiftCollections.SwiftBucketState`1">
-            <summary>
-            Represents the state of a bucket in a fast allocation pool, including the items, allocation status, free indices, and peak usage count.
-            </summary>
-            <remarks>
-            This struct is typically used to capture or transfer the current state of a bucket-based memory pool.
-            It provides direct access to the underlying arrays representing the items, their allocation status, and the indices of free slots. 
-            The struct is serializable and designed for efficient state management in high-performance scenarios.
-            </remarks>
-            <typeparam name="T">The type of items stored in the bucket.</typeparam>
-            <remarks>
-            MemoryPack GenerateType: Object<br/>
-            <code>
-            <b>T[]</b> Items<br/>
-            <b>bool[]</b> Allocated<br/>
-            <b>int[]</b> FreeIndices<br/>
-            <b>int</b> PeakCount<br/>
-            </code>
-            </remarks>
-        </member>
-        <member name="F:SwiftCollections.SwiftBucketState`1.Items">
-            <summary>
-            Gets the array of items contained in the collection.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftBucketState`1.Allocated">
-            <summary>
-            Indicates which items in the collection are currently allocated.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftBucketState`1.FreeIndices">
-            <summary>
-            Gets the collection of indices that are currently available for allocation.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftBucketState`1.PeakCount">
-            <summary>
-            Gets the maximum number of peaks detected or recorded.
-            </summary>
-        </member>
-        <member name="M:SwiftCollections.SwiftBucketState`1.#ctor(`0[],System.Boolean[],System.Int32[],System.Int32)">
-            <summary>
-            Initializes a new instance of the SwiftBucketState class with the specified items, allocation states, free indices, and peak count.
-            </summary>
-            <param name="items">The array of items contained in the bucket. Cannot be null; an empty array is used if null is provided.</param>
-            <param name="allocated">
-            An array indicating which items in the bucket are currently allocated. 
-            Cannot be null; an empty array is used if null is provided.
-            </param>
-            <param name="freeIndices">
-            An array of indices representing the positions of free items in the bucket. 
-            Cannot be null; an empty array is used if null is provided.
-            </param>
-            <param name="peakCount">The highest number of items that have been allocated in the bucket at any point.</param>
-        </member>
         <member name="T:SwiftCollections.SwiftDictionaryState`2">
             <summary>
             Represents an immutable snapshot of the key-value pairs contained in a dictionary at a specific point in time.
@@ -7031,72 +6282,60 @@
             </remarks>
             <param name="items">An array of key-value pairs to initialize the dictionary state. Cannot be null.</param>
         </member>
-        <member name="T:SwiftCollections.SwiftGenerationalBucketState`1">
+        <member name="T:SwiftCollections.SwiftSlotMapState`1">
             <summary>
-            Represents the immutable state of a generational bucket, including item storage, allocation status, generation tracking, and free index management.
+            Represents the state of a map in a fast allocation pool, including the items, allocation status, free indices, and peak usage count.
             </summary>
             <remarks>
-            This struct is typically used to capture or transfer the complete state of a generational bucket for serialization, persistence, or inspection purposes. 
-            All arrays are expected to be of the same length, and the struct is designed for efficient value-type usage. 
-            The state is read-only and does not provide mutation operations.</remarks>
-            <typeparam name="T">The type of elements stored in the bucket.</typeparam>
+            This struct is typically used to capture or transfer the current state of a map-based memory pool.
+            It provides direct access to the underlying arrays representing the items, their allocation status, and the indices of free slots. 
+            The struct is serializable and designed for efficient state management in high-performance scenarios.
+            </remarks>
+            <typeparam name="T">The type of items stored in the map.</typeparam>
             <remarks>
             MemoryPack GenerateType: Object<br/>
             <code>
             <b>T[]</b> Items<br/>
             <b>bool[]</b> Allocated<br/>
-            <b>uint[]</b> Generations<br/>
             <b>int[]</b> FreeIndices<br/>
-            <b>int</b> Peak<br/>
+            <b>int</b> PeakCount<br/>
             </code>
             </remarks>
         </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucketState`1.Items">
+        <member name="F:SwiftCollections.SwiftSlotMapState`1.Items">
             <summary>
             Gets the array of items contained in the collection.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucketState`1.Allocated">
+        <member name="F:SwiftCollections.SwiftSlotMapState`1.Allocated">
             <summary>
             Indicates which items in the collection are currently allocated.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucketState`1.Generations">
-            <summary>
-            Gets the collection of generation values associated with this instance.
-            </summary>
-        </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucketState`1.FreeIndices">
+        <member name="F:SwiftCollections.SwiftSlotMapState`1.FreeIndices">
             <summary>
             Gets the collection of indices that are currently available for allocation.
             </summary>
         </member>
-        <member name="F:SwiftCollections.SwiftGenerationalBucketState`1.Peak">
+        <member name="F:SwiftCollections.SwiftSlotMapState`1.PeakCount">
             <summary>
-            Gets the peak value recorded during the measurement period.
+            Gets the maximum number of peaks detected or recorded.
             </summary>
         </member>
-        <member name="M:SwiftCollections.SwiftGenerationalBucketState`1.#ctor(`0[],System.Boolean[],System.UInt32[],System.Int32[],System.Int32)">
+        <member name="M:SwiftCollections.SwiftSlotMapState`1.#ctor(`0[],System.Boolean[],System.Int32[],System.Int32)">
             <summary>
-            Initializes a new instance of the SwiftGenerationalBucketState class with the specified items, allocation states, 
-            generation counters, free indices, and peak index.
+            Initializes a new instance of the SwiftSlotMapState class with the specified items, allocation states, free indices, and peak count.
             </summary>
-            <param name="items">The array of items to be managed by the bucket. Cannot be null; an empty array is used if null is provided.</param>
+            <param name="items">The array of items contained in the map. Cannot be null; an empty array is used if null is provided.</param>
             <param name="allocated">
-            An array indicating which slots in the bucket are currently allocated.
-            Each element corresponds to an item in the items array. 
-            Cannot be null; an empty array is used if null is provided.
-            </param>
-            <param name="generations">
-            An array of generation counters for each slot in the bucket. 
-            Used to track the version or state of each item.
+            An array indicating which items in the map are currently allocated. 
             Cannot be null; an empty array is used if null is provided.
             </param>
             <param name="freeIndices">
-            An array of indices representing the free slots available for allocation. 
+            An array of indices representing the positions of free items in the map. 
             Cannot be null; an empty array is used if null is provided.
             </param>
-            <param name="peak">The highest index that has been allocated in the bucket. Must be greater than or equal to zero.</param>
+            <param name="peakCount">The highest number of items that have been allocated in the map at any point.</param>
         </member>
         <member name="T:SwiftCollections.SwiftSparseMapState`1">
             <summary>
@@ -7137,6 +6376,73 @@
             An array of values of type T corresponding to the dense keys. 
             If null, an empty array is used.
             </param>
+        </member>
+        <member name="T:SwiftCollections.SwiftTicketMapState`1">
+            <summary>
+            Represents the immutable state of a generational map, including item storage, allocation status, generation tracking, and free index management.
+            </summary>
+            <remarks>
+            This struct is typically used to capture or transfer the complete state of a generational map for serialization, persistence, or inspection purposes. 
+            All arrays are expected to be of the same length, and the struct is designed for efficient value-type usage. 
+            The state is read-only and does not provide mutation operations.</remarks>
+            <typeparam name="T">The type of elements stored in the map.</typeparam>
+            <remarks>
+            MemoryPack GenerateType: Object<br/>
+            <code>
+            <b>T[]</b> Items<br/>
+            <b>bool[]</b> Allocated<br/>
+            <b>uint[]</b> Generations<br/>
+            <b>int[]</b> FreeIndices<br/>
+            <b>int</b> Peak<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicketMapState`1.Items">
+            <summary>
+            Gets the array of items contained in the collection.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicketMapState`1.Allocated">
+            <summary>
+            Indicates which items in the collection are currently allocated.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicketMapState`1.Generations">
+            <summary>
+            Gets the collection of generation values associated with this instance.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicketMapState`1.FreeIndices">
+            <summary>
+            Gets the collection of indices that are currently available for allocation.
+            </summary>
+        </member>
+        <member name="F:SwiftCollections.SwiftTicketMapState`1.Peak">
+            <summary>
+            Gets the peak value recorded during the measurement period.
+            </summary>
+        </member>
+        <member name="M:SwiftCollections.SwiftTicketMapState`1.#ctor(`0[],System.Boolean[],System.UInt32[],System.Int32[],System.Int32)">
+            <summary>
+            Initializes a new instance of the SwiftTicketMapState class with the specified items, allocation states, 
+            generation counters, free indices, and peak index.
+            </summary>
+            <param name="items">The array of items to be managed by the map. Cannot be null; an empty array is used if null is provided.</param>
+            <param name="allocated">
+            An array indicating which slots in the map are currently allocated.
+            Each element corresponds to an item in the items array. 
+            Cannot be null; an empty array is used if null is provided.
+            </param>
+            <param name="generations">
+            An array of generation counters for each slot in the map. 
+            Used to track the version or state of each item.
+            Cannot be null; an empty array is used if null is provided.
+            </param>
+            <param name="freeIndices">
+            An array of indices representing the free slots available for allocation. 
+            Cannot be null; an empty array is used if null is provided.
+            </param>
+            <param name="peak">The highest index that has been allocated in the map. Must be greater than or equal to zero.</param>
         </member>
         <member name="T:SwiftCollections.Utility.SwiftHashTools">
             <summary>
@@ -7302,49 +6608,6 @@
             <param name="key">The string to hash.</param>
             <param name="seed">The seed value for the hash function.</param>
             <returns>An integer hash code for the string.</returns>
-        </member>
-        <member name="T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute">
-            <summary>
-            Provides the compiler-recognized caller argument expression marker for target frameworks that do not define it publicly.
-            </summary>
-        </member>
-        <member name="M:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute.#ctor(System.String)">
-            <summary>
-            Initializes the attribute with the source parameter name.
-            </summary>
-            <param name="parameterName">The method parameter whose call-site expression should be captured.</param>
-        </member>
-        <member name="P:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute.ParameterName">
-            <summary>
-            Gets the method parameter whose call-site expression should be captured.
-            </summary>
-        </member>
-        <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerAttribute">
-            <summary>
-            Provides the compiler-recognized interpolated string handler marker for target frameworks that do not define it publicly.
-            </summary>
-        </member>
-        <member name="T:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute">
-            <summary>
-            Provides the compiler-recognized argument binding marker for target frameworks that do not define it publicly.
-            </summary>
-        </member>
-        <member name="M:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.#ctor(System.String)">
-            <summary>
-            Initializes the attribute with one constructor argument name.
-            </summary>
-            <param name="argument">The method parameter name to pass to the interpolated string handler constructor.</param>
-        </member>
-        <member name="M:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.#ctor(System.String[])">
-            <summary>
-            Initializes the attribute with multiple constructor argument names.
-            </summary>
-            <param name="arguments">The method parameter names to pass to the interpolated string handler constructor.</param>
-        </member>
-        <member name="P:System.Runtime.CompilerServices.InterpolatedStringHandlerArgumentAttribute.Arguments">
-            <summary>
-            Gets the method parameter names passed to the interpolated string handler constructor.
-            </summary>
         </member>
     </members>
 </doc>

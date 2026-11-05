@@ -19,12 +19,12 @@ description: Unity authoring adapters, GameObject pooling, bounds conversion, pa
 
 <div class="sc-card-grid">
   <div class="sc-card">
-    <h3><a href="https://github.com/mrdav30/SwiftCollections-Unity/tree/v7.0.0/com.mrdav30.swiftcollections">Standard</a></h3>
+    <h3><a href="https://github.com/mrdav30/SwiftCollections-Unity/tree/v8.0.0/com.mrdav30.swiftcollections">Standard</a></h3>
     <p>The core runtime, Unity authoring adapters, pooling, bounds conversion,
     samples, and MemoryPack support.</p>
   </div>
   <div class="sc-card">
-    <h3><a href="https://github.com/mrdav30/SwiftCollections-Unity/tree/v7.0.0/com.mrdav30.swiftcollections.lean">Lean</a></h3>
+    <h3><a href="https://github.com/mrdav30/SwiftCollections-Unity/tree/v8.0.0/com.mrdav30.swiftcollections.lean">Lean</a></h3>
     <p>The same collection and Unity adapter APIs without the MemoryPack runtime
     dependency.</p>
   </div>

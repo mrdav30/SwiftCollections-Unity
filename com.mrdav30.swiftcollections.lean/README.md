@@ -4,7 +4,7 @@ The Lean base package: the same SwiftCollections and Unity adapter APIs as the
 Standard base, without the MemoryPack runtime dependency. It includes Unity
 authoring adapters, bounds conversion, GameObject pooling, and the Demo Scene.
 
-Requires Unity 2022.3 or newer.
+Requires Unity 6.3 LTS (6000.3) or newer.
 
 [Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
 [Getting started](https://mrdav30.github.io/SwiftCollections-Unity/guides/getting-started.html) ·
@@ -15,7 +15,7 @@ Requires Unity 2022.3 or newer.
 In **Window → Package Manager**, choose **+ → Install package from git URL…**:
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.lean#v8.0.0
 ```
 
 Do not install the Standard base in the same project. In a custom asmdef,

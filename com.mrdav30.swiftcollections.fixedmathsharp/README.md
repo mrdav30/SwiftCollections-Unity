@@ -4,7 +4,7 @@ Optional fixed-point query integration for the Standard SwiftCollections base.
 It adds `FixedBoundVolume`, fixed query structures, and
 `Bounds.ToFixedBoundVolume()`.
 
-Requires Unity 2022.3 or newer.
+Requires Unity 6.3 LTS (6000.3) or newer.
 
 [Documentation](https://mrdav30.github.io/SwiftCollections-Unity/) ·
 [Pooling and queries](https://mrdav30.github.io/SwiftCollections-Unity/guides/pooling-and-queries.html) ·
@@ -15,17 +15,17 @@ Requires Unity 2022.3 or newer.
 Install the Standard base first:
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections#v8.0.0
 ```
 
 Then install this companion:
 
 ```text
-https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v7.0.0
+https://github.com/mrdav30/SwiftCollections-Unity.git?path=/com.mrdav30.swiftcollections.fixedmathsharp#v8.0.0
 ```
 
 The companion's editor installer attempts to add the matching
-`com.mrdav30.fixedmathsharp` package at `v7.0.0`. It does not install the
+`com.mrdav30.fixedmathsharp` package at `v8.0.0`. It does not install the
 SwiftCollections base.
 
 If the FixedMathSharp dependency needs repair, run:

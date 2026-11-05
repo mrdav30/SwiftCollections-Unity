@@ -59,9 +59,15 @@ git diff --check
 ```
 
 The `build-and-test` workflow is the canonical validation for all four package
-variants and the hosted API site because it stages the required Unity and
-package reference assemblies. Sample import smoke tests run on pushes to
-`main` for the Standard and Lean base packages.
+variants on Unity 6000.3.9f1 and the hosted API site because it stages the
+required Unity and package reference assemblies. Sample import smoke tests run
+on pushes to `main` for the Standard and Lean base packages.
+
+The workflow pins the host runner to Ubuntu 24.04. Unity activation uses the
+`UNITY_EMAIL` and `UNITY_PASSWORD` secrets directly; a machine-bound
+`UNITY_LICENSE` file is not used. Sample-import jobs trust the exact local Git
+checkout paths through the runner's global Git config, which GameCI mounts
+into the Unity container's home directory.
 
 ## Code of Conduct
 

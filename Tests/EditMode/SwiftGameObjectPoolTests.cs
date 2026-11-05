@@ -25,6 +25,30 @@ namespace SwiftCollections.Unity.Tests
         }
 
         [Test]
+        public void TryGetObject_WithNullParent_PreservesArgumentValidation()
+        {
+            SwiftGameObjectPool pool = new("projectiles", _prefab, 1);
+
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                pool.TryGetObject(null, out _));
+
+            Assert.That(exception.ParamName, Is.EqualTo("parent"));
+            Assert.That(pool.CreatedObjects.Count, Is.Zero);
+        }
+
+        [Test]
+        public void TryGetObject_WithNullPrefab_PreservesArgumentValidation()
+        {
+            SwiftGameObjectPool pool = new("projectiles", null, 1);
+
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                pool.TryGetObject(_parent.transform, out _));
+
+            Assert.That(exception.ParamName, Is.EqualTo("_prefab"));
+            Assert.That(pool.CreatedObjects.Count, Is.Zero);
+        }
+
+        [Test]
         public void TryGetObject_CreatesInactiveChildAndReusesReleasedInstance()
         {
             SwiftGameObjectPool pool = new("projectiles", _prefab, 1);
